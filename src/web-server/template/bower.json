@@ -1,0 +1,26 @@
+{
+  "name": "c3-chart-maker",
+  "description": "A Node.js module and CLI tool for rendering a chart from a CSV file using a C3 spec.",
+  "main": "index.js",
+  "authors": [
+    "ashley@codecapers.com.au"
+  ],
+  "license": "MIT",
+  "keywords": [
+    "chart",
+    "visualization",
+    "graph"
+  ],
+  "homepage": "https://github.com/codecapers/c3-chart-maker",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "^3.3.1",
+    "c3": "^0.4.21"
+  }
+}

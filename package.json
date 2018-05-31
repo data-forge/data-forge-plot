@@ -26,10 +26,13 @@
     },
     "homepage": "https://github.com/data-forge/data-forge-plot#readme",
     "dependencies": {
-        "data-forge": "1.0.8"
+        "data-forge": "1.0.8",
+        "express": "^4.16.3",
+        "nightmare": "^3.0.1"
     },
     "devDependencies": {
         "@types/chai": "4.0.4",
+        "@types/express": "^4.11.1",
         "@types/mocha": "2.2.43",
         "@types/node": "8.0.28",
         "chai": "4.1.2",
