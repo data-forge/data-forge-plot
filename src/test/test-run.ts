@@ -55,7 +55,7 @@ async function main(): Promise<void> {
         .renderImage("./test-dataframe-2.png");
     */
    await df.plot({}, { y: "A", x: "B" })
-    .chartType(ChartType.Bar)
+    .chartType(ChartType.Scatter)
     .renderImage("./test-dataframe-2.png");
 }
 
