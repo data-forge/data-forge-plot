@@ -16,7 +16,7 @@ $(function () {
                 json: Array.from(inputChartDef.data),
                 keys: {
                     x: inputChartDef.axisMap.x,
-                    value: inputChartDef.axisMap.y,
+                    value: Array.isArray(inputChartDef.axisMap.y) ? inputChartDef.axisMap.y : [inputChartDef.axisMap.y],
                 },
                 type: inputChartDef.plotDef.chartType,
             },

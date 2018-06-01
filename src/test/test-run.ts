@@ -49,9 +49,14 @@ async function main(): Promise<void> {
         },
     ]);
     //await df.plot().renderImage("./test-dataframe-2.png");
+    /*
     await df.plot()
         .chartType(ChartType.Bar)
         .renderImage("./test-dataframe-2.png");
+    */
+   await df.plot({}, { y: "A", x: "B" })
+    .chartType(ChartType.Bar)
+    .renderImage("./test-dataframe-2.png");
 }
 
 main()
