@@ -116,6 +116,13 @@ export interface INodejsExportOptions {
 export interface IPlotAPI {
 
     /**
+     * Set the type of the chart to be plotted.
+     * 
+     * @param chartType Specifies the chart type.
+     */
+    chartType (chartType: ChartType): IPlotAPI;
+
+    /**
      * Render the plot to an image file.
      */
     /*async*/ renderImage (imageFilePath: string): Promise<void>;
@@ -179,12 +186,13 @@ class PlotAPI implements IPlotAPI {
     }
     
     /**
-     * Show the chart in the Electron browser.
-     * Promise resolves when browser is closed.
+     * Set the type of the chart to be plotted.
+     * 
+     * @param chartType Specifies the chart type.
      */
-    async showInteractiveChart (): Promise<void> { //fio:
-        //todo: should export the interactive chart, then open it in the browser and just continue.
-        // use opn(url) to open.
+    chartType (chartType: ChartType): IPlotAPI {
+        this.plotDef.chartType = chartType;
+        return this;
     }
 
     /**

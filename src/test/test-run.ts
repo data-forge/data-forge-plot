@@ -8,7 +8,8 @@ async function main(): Promise<void> {
     await series.plot().renderImage("./test-series.png");
     */
 
-    
+
+    /*
     var df = new DataFrame([ 
         {
             A: 10,
@@ -20,6 +21,7 @@ async function main(): Promise<void> {
             A: 15,
         },
     ]);
+    */
     //await df.plot().renderImage("./test-dataframe.png");
 
     /*
@@ -30,7 +32,26 @@ async function main(): Promise<void> {
 
     //await df.plot().exportWeb("c:\\temp\\test-output", { openBrowser: true, overwrite: true });
 
-    await df.plot().exportNodejs("c:\\temp\\test-output-2", { overwrite: true });
+    //await df.plot().exportNodejs("c:\\temp\\test-output-2", { overwrite: true });
+
+    var df = new DataFrame([ 
+        {
+            A: 10,
+            B: 12,
+        },
+        {
+            A: 20,
+            B: 15,
+        },
+        {
+            A: 15,
+            B: 22,
+        },
+    ]);
+    //await df.plot().renderImage("./test-dataframe-2.png");
+    await df.plot()
+        .chartType(ChartType.Bar)
+        .renderImage("./test-dataframe-2.png");
 }
 
 main()
