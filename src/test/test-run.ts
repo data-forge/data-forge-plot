@@ -22,11 +22,13 @@ async function main(): Promise<void> {
     ]);
     //await df.plot().renderImage("./test-dataframe.png");
 
+    /*
     await df
         .plot({ chartType: ChartType.Bar })
         .renderImage("./test-dataframe.png");
+    */
 
-    await df.plot().showInteractiveChart();    
+    await df.plot().exportWeb("c:\\temp\\test-output", { openBrowser: true, overwrite: true });
 }
 
 main()

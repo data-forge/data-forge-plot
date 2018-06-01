@@ -5,6 +5,9 @@ import { ChartRenderer, IChartRenderer } from './render-chart';
 import * as Sugar from 'sugar';
 import { WebServer } from './web-server';
 const opn = require('opn');
+import * as jetpack from 'fs-jetpack';
+import * as path from 'path';
+import * as fs from 'fs';
 
 /** 
  * Defines the type of chart to output.
@@ -79,15 +82,26 @@ export interface IChartDef {
 }
 
 /**
+ * Options for exporting web projects for interactive charts.
+ */
+export interface IWebExportOptions {
+    /**
+     * Open the exported web visualization in the browser after exporting it.
+     * Default: false
+     */
+    openBrowser?: boolean;
+
+    /**
+     * Set to true to overwrite existing output.
+     * Default: false
+     */
+    overwrite?: boolean;
+}
+
+/**
  * Fluent API for configuring the plot.
  */
 export interface IPlotAPI {
-
-    /**
-     * Show the chart in the Electron browser.
-     * Promise resolves when browser is closed.
-     */
-    /*async*/ showInteractiveChart (): Promise<void>;
 
     /**
      * Render the plot to an image file.
@@ -95,10 +109,15 @@ export interface IPlotAPI {
     /*async*/ renderImage (imageFilePath: string): Promise<void>;
 
     /**
-     * Export an interactive web visualization of the plot.
+     * Export an interactive web visualization of the chart.
      */
-    /*async*/ exportWeb (outputFolderPath: string): Promise<void>;
+    /*async*/ exportWeb (outputFolderPath: string, exportOptions?: IWebExportOptions): Promise<void>;
 
+    /**
+     * Export a Node.js project to host a web visualization of the char.
+     */
+    /*async*/ exportNodejs (outputFolderPath: string): Promise<void>;
+    
     /**
      * Serialize the plot definition so that it can be converted to JSON.
      * The JSON definition of the chart can be used to instantiate the chart in a browser.
@@ -151,7 +170,7 @@ class PlotAPI implements IPlotAPI {
      * Show the chart in the Electron browser.
      * Promise resolves when browser is closed.
      */
-    async showInteractiveChart (): Promise<void> {
+    async showInteractiveChart (): Promise<void> { //fio:
         //todo: should export the interactive chart, then open it in the browser and just continue.
         // use opn(url) to open.
     }
@@ -174,12 +193,34 @@ class PlotAPI implements IPlotAPI {
     }
 
     /**
-     * Export an interactive web visualization of the plot.
+     * Export an interactive web visualization of the chart.
      */
-    async exportWeb (outputFolderPath: string): Promise<void> {
-        //todo;
+    async exportWeb (outputFolderPath: string, exportOptions?: IWebExportOptions): Promise<void> {
+
+        if (exportOptions && exportOptions.overwrite) {
+            await jetpack.remove(outputFolderPath);
+        }
+        
+        await jetpack.copyAsync(path.join(__dirname, "export-template"), outputFolderPath);
+
+        const jsonChartDef = JSON.stringify(this.serialize(), null, 4);
+
+        const indexJsPath = path.join(outputFolderPath, "index.js");
+        await jetpack.appendAsync(indexJsPath, "var chartDef =\r\n");
+        await jetpack.appendAsync(indexJsPath, jsonChartDef);
+
+        if (exportOptions && exportOptions.openBrowser) {
+            opn("file://" + path.join(outputFolderPath, "index.html"));
+        }
     }
 
+    /**
+     * Export a Node.js project to host a web visualization of the char.
+     */
+    async exportNodejs (outputFolderPath: string): Promise<void> {
+        //todo:
+    }
+    
     /**
      * Serialize the plot definition so that it can be converted to JSON.
      * The JSON definition of the chart can be used to instantiate the chart in a browser.
