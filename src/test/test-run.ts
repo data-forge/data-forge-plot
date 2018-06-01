@@ -28,7 +28,9 @@ async function main(): Promise<void> {
         .renderImage("./test-dataframe.png");
     */
 
-    await df.plot().exportWeb("c:\\temp\\test-output", { openBrowser: true, overwrite: true });
+    //await df.plot().exportWeb("c:\\temp\\test-output", { openBrowser: true, overwrite: true });
+
+    await df.plot().exportNodejs("c:\\temp\\test-output-2", { overwrite: true });
 }
 
 main()

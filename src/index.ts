@@ -7,7 +7,7 @@ import { WebServer } from './web-server';
 const opn = require('opn');
 import * as jetpack from 'fs-jetpack';
 import * as path from 'path';
-import * as fs from 'fs';
+import * as fs from 'fs-extra';
 
 /** 
  * Defines the type of chart to output.
@@ -99,6 +99,18 @@ export interface IWebExportOptions {
 }
 
 /**
+ * Options for exporting Node.js projects for interactive charts.
+ */
+export interface INodejsExportOptions {
+
+    /**
+     * Set to true to overwrite existing output.
+     * Default: false
+     */
+    overwrite?: boolean;
+}
+
+/**
  * Fluent API for configuring the plot.
  */
 export interface IPlotAPI {
@@ -116,7 +128,7 @@ export interface IPlotAPI {
     /**
      * Export a Node.js project to host a web visualization of the char.
      */
-    /*async*/ exportNodejs (outputFolderPath: string): Promise<void>;
+    /*async*/ exportNodejs (outputFolderPath: string, exportOptions?: INodejsExportOptions): Promise<void>;
     
     /**
      * Serialize the plot definition so that it can be converted to JSON.
@@ -198,10 +210,10 @@ class PlotAPI implements IPlotAPI {
     async exportWeb (outputFolderPath: string, exportOptions?: IWebExportOptions): Promise<void> {
 
         if (exportOptions && exportOptions.overwrite) {
-            await jetpack.remove(outputFolderPath);
+            await fs.remove(outputFolderPath);
         }
         
-        await jetpack.copyAsync(path.join(__dirname, "export-template"), outputFolderPath);
+        await jetpack.copyAsync(path.join(__dirname, "export-templates", "web"), outputFolderPath);
 
         const jsonChartDef = JSON.stringify(this.serialize(), null, 4);
 
@@ -217,8 +229,16 @@ class PlotAPI implements IPlotAPI {
     /**
      * Export a Node.js project to host a web visualization of the char.
      */
-    async exportNodejs (outputFolderPath: string): Promise<void> {
-        //todo:
+    async exportNodejs (outputFolderPath: string, exportOptions?: INodejsExportOptions): Promise<void> {
+
+        if (exportOptions && exportOptions.overwrite) {
+            await fs.remove(outputFolderPath);
+        }
+        
+        await jetpack.copyAsync(path.join(__dirname, "export-templates", "nodejs"), outputFolderPath);
+
+        const jsonChartDef = JSON.stringify(this.serialize(), null, 4);
+        await jetpack.writeAsync(path.join(outputFolderPath, "chart-def.json"), jsonChartDef);
     }
     
     /**
