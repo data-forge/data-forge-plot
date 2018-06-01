@@ -18,6 +18,7 @@ $(function () {
                     x: inputChartDef.axisMap.x,
                     value: inputChartDef.axisMap.y,
                 },
+                type: inputChartDef.plotDef.chartType,
             },
             transition: {
                 duration: 0 // Disable animated transitions when we are capturing a static image.
@@ -28,6 +29,7 @@ $(function () {
     $.get("chart-data")
         .then(function (response) {
             const chartDef = formatChartDef(response.chartDef);
+            //console.log(JSON.stringify(chartDef, null, 4));
             var chart = c3.generate(chartDef);
         })
         .catch(function (err) {

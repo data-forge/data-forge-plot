@@ -1,5 +1,6 @@
 import { DataFrame, Series } from "data-forge";
 import "../index";
+import { ChartType } from "../index";
 
 async function main(): Promise<void> {
     /*
@@ -20,6 +21,10 @@ async function main(): Promise<void> {
         },
     ]);
     //await df.plot().renderImage("./test-dataframe.png");
+
+    await df
+        .plot({ chartType: ChartType.Bar })
+        .renderImage("./test-dataframe.png");
 
     await df.plot().showInteractiveChart();    
 }

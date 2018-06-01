@@ -107,8 +107,6 @@ export class WebServer implements IWebServer {
                 resolve();
             });
         });
-        
-        this.server = null;
     }
 }
 
@@ -122,5 +120,5 @@ if (require.main === module) {
         .catch(err => {
             console.error("Error starting web server.");
             console.error(err && err.stack || err);
-        })
+        });
 }

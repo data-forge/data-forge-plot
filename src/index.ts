@@ -18,26 +18,28 @@ export enum ChartType {
  * Defines the chart.
  */
 export interface IPlotDef {
+
     /**
      * The type of chart to render.
      */
-    chartType: ChartType;
+    chartType?: ChartType;
 
     /**
      * Width of the plot.
      */
-    width: number;
+    width?: number;
 
     /**
      * Height of the plot.
      */
-    height: number;
+    height?: number;
 }
 
 /**
  * Maps the columns in a dataframe to axis in the chart.
  */
 export interface IAxisMap {
+
     /**
      * The x axis for the chart.
      */
@@ -141,7 +143,7 @@ class PlotAPI implements IPlotAPI {
         assert.isArray(data, "Expected 'data' parameter to PlotAPI constructor to be an array.");
 
         this.data = data;
-        this.plotDef = Object.assign({}, plotDef); // Clone the def and plot map so they can be updated by the fluent API.
+        this.plotDef = Object.assign({}, defaultPlotDef, plotDef); // Clone the def and plot map so they can be updated by the fluent API.
         this.axisMap = Object.assign({}, axisMap);
     }
     
