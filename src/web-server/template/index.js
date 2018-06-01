@@ -3,32 +3,74 @@
 $(function () {
 
     /**
-     * Convert a data-forge-plot axis definition to a C3 axis definition.
+     * Configure C3 axes.
      */
-    function convertAxisDef (axisDef) {
-        return {
-            type: axisDef.axisType || "indexed",
-        };
+    function configureAxes (inputChartDef) {
+       var axisMap = inputChartDef.axisMap;
+       var c3Axes = {};
+
+        for (var axisName in axisMap) {
+            if (axisName === "x") {
+                // No need to handle this case with c3.
+                continue;
+            }
+
+            var seriesName = axisMap[axisName];
+            if (Array.isArray(seriesName)) {
+                for (var i = 0; i < seriesName.length; ++i) {
+                    c3Axes[seriesName[i]] = axisName;
+                }
+            }
+            else {
+                c3Axes[seriesName] = axisName;
+            }
+        }
+
+       return c3Axes;
     };
 
     /**
-     * Setup an axis definition if necessary.
+     * Configure C3 axis'.
      */
-    function setupAxisDef(axisName, inputChartDef, c3ChartDef) {
-        if (inputChartDef.plotDef[axisName]) {
-            if (!c3ChartDef.axis) {
-                c3ChartDef.axis = {};
+    function configureAxis (inputChartDef) {        
+        var axisMap = inputChartDef.axisMap;
+        var c3Axis = {
+            x: { show: false }, 
+            y: { show: false },
+            y2: { show: false },
+        };
+
+        for (var axisName in axisMap) {
+
+            var axisDef = inputChartDef.plotDef[axisName];
+            if (axisDef && axisDef.axisType) {
+                c3Axis[axisName].type = axisDef.axisType;
             }
 
-            c3ChartDef.axis[axisName] = convertAxisDef(inputChartDef.plotDef[axisName]);
+            c3Axis[axisName].show = true;
         }
-    };
+
+        return c3Axis;
+    }
+
+    /**
+     * Extract series names to display on the particular axis.
+     */
+    function extractSeriesNames (axisName, inputChartDef) {
+        if (!inputChartDef.axisMap[axisName]) {
+            return [];
+        }
+        
+        return Array.isArray(inputChartDef.axisMap[axisName]) ? 
+            inputChartDef.axisMap[axisName] : 
+            [inputChartDef.axisMap[axisName]];
+    }
 
     /**
      * Convert a data-forge-plot chart definition to a C3 chart definition.
      */
     function formatChartDef (inputChartDef) {
-        const c3ChartDef = {
+       var c3ChartDef = {
             bindto: "#chart",
             size: {
                 width: inputChartDef.plotDef.width || 300,
@@ -38,24 +80,26 @@ $(function () {
                 json: Array.from(inputChartDef.data),
                 keys: {
                     x: inputChartDef.axisMap.x,
-                    value: Array.isArray(inputChartDef.axisMap.y) ? inputChartDef.axisMap.y : [inputChartDef.axisMap.y],
+                    value: extractSeriesNames("y", inputChartDef).concat(extractSeriesNames("y2", inputChartDef)),
                 },
                 type: inputChartDef.plotDef.chartType || "line",
+                axes: configureAxes(inputChartDef),
             },
+            axis: configureAxis(inputChartDef),
             transition: {
                 duration: 0 // Disable animated transitions when we are capturing a static image.
             }
         };
 
-        setupAxisDef("x", inputChartDef, c3ChartDef);
-        setupAxisDef("y", inputChartDef, c3ChartDef);
-        setupAxisDef("y2", inputChartDef, c3ChartDef);
         return c3ChartDef;
     };
 
     $.get("chart-data")
         .then(function (response) {
-            const c3ChartDef = formatChartDef(response.chartDef);
+            console.log("Input chart def:");
+            console.log(JSON.stringify(response.chartDef, null, 4));
+           var c3ChartDef = formatChartDef(response.chartDef);
+            console.log("Converted C3 chart def:");
             console.log(JSON.stringify(c3ChartDef, null, 4));
             var chart = c3.generate(c3ChartDef);
         })

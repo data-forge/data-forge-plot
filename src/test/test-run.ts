@@ -62,6 +62,7 @@ async function main(): Promise<void> {
     .renderImage("./test-dataframe-2.png");
     */
 
+    /*
 
    var df = new DataFrame([ 
         {
@@ -79,7 +80,24 @@ async function main(): Promise<void> {
     ]);
     await df.plot({ x: { axisType: AxisType.Timeseries }})
         .renderImage("./test-dataframe-3.png");
+        */
 
+    var df = new DataFrame([ 
+        {
+            A: 10,
+            B: 120,
+        },
+        {
+            A: 20,
+            B: 150,
+        },
+        {
+            A: 15,
+            B: 220,
+        },
+    ]);
+    await df.plot({}, { y2: "B" })
+        .renderImage("./test-dataframe-4.png");
 }
 
 main()

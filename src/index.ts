@@ -82,12 +82,12 @@ export interface IAxisMap {
     /**
      * The x axis for the chart.
      */
-    x: string;
+    x?: string;
 
     /**
      * The y axis for the chart.
      */
-    y: string | string[];
+    y?: string | string[];
 
     /**
      * The optional  second y axis for the chart.
@@ -380,11 +380,43 @@ function plotDataFrame(this: IDataFrame<any, any>, plotDef?: IPlotDef, axisMap?:
             "y": this.getColumnNames(),
         };
     }
+    else {
+        axisMap = Object.assign({}, axisMap);
+        if (!axisMap.x) {
+            axisMap.x = "__index__";
+        }
+
+        if (!axisMap.y) {
+            if (!axisMap.y2) {
+                // All columns on the y axis.
+                axisMap.y = this.getColumnNames();
+            }
+            else {
+                // All columns on y axis, expect those explicitly on the y2 axis.
+                axisMap.y = this.getColumnNames()
+                    .filter(columnName => {
+                        if (Sugar.Object.isArray(axisMap!.y2!)) {
+                            if ((axisMap!.y2 as string[]).indexOf(columnName) >= 0) {{
+                                return false; // This column is moved to y2 axis.
+                            }}
+                        }
+                        else {
+                            if (columnName === axisMap!.y2) {
+                                return false; // This column is moved to y2 axis.
+                            }
+                        }
+
+                        return true; // This column can stay on y axis.
+                    });
+            }            
+        }
+    }
 
     const includeIndex = axisMap.x === "__index__" ||
         axisMap.y === "__index__" ||
-        (Sugar.Object.isArray(axisMap.y) &&
-            axisMap.y.filter(y => y === "__index__").length > 0);
+        axisMap.y2 === "__index__" ||
+        (Sugar.Object.isArray(axisMap!.y!) && (axisMap!.y! as string[]).filter(y => y === "__index__").length > 0) ||
+        axisMap!.y2 && (Sugar.Object.isArray(axisMap!.y2!) && (axisMap!.y2! as string[]).filter(y => y === "__index__").length > 0);
 
     let df = this;
 
