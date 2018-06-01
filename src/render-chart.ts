@@ -4,6 +4,8 @@ import { IPlotDef, IAxisMap, IChartDef } from ".";
 
 declare const document: any;
 
+const selector = "svg";
+
 /**
  * Interface to the chart renderer.
  * This component is responsible for turning data and a chart definition into a chart.
@@ -14,7 +16,7 @@ export interface IChartRenderer {
      * Start the chart renderer.
      * For performance reasons the chart render can be reused to render multiple charts.
      */
-    start (): void;
+    start (showBrowser: boolean): void;
 
     /**
      * Finish the chart renderer.
@@ -51,12 +53,13 @@ export class ChartRenderer implements IChartRenderer {
      * Start the chart renderer.
      * For performance reasons the chart render can be reused to render multiple charts.
      */
-    async start (): Promise<void> {
-        this.webServer = new WebServer();
+    async start (showBrowser: boolean): Promise<void> {
+        this.webServer = new WebServer(this.webServerPortNo);
         await this.webServer.start();
 
         this.nightmare = new Nightmare({
-            show: false
+            show: showBrowser,
+            frame: showBrowser,
         });
 
         this.nightmare.on('crashed', (evt: any) => {
@@ -95,18 +98,23 @@ export class ChartRenderer implements IChartRenderer {
     }
 
     /**
+     * Load the chart into the Electron browser.
+     */
+    async loadChart (chartDef: IChartDef): Promise<void> {
+
+        this.webServer!.chartDef = chartDef; //todo: this might prevent charts from being rendered in parallel!
+
+        this.nightmare.goto(this.webServer!.getUrl()); 
+        await this.nightmare.wait(selector);
+    }
+
+    /**
      * Create a chart from data and a chart definition and render it to an image file.
      */
     async renderImage (chartDef: IChartDef, outputFilePath: string): Promise<void> {
-        const selector = "svg";
-        const url = "http://127.0.0.1:" + this.webServerPortNo;
+        await this.loadChart(chartDef);
 
-        this.webServer!.chartDef = chartDef; //todo: this might prevent charts from being rendered in parallel!
-        
-        this.nightmare!.goto(url); 
-        
-        await this.nightmare!.wait(selector)
-            .evaluate(
+        await this.nightmare.evaluate(
                 (selector: string) => {
                     const body = document.querySelector('body');
                     const element = document.querySelector(selector);
@@ -123,7 +131,7 @@ export class ChartRenderer implements IChartRenderer {
                 selector
             )
             .then((rect: any) => {
-                return this.nightmare!
+                return this.nightmare
                     .viewport(rect.bodyWidth, rect.bodyHeight)
                     .screenshot(outputFilePath, rect);
             });

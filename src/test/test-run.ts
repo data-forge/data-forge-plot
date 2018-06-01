@@ -19,8 +19,9 @@ async function main(): Promise<void> {
             A: 15,
         },
     ]);
-    await df.plot().renderImage("./test-dataframe.png");
-    
+    //await df.plot().renderImage("./test-dataframe.png");
+
+    await df.plot().showInteractiveChart();    
 }
 
 main()

@@ -3,6 +3,8 @@ import { ISeries, Series } from 'data-forge';
 import { IDataFrame, DataFrame } from 'data-forge';
 import { ChartRenderer, IChartRenderer } from './render-chart';
 import * as Sugar from 'sugar';
+import { WebServer } from './web-server';
+const opn = require('opn');
 
 /** 
  * Defines the type of chart to output.
@@ -148,7 +150,8 @@ class PlotAPI implements IPlotAPI {
      * Promise resolves when browser is closed.
      */
     async showInteractiveChart (): Promise<void> {
-        //todo:
+        //todo: should export the interactive chart, then open it in the browser and just continue.
+        // use opn(url) to open.
     }
 
     /**
@@ -162,7 +165,7 @@ class PlotAPI implements IPlotAPI {
         else {
             // Create a new chart renderer.
             const chartRenderer: IChartRenderer = new ChartRenderer();
-            await chartRenderer.start();
+            await chartRenderer.start(false);
             await chartRenderer.renderImage(this.serialize(), imageFilePath);
             await chartRenderer.end();
         }
@@ -185,13 +188,6 @@ class PlotAPI implements IPlotAPI {
             plotDef: this.plotDef,
             axisMap: this.axisMap,
         };
-    }
-    
-    /**
-     * Serialize the plot definition to JSON.
-     */
-    toJSON (): any {
-        return {}; //todo:
     }
 }
 
@@ -216,7 +212,7 @@ declare module "data-forge/build/lib/series" {
 
 async function startPlot (): Promise<void> {
     globalChartRenderer = new ChartRenderer();
-    await globalChartRenderer.start();
+    await globalChartRenderer.start(false);
 }
 
 async function endPlot(): Promise<void> {

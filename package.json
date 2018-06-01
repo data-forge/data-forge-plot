@@ -28,7 +28,8 @@
     "dependencies": {
         "data-forge": "1.0.8",
         "express": "^4.16.3",
-        "nightmare": "^3.0.1"
+        "nightmare": "^3.0.1",
+        "opn": "^5.3.0"
     },
     "devDependencies": {
         "@types/chai": "4.0.4",
