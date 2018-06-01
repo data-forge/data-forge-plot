@@ -36,9 +36,14 @@ export interface IWebServer {
 export class WebServer implements IWebServer {
 
     /**
-     * The port number for the web server.
+     * The requested port number for the web server.
      */
-    portNo: number;
+    requestedPortNo: number;
+
+    /**
+     * The assigned port number for the web server.
+     */
+    assignedPortNo: number;
 
     /**
      * The Express server instance that implements the web-server.
@@ -52,14 +57,15 @@ export class WebServer implements IWebServer {
     chartDef: any = {};
 
     constructor (portNo: number) {
-        this.portNo = portNo;
+        this.requestedPortNo = portNo;
+        this.assignedPortNo = portNo;
     }
 
     /**
      * Get the URL to access the web-sever.
      */
     getUrl (): string {
-        return "http://127.0.0.1:" + this.portNo;
+        return "http://127.0.0.1:" + this.assignedPortNo;
     }
 
     /**
@@ -80,11 +86,12 @@ export class WebServer implements IWebServer {
                 });
             });
             
-            this.server.listen(this.portNo, (err: any) => {
+            this.server.listen(this.requestedPortNo, (err: any) => {
                 if (err) {
                     reject(err);
                 }
                 else {
+                    this.assignedPortNo = this.server.address().port
                     resolve();
                 }
             });

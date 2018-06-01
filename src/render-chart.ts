@@ -40,11 +40,6 @@ export class ChartRenderer implements IChartRenderer {
     nightmare: any | null = null;
 
     /**
-     * The port for the web server that serves the interative chart.
-     */
-    webServerPortNo: number = 3000;
-
-    /**
      * Interface to the web-server that serves the interactive chart.
      */
     webServer: IWebServer | null = null;
@@ -54,7 +49,8 @@ export class ChartRenderer implements IChartRenderer {
      * For performance reasons the chart render can be reused to render multiple charts.
      */
     async start (showBrowser: boolean): Promise<void> {
-        this.webServer = new WebServer(this.webServerPortNo);
+        const autoAssignPortNo = 0; // Use port no 0, to automatically assign a port number.
+        this.webServer = new WebServer(autoAssignPortNo);
         await this.webServer.start();
 
         this.nightmare = new Nightmare({
