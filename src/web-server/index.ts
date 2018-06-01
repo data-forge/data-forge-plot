@@ -1,19 +1,47 @@
 import * as express from "express";
 import * as path from "path";
 
+/**
+ * Web-server component. Serves the chart interative chart.
+ */
 export interface IWebServer {
 
+    /**
+     * The data that defines the chart.
+     * Passed to the browser-based chart via REST API.
+     */
     chartDef: any;
 
+    /**
+     * Start the web-server.
+     */
     /*async*/ start (): Promise<void>;
+
+    /**
+     * Stop the web-server.
+     */
     /*async*/ stop (): Promise<void>;
 }
 
+/**
+ * Web-server component. Serves the chart interative chart.
+ */
 export class WebServer implements IWebServer {
 
+    /**
+     * The Express server instance that implements the web-server.
+     */
     server: any | null = null;
+
+    /**
+     * The data that defines the chart.
+     * Passed to the browser-based chart via REST API.
+     */
     chartDef: any = {};
 
+    /**
+     * Start the web-server.
+     */
     start (): Promise<void> {
         return new Promise((resolve, reject) => {
             const app = express();
@@ -39,6 +67,9 @@ export class WebServer implements IWebServer {
         });
     }
 
+    /**
+     * Stop the web-server.
+     */
     async stop (): Promise<void> {
         await this.server.close();
         this.server = null;

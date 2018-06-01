@@ -2,6 +2,7 @@ import { assert } from 'chai';
 import { ISeries, Series } from 'data-forge';
 import { IDataFrame, DataFrame } from 'data-forge';
 import { ChartRenderer, IChartRenderer } from './render-chart';
+import * as Sugar from 'sugar';
 
 /** 
  * Defines the type of chart to output.
@@ -35,8 +36,19 @@ export interface IPlotDef {
  * Maps the columns in a dataframe to axis in the chart.
  */
 export interface IAxisMap {
+    /**
+     * The x axis for the chart.
+     */
     x: string;
+
+    /**
+     * The y axis for the chart.
+     */
     y: string | string[];
+
+    /**
+     * The optional  second y axis for the chart.
+     */
     y2?: string | string[];
 }
 
@@ -57,17 +69,22 @@ export interface IPlotAPI {
     /*async*/ renderImage (imageFilePath: string): Promise<void>;
 
     /**
-     * Export an interfactive web visualization of the plot.
+     * Export an interactive web visualization of the plot.
      */
     /*async*/ exportWeb (outputFolderPath: string): Promise<void>;
 
     /**
      * Serialize the plot definition to JSON.
+     * The JSON definition of the chart can be used to instantiate the chart in a browser.
      */
     toJSON (): any;
 }
 
-let globalChartRenderer: IChartRenderer | null = null; // Reusable chart renderer.
+//
+// Reusable chart renderer. 
+// For improved performance.
+//
+let globalChartRenderer: IChartRenderer | null = null; 
 
 const defaultPlotDef: IPlotDef = {
     chartType: ChartType.Line,
@@ -75,10 +92,24 @@ const defaultPlotDef: IPlotDef = {
     height: 300,
 }
 
+/**
+ * Fluent API for configuring the plot.
+ */
 class PlotAPI implements IPlotAPI {
 
+    /**
+     * Data to be plotted.
+     */
     data: any[];
+
+    /**
+     * Defines the chart that is to be plotted.
+     */
     plotDef: IPlotDef;
+
+    /**
+     * Defines how the data is mapped to the axis' in the chart.
+     */
     axisMap: IAxisMap;
 
     constructor(data: any[], plotDef: IPlotDef, axisMap: IAxisMap) {
@@ -116,10 +147,10 @@ class PlotAPI implements IPlotAPI {
     }
 
     /**
-     * Export an interfactive web visualization of the plot.
+     * Export an interactive web visualization of the plot.
      */
     async exportWeb (outputFolderPath: string): Promise<void> {
-        return; //todo;
+        //todo;
     }
 
     /**
@@ -130,6 +161,9 @@ class PlotAPI implements IPlotAPI {
     }
 }
 
+//
+// Augment ISeries and Series with plot function.
+//
 declare module "data-forge/build/lib/series" {
     interface ISeries<IndexT, ValueT> {
         startPlot(): void;
@@ -156,24 +190,22 @@ async function endPlot(): Promise<void> {
     globalChartRenderer = null;
 }
 
-function plotSeries (this: ISeries<any, any>, plotDef?: IPlotDef, axisMap?: IAxisMap): IPlotAPI {
+function plotSeries (this: ISeries<any, any>, plotDef?: IPlotDef): IPlotAPI {
     if (!plotDef) {
         plotDef = defaultPlotDef;
     }
     
-    if (!axisMap) {
-        axisMap = {
-            "x": "__index__",
-            "y": [
-                "__value__",
-            ],
-        };
-    }
+    const axisMap = {
+        "x": "__index__",
+        "y": [
+            "__value__",
+        ],
+    };
 
     const amt = this.count();
     const dataWithIndex = this.inflate(value => ({ __value__: value }))
         .withSeries("__index__", this.getIndex().head(amt))
-        .toArray(); //todo: including the index should be optional.
+        .toArray();
     return new PlotAPI(dataWithIndex, plotDef, axisMap);
 }
 
@@ -181,6 +213,9 @@ Series.prototype.startPlot = startPlot;
 Series.prototype.endPlot = endPlot;
 Series.prototype.plot = plotSeries;
 
+//
+// Augment IDataFrame and DataFrame with plot function.
+//
 declare module "data-forge/build/lib/dataframe" {
     interface IDataFrame<IndexT, ValueT> {
         startPlot(): void;
@@ -209,9 +244,20 @@ function plotDataFrame (this: IDataFrame<any, any>, plotDef?: IPlotDef, axisMap?
         };
     }
 
-    const amt = this.count();
-    const dataWithIndex = this.withSeries("__index__", this.getIndex().head(amt)).toArray(); //todo: including the index should be optional.
-    return new PlotAPI(dataWithIndex, plotDef, axisMap);
+    const includeIndex = axisMap.x === "__index__" || 
+        axisMap.y === "__index__" || 
+        (Sugar.Object.isArray(axisMap.y) && 
+            axisMap.y.filter(y => y === "__index__").length > 0);
+
+    let df = this;
+
+    if (includeIndex) {
+        const amt = this.count();
+        df = df.withSeries("__index__", df.getIndex().head(amt));
+    }
+
+    const data = df.toArray();
+    return new PlotAPI(data, plotDef, axisMap);
 }
 
 DataFrame.prototype.startPlot = startPlot;

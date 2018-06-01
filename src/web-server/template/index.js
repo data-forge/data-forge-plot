@@ -2,6 +2,9 @@
 
 $(function () {
 
+    /**
+     * Convert the input chart definition to a C3 chart definition.
+     */
     function formatChartDef (inputChartDef) {
         return {
             bindto: "#chart",

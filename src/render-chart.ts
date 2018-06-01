@@ -4,20 +4,53 @@ import { IPlotDef, IAxisMap } from ".";
 
 declare const document: any;
 
+/**
+ * Interface to the chart renderer.
+ * This component is responsible for turning data and a chart definition into a chart.
+ */
 export interface IChartRenderer {
 
+    /**
+     * Start the chart renderer.
+     * For performance reasons the chart render can be reused to render multiple charts.
+     */
     start (): void;
-    /*async*/ end (): Promise<void>;
-    /*async*/ renderImage (data: any[], plotDef: IPlotDef, axisMap: IAxisMap, outputFilePath: string): Promise<void>;
 
+    /**
+     * Finish the chart renderer.
+     */
+    /*async*/ end (): Promise<void>;
+
+    /**
+     * Create a chart from data and a chart definition and render it to an image file.
+     */
+    /*async*/ renderImage (data: any[], plotDef: IPlotDef, axisMap: IAxisMap, outputFilePath: string): Promise<void>;
 }
 
+/**
+ * This component is responsible for turning data and a chart definition into a chart.
+ */
 export class ChartRenderer implements IChartRenderer {
 
+    /**
+     * Nightmare headless browser instance.
+     */
     nightmare: any | null = null;
-    webServerPortNo: number = 3000; //todo: choose from available ports.
+
+    /**
+     * The port for the web server that serves the interative chart.
+     */
+    webServerPortNo: number = 3000;
+
+    /**
+     * Interface to the web-server that serves the interactive chart.
+     */
     webServer: IWebServer | null = null;
 
+    /**
+     * Start the chart renderer.
+     * For performance reasons the chart render can be reused to render multiple charts.
+     */
     async start (): Promise<void> {
         this.webServer = new WebServer();
         await this.webServer.start();
@@ -34,7 +67,7 @@ export class ChartRenderer implements IChartRenderer {
 
             if (type === 'log') {
                 console.log('LOG: ' + message);
-                return; // Don't bother with logs.
+                return;
             }
     
             if (type === 'warn') {
@@ -49,6 +82,9 @@ export class ChartRenderer implements IChartRenderer {
         });
     }
 
+    /**
+     * Finish the chart renderer.
+     */
     async end (): Promise<void> {
 
         await this.nightmare!.end();
@@ -58,6 +94,9 @@ export class ChartRenderer implements IChartRenderer {
         this.webServer = null;
     }
 
+    /**
+     * Create a chart from data and a chart definition and render it to an image file.
+     */
     async renderImage (data: any[], plotDef: IPlotDef, axisMap: IAxisMap, outputFilePath: string): Promise<void> {
         const selector = "svg";
         const url = "http://127.0.0.1:" + this.webServerPortNo;
