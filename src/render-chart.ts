@@ -1,6 +1,6 @@
 const Nightmare = require("nightmare");
 import { WebServer, IWebServer }  from "./web-server";
-import { IPlotDef, IAxisMap } from ".";
+import { IPlotDef, IAxisMap, IChartDef } from ".";
 
 declare const document: any;
 
@@ -24,7 +24,7 @@ export interface IChartRenderer {
     /**
      * Create a chart from data and a chart definition and render it to an image file.
      */
-    /*async*/ renderImage (data: any[], plotDef: IPlotDef, axisMap: IAxisMap, outputFilePath: string): Promise<void>;
+    /*async*/ renderImage (chartDef: IChartDef, outputFilePath: string): Promise<void>;
 }
 
 /**
@@ -97,16 +97,12 @@ export class ChartRenderer implements IChartRenderer {
     /**
      * Create a chart from data and a chart definition and render it to an image file.
      */
-    async renderImage (data: any[], plotDef: IPlotDef, axisMap: IAxisMap, outputFilePath: string): Promise<void> {
+    async renderImage (chartDef: IChartDef, outputFilePath: string): Promise<void> {
         const selector = "svg";
         const url = "http://127.0.0.1:" + this.webServerPortNo;
 
-        this.webServer!.chartDef = {
-            data: data,
-            plotDef: plotDef, //todo: this might prevent charts from being rendered in parallel!
-            axisMap: axisMap,
-        },
-
+        this.webServer!.chartDef = chartDef; //todo: this might prevent charts from being rendered in parallel!
+        
         this.nightmare!.goto(url); 
         
         await this.nightmare!.wait(selector)

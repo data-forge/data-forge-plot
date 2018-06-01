@@ -53,6 +53,28 @@ export interface IAxisMap {
 }
 
 /**
+ * A chart definition that is suitable for serialization to JSON and transfer to the browser via REST API.
+ * Can be used to instantiate a Data-Forge chart in the browser.
+ */
+export interface IChartDef {
+
+    /**
+     * JSON serializable representation of the data.
+     */
+    data: any[],
+
+    /**
+     * Defines the look of the chart.
+     */
+    plotDef: IPlotDef;
+
+    /**
+     * Maps fields in the data to axis' on the chart.
+     */
+    axisMap: IAxisMap;
+}
+
+/**
  * Fluent API for configuring the plot.
  */
 export interface IPlotAPI {
@@ -74,10 +96,10 @@ export interface IPlotAPI {
     /*async*/ exportWeb (outputFolderPath: string): Promise<void>;
 
     /**
-     * Serialize the plot definition to JSON.
+     * Serialize the plot definition so that it can be converted to JSON.
      * The JSON definition of the chart can be used to instantiate the chart in a browser.
      */
-    toJSON (): any;
+    serialize (): IChartDef;
 }
 
 //
@@ -135,13 +157,13 @@ class PlotAPI implements IPlotAPI {
     async renderImage (imageFilePath: string): Promise<void> {
         if (globalChartRenderer) {
             // Reused global chart renderer.
-            await globalChartRenderer.renderImage(this.data, this.plotDef, this.axisMap, imageFilePath);
+            await globalChartRenderer.renderImage(this.serialize(), imageFilePath);
         }
         else {
             // Create a new chart renderer.
             const chartRenderer: IChartRenderer = new ChartRenderer();
             await chartRenderer.start();
-            await chartRenderer.renderImage(this.data,  this.plotDef, this.axisMap, imageFilePath);
+            await chartRenderer.renderImage(this.serialize(), imageFilePath);
             await chartRenderer.end();
         }
     }
@@ -153,6 +175,18 @@ class PlotAPI implements IPlotAPI {
         //todo;
     }
 
+    /**
+     * Serialize the plot definition so that it can be converted to JSON.
+     * The JSON definition of the chart can be used to instantiate the chart in a browser.
+     */
+    serialize (): IChartDef {
+        return {
+            data: this.data,
+            plotDef: this.plotDef,
+            axisMap: this.axisMap,
+        };
+    }
+    
     /**
      * Serialize the plot definition to JSON.
      */
