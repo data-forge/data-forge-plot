@@ -19,6 +19,26 @@ export enum ChartType {
 }
 
 /**
+ * Defines the type of an axis.
+ */
+export enum AxisType {
+    Indexed = "indexed",
+    Timeseries = "timeseries",
+    Category = "category",
+}
+
+/**
+ * Configures an axis of the chart.
+ */
+export interface IAxisConfig {
+    /**
+     * Sets the type of the axis' data.
+     * Default: AxisType.Indexed ("indexed")
+     */
+    axisType?: AxisType;
+}
+
+/**
  * Defines the chart.
  */
 export interface IPlotDef {
@@ -37,6 +57,21 @@ export interface IPlotDef {
      * Height of the plot.
      */
     height?: number;
+
+    /**
+     * Configuration for the x axis.
+     */
+    x?: IAxisConfig;
+
+    /**
+     * Configuration for the y axis.
+     */
+    y?: IAxisConfig;
+
+    /**
+     * Configuration for the second y axis.
+     */
+    y2?: IAxisConfig;
 }
 
 /**
@@ -121,35 +156,35 @@ export interface IPlotAPI {
      * 
      * @param chartType Specifies the chart type.
      */
-    chartType (chartType: ChartType): IPlotAPI;
+    chartType(chartType: ChartType): IPlotAPI;
 
     /**
      * Render the plot to an image file.
      */
-    /*async*/ renderImage (imageFilePath: string): Promise<void>;
+    /*async*/ renderImage(imageFilePath: string): Promise<void>;
 
     /**
      * Export an interactive web visualization of the chart.
      */
-    /*async*/ exportWeb (outputFolderPath: string, exportOptions?: IWebExportOptions): Promise<void>;
+    /*async*/ exportWeb(outputFolderPath: string, exportOptions?: IWebExportOptions): Promise<void>;
 
     /**
      * Export a Node.js project to host a web visualization of the char.
      */
-    /*async*/ exportNodejs (outputFolderPath: string, exportOptions?: INodejsExportOptions): Promise<void>;
-    
+    /*async*/ exportNodejs(outputFolderPath: string, exportOptions?: INodejsExportOptions): Promise<void>;
+
     /**
      * Serialize the plot definition so that it can be converted to JSON.
      * The JSON definition of the chart can be used to instantiate the chart in a browser.
      */
-    serialize (): IChartDef;
+    serialize(): IChartDef;
 }
 
 //
 // Reusable chart renderer. 
 // For improved performance.
 //
-let globalChartRenderer: IChartRenderer | null = null; 
+let globalChartRenderer: IChartRenderer | null = null;
 
 const defaultPlotDef: IPlotDef = {
     chartType: ChartType.Line,
@@ -185,13 +220,13 @@ class PlotAPI implements IPlotAPI {
         this.plotDef = Object.assign({}, defaultPlotDef, plotDef); // Clone the def and plot map so they can be updated by the fluent API.
         this.axisMap = Object.assign({}, axisMap);
     }
-    
+
     /**
      * Set the type of the chart to be plotted.
      * 
      * @param chartType Specifies the chart type.
      */
-    chartType (chartType: ChartType): IPlotAPI {
+    chartType(chartType: ChartType): IPlotAPI {
         this.plotDef.chartType = chartType;
         return this;
     }
@@ -199,7 +234,7 @@ class PlotAPI implements IPlotAPI {
     /**
      * Render the plot to an image file.
      */
-    async renderImage (imageFilePath: string): Promise<void> {
+    async renderImage(imageFilePath: string): Promise<void> {
         if (globalChartRenderer) {
             // Reused global chart renderer.
             await globalChartRenderer.renderImage(this.serialize(), imageFilePath);
@@ -216,12 +251,12 @@ class PlotAPI implements IPlotAPI {
     /**
      * Export an interactive web visualization of the chart.
      */
-    async exportWeb (outputFolderPath: string, exportOptions?: IWebExportOptions): Promise<void> {
+    async exportWeb(outputFolderPath: string, exportOptions?: IWebExportOptions): Promise<void> {
 
         if (exportOptions && exportOptions.overwrite) {
             await fs.remove(outputFolderPath);
         }
-        
+
         await jetpack.copyAsync(path.join(__dirname, "export-templates", "web"), outputFolderPath);
 
         const jsonChartDef = JSON.stringify(this.serialize(), null, 4);
@@ -238,23 +273,23 @@ class PlotAPI implements IPlotAPI {
     /**
      * Export a Node.js project to host a web visualization of the char.
      */
-    async exportNodejs (outputFolderPath: string, exportOptions?: INodejsExportOptions): Promise<void> {
+    async exportNodejs(outputFolderPath: string, exportOptions?: INodejsExportOptions): Promise<void> {
 
         if (exportOptions && exportOptions.overwrite) {
             await fs.remove(outputFolderPath);
         }
-        
+
         await jetpack.copyAsync(path.join(__dirname, "export-templates", "nodejs"), outputFolderPath);
 
         const jsonChartDef = JSON.stringify(this.serialize(), null, 4);
         await jetpack.writeAsync(path.join(outputFolderPath, "chart-def.json"), jsonChartDef);
     }
-    
+
     /**
      * Serialize the plot definition so that it can be converted to JSON.
      * The JSON definition of the chart can be used to instantiate the chart in a browser.
      */
-    serialize (): IChartDef {
+    serialize(): IChartDef {
         return {
             data: this.data,
             plotDef: this.plotDef,
@@ -271,18 +306,18 @@ declare module "data-forge/build/lib/series" {
         startPlot(): void;
         endPlot(): void;
 
-        plot (plotDef?: IPlotDef, axisMap?: IAxisMap): IPlotAPI;
+        plot(plotDef?: IPlotDef, axisMap?: IAxisMap): IPlotAPI;
     }
 
     interface Series<IndexT, ValueT> {
         startPlot(): void;
         endPlot(): void;
 
-        plot (plotDef?: IPlotDef, axisMap?: IAxisMap): IPlotAPI;
+        plot(plotDef?: IPlotDef, axisMap?: IAxisMap): IPlotAPI;
     }
 }
 
-async function startPlot (): Promise<void> {
+async function startPlot(): Promise<void> {
     globalChartRenderer = new ChartRenderer();
     await globalChartRenderer.start(false);
 }
@@ -292,11 +327,11 @@ async function endPlot(): Promise<void> {
     globalChartRenderer = null;
 }
 
-function plotSeries (this: ISeries<any, any>, plotDef?: IPlotDef): IPlotAPI {
+function plotSeries(this: ISeries<any, any>, plotDef?: IPlotDef): IPlotAPI {
     if (!plotDef) {
         plotDef = defaultPlotDef;
     }
-    
+
     const axisMap = {
         "x": "__index__",
         "y": [
@@ -323,22 +358,22 @@ declare module "data-forge/build/lib/dataframe" {
         startPlot(): void;
         endPlot(): void;
 
-        plot (plotDef?: IPlotDef, axisMap?: IAxisMap): IPlotAPI;
+        plot(plotDef?: IPlotDef, axisMap?: IAxisMap): IPlotAPI;
     }
 
     interface DataFrame<IndexT, ValueT> {
         startPlot(): void;
         endPlot(): void;
 
-        plot (plotDef?: IPlotDef, axisMap?: IAxisMap): IPlotAPI;
+        plot(plotDef?: IPlotDef, axisMap?: IAxisMap): IPlotAPI;
     }
 }
 
-function plotDataFrame (this: IDataFrame<any, any>, plotDef?: IPlotDef, axisMap?: IAxisMap): IPlotAPI {
+function plotDataFrame(this: IDataFrame<any, any>, plotDef?: IPlotDef, axisMap?: IAxisMap): IPlotAPI {
     if (!plotDef) {
         plotDef = defaultPlotDef;
     }
-    
+
     if (!axisMap) {
         axisMap = {
             "x": "__index__",
@@ -346,9 +381,9 @@ function plotDataFrame (this: IDataFrame<any, any>, plotDef?: IPlotDef, axisMap?
         };
     }
 
-    const includeIndex = axisMap.x === "__index__" || 
-        axisMap.y === "__index__" || 
-        (Sugar.Object.isArray(axisMap.y) && 
+    const includeIndex = axisMap.x === "__index__" ||
+        axisMap.y === "__index__" ||
+        (Sugar.Object.isArray(axisMap.y) &&
             axisMap.y.filter(y => y === "__index__").length > 0);
 
     let df = this;

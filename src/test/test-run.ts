@@ -1,6 +1,6 @@
 import { DataFrame, Series } from "data-forge";
 import "../index";
-import { ChartType } from "../index";
+import { ChartType, AxisType } from "../index";
 
 async function main(): Promise<void> {
     /*
@@ -34,6 +34,7 @@ async function main(): Promise<void> {
 
     //await df.plot().exportNodejs("c:\\temp\\test-output-2", { overwrite: true });
 
+    /*
     var df = new DataFrame([ 
         {
             A: 10,
@@ -48,15 +49,37 @@ async function main(): Promise<void> {
             B: 22,
         },
     ]);
+    */
     //await df.plot().renderImage("./test-dataframe-2.png");
     /*
     await df.plot()
         .chartType(ChartType.Bar)
         .renderImage("./test-dataframe-2.png");
     */
+   /*
    await df.plot({}, { y: "A", x: "B" })
     .chartType(ChartType.Scatter)
     .renderImage("./test-dataframe-2.png");
+    */
+
+
+   var df = new DataFrame([ 
+        {
+            A: "25/04/2018",
+            B: 12,
+        },
+        {
+            A: "26/04/2018",
+            B: 15,
+        },
+        {
+            A: "27/04/2018",
+            B: 22,
+        },
+    ]);
+    await df.plot({ x: { axisType: AxisType.Timeseries }})
+        .renderImage("./test-dataframe-3.png");
+
 }
 
 main()
