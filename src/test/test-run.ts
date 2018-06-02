@@ -1,6 +1,6 @@
 import { DataFrame, Series } from "data-forge";
 import "../index";
-import { ChartType, AxisType } from "../index";
+import { ChartType, AxisType, HorizontalLabelPosition } from "../index";
 
 async function main(): Promise<void> {
     /*
@@ -97,10 +97,30 @@ async function main(): Promise<void> {
         },
     ]);
 
-    await df.plot({}, { y2: "B" })
-        //.renderImage("./test-dataframe-4.png");
+    await df.plot({ 
+                x: {
+                    label: {
+                        text: "Blah",
+                        position: HorizontalLabelPosition.InnerCenter,
+                    },
+                },
+                y: {
+                    label: "Fooey",
+                },
+            }, 
+            { 
+                y2: "B",
+                series: {
+                    A:  {
+                        label: "A baby"
+                    },
+                    B: "B yeah"
+                } 
+            }
+        )
+        .renderImage("./test-dataframe-4.png");
         //.exportWeb("c:/temp/test-output-3");
-        .exportNodejs("c:/temp/test-output-4");
+        //.exportNodejs("c:/temp/test-output-4");
 }
 
 main()

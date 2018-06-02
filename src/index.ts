@@ -28,6 +28,42 @@ export enum AxisType {
 }
 
 /**
+ * Defines the position of a horizontal label.
+ */
+export enum HorizontalLabelPosition {
+    InnerRight = "inner-right", // Default
+    InnerCenter = "inner-center",
+    InnerLeft = "inner-left",
+    OuterRight = "outer-right",
+    OuterCenter = "outer-center",
+    OuterLeft = "outer-left",
+}
+
+/**
+ * Defines the position of a vertical label.
+ */
+export enum VerticalLabelPosition {
+    InnerTop = "inner-top", // Default
+    InnerMiddle = "inner-middle",
+    InnerBottom = "inner-bottom",
+    OuterTop = "outer-top",
+    OuterMiddle = "outer-middle",
+    OuterBottom = "outer-bottom",
+}
+
+export interface ILabelConfig {
+    /**
+     * The text for the label.
+     */
+    text?: string;
+
+    /**
+     * Position of the label.
+     */
+    position?: HorizontalLabelPosition | VerticalLabelPosition;
+}
+
+/**
  * Configures an axis of the chart.
  */
 export interface IAxisConfig {
@@ -36,6 +72,28 @@ export interface IAxisConfig {
      * Default: AxisType.Indexed ("indexed")
      */
     axisType?: AxisType;
+
+    /**
+     * Label for the axis.
+     */
+    label?: string | ILabelConfig;
+}
+
+/**
+ * Configuration for a single series.
+ */
+export interface ISeriesConfig { 
+    /**
+     * The label for the series.
+     */
+    label: string;
+}
+
+/**
+ * Configuration for all series.
+ */
+export interface ISeriesConfiguration {
+    [index: string]: string | ISeriesConfig;
 }
 
 /**
@@ -93,6 +151,11 @@ export interface IAxisMap {
      * The optional  second y axis for the chart.
      */
     y2?: string | string[];
+
+    /**
+     * Configuration for all series.
+     */
+    series?: ISeriesConfiguration;
 }
 
 /**
@@ -434,5 +497,5 @@ function plotDataFrame(this: IDataFrame<any, any>, plotDef?: IPlotDef, axisMap?:
 }
 
 DataFrame.prototype.startPlot = startPlot;
-DataFrame.prototype.endPlot = endPlot;
+DataFrame.prototype.endPlot = endPlot;  
 DataFrame.prototype.plot = plotDataFrame;
