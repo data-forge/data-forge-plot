@@ -96,8 +96,11 @@ async function main(): Promise<void> {
             B: 220,
         },
     ]);
+
     await df.plot({}, { y2: "B" })
-        .renderImage("./test-dataframe-4.png");
+        //.renderImage("./test-dataframe-4.png");
+        //.exportWeb("c:/temp/test-output-3");
+        .exportNodejs("c:/temp/test-output-4");
 }
 
 main()

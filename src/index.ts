@@ -259,6 +259,8 @@ class PlotAPI implements IPlotAPI {
 
         await jetpack.copyAsync(path.join(__dirname, "export-templates", "web"), outputFolderPath);
 
+        await jetpack.copyAsync(path.join(__dirname, "web-server", "template", "format-chart-def.js"), path.join(outputFolderPath, "format-chart-def.js"));
+
         const jsonChartDef = JSON.stringify(this.serialize(), null, 4);
 
         const indexJsPath = path.join(outputFolderPath, "index.js");
@@ -280,6 +282,8 @@ class PlotAPI implements IPlotAPI {
         }
 
         await jetpack.copyAsync(path.join(__dirname, "export-templates", "nodejs"), outputFolderPath);
+
+        await jetpack.copyAsync(path.join(__dirname, "web-server", "template", "format-chart-def.js"), path.join(outputFolderPath, "public", "format-chart-def.js"));
 
         const jsonChartDef = JSON.stringify(this.serialize(), null, 4);
         await jetpack.writeAsync(path.join(outputFolderPath, "chart-def.json"), jsonChartDef);
