@@ -1,19 +1,12 @@
 "use strict";
 
 /**
- * Configure C3 axes.
+ * Configure a single axe.
  */
-function configureAxes (inputChartDef) {
+function configureOneAxe (axisName, inputChartDef, c3Axes) {
     var axisMap = inputChartDef.axisMap;
-    var c3Axes = {};
-
-    for (var axisName in axisMap) {
-        if (axisName === "x") {
-            // No need to handle this case with c3.
-            continue;
-        }
-
-        var seriesName = axisMap[axisName];
+    var seriesName = axisMap[axisName];
+    if (seriesName) {
         if (Array.isArray(seriesName)) {
             for (var i = 0; i < seriesName.length; ++i) {
                 c3Axes[seriesName[i]] = axisName;
@@ -23,7 +16,15 @@ function configureAxes (inputChartDef) {
             c3Axes[seriesName] = axisName;
         }
     }
+}
 
+/**
+ * Configure C3 axes.
+ */
+function configureAxes (inputChartDef) {
+    var c3Axes = {};
+    configureOneAxe("y", inputChartDef, c3Axes);
+    configureOneAxe("y2", inputChartDef, c3Axes);
     return c3Axes;
 };
 
