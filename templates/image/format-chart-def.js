@@ -124,6 +124,9 @@ function formatChartDef (inputChartDef) {
         axis: configureAxis(inputChartDef),
         transition: {
             duration: 0 // Disable animated transitions when we are capturing a static image.
+        },
+        point: {
+            show: false
         }
     };
 
