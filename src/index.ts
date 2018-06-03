@@ -473,7 +473,7 @@ class PlotAPI implements IAxisPlotAPI {
         }
 
         if (renderOptions && renderOptions.openImage) {
-            opn(imageFilePath);
+            opn(path.resolve(imageFilePath));
         }
     }
 
@@ -498,7 +498,7 @@ class PlotAPI implements IAxisPlotAPI {
         await jetpack.appendAsync(indexJsPath, jsonChartDef);
 
         if (exportOptions && exportOptions.openBrowser) {
-            opn("file://" + path.join(outputFolderPath, "index.html"));
+            opn("file://" + path.resolve(path.join(outputFolderPath, "index.html")));
         }
     }
 
