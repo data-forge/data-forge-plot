@@ -1,7 +1,7 @@
 import * as express from "express";
 import * as http from 'http';
 import * as path from "path";
-import { port } from "_debugger";
+import { findPackageDir } from "./find-package-dir";
 
 /**
  * Web-server component. Serves the chart interative chart.
@@ -68,34 +68,39 @@ export class WebServer implements IWebServer {
         return "http://127.0.0.1:" + this.assignedPortNo;
     }
 
+
+
     /**
      * Start the web-server.
      */
     start (): Promise<void> {
-        return new Promise((resolve, reject) => {
-            const app = express();
-            this.server = http.createServer(app);
-    
-            const staticFilesPath = path.join(__dirname, "template");
-            const staticFilesMiddleWare = express.static(staticFilesPath);
-            app.use("/", staticFilesMiddleWare);
-    
-            app.get("/chart-data", (request, response) => {
-                response.json({
-                    chartDef: this.chartDef,
+        return findPackageDir(__dirname)
+            .then(parentDir => {
+                return new Promise<void>((resolve, reject) => {
+                    const app = express();
+                    this.server = http.createServer(app);
+            
+                    const staticFilesPath = path.join(parentDir, "templates/image");
+                    const staticFilesMiddleWare = express.static(staticFilesPath);
+                    app.use("/", staticFilesMiddleWare);
+            
+                    app.get("/chart-data", (request, response) => {
+                        response.json({
+                            chartDef: this.chartDef,
+                        });
+                    });
+                    
+                    this.server.listen(this.requestedPortNo, (err: any) => {
+                        if (err) {
+                            reject(err);
+                        }
+                        else {
+                            this.assignedPortNo = this.server.address().port
+                            resolve();
+                        }
+                    });
                 });
             });
-            
-            this.server.listen(this.requestedPortNo, (err: any) => {
-                if (err) {
-                    reject(err);
-                }
-                else {
-                    this.assignedPortNo = this.server.address().port
-                    resolve();
-                }
-            });
-        });
     }
 
     /**

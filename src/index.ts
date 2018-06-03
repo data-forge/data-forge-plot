@@ -7,6 +7,7 @@ import { WebServer } from './web-server';
 const opn = require('opn');
 import * as path from 'path';
 import * as fs from 'fs-extra';
+import { findPackageDir } from './find-package-dir';
 
 const jetpack = require('fs-jetpack');
 
@@ -426,9 +427,10 @@ class PlotAPI implements IAxisPlotAPI {
             await fs.remove(outputFolderPath);
         }
 
-        await jetpack.copyAsync(path.join(__dirname, "export-templates", "web"), outputFolderPath);
+        const packageFolderPath = await findPackageDir(__dirname);
 
-        await jetpack.copyAsync(path.join(__dirname, "web-server", "template", "format-chart-def.js"), path.join(outputFolderPath, "format-chart-def.js"));
+        await jetpack.copyAsync(path.join(packageFolderPath, "templates", "web"), outputFolderPath);
+        await jetpack.copyAsync(path.join(packageFolderPath, "templates", "image", "format-chart-def.js"), path.join(outputFolderPath, "format-chart-def.js"));
 
         const jsonChartDef = JSON.stringify(this.serialize(), null, 4);
 
@@ -450,9 +452,10 @@ class PlotAPI implements IAxisPlotAPI {
             await fs.remove(outputFolderPath);
         }
 
-        await jetpack.copyAsync(path.join(__dirname, "export-templates", "nodejs"), outputFolderPath);
+        const packageFolderPath = await findPackageDir(__dirname);
 
-        await jetpack.copyAsync(path.join(__dirname, "web-server", "template", "format-chart-def.js"), path.join(outputFolderPath, "public", "format-chart-def.js"));
+        await jetpack.copyAsync(path.join(packageFolderPath, "templates", "nodejs"), outputFolderPath);
+        await jetpack.copyAsync(path.join(packageFolderPath, "templates", "image", "format-chart-def.js"), path.join(outputFolderPath, "public", "format-chart-def.js"));
 
         const jsonChartDef = JSON.stringify(this.serialize(), null, 4);
         await jetpack.writeAsync(path.join(outputFolderPath, "chart-def.json"), jsonChartDef);

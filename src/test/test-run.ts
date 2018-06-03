@@ -132,7 +132,8 @@ async function main(): Promise<void> {
         .y()
             .label("Fooster")
             .labelPosition(VerticalLabelPosition.OuterMiddle)
-        .renderImage("./test-dataframe-5.png");
+        //.renderImage("./test-dataframe-5.png");
+        .exportWeb("c:/temp/test-output-3");
 }
 
 main()
