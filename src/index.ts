@@ -605,3 +605,4 @@ function plotDataFrame(this: IDataFrame<any, any>, plotDef?: IPlotDef, axisMap?:
 DataFrame.prototype.startPlot = startPlot;
 DataFrame.prototype.endPlot = endPlot;  
 DataFrame.prototype.plot = plotDataFrame;
+
