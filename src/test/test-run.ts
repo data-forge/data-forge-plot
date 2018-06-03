@@ -3,11 +3,11 @@ import "../index";
 import { ChartType, AxisType, HorizontalLabelPosition, VerticalLabelPosition } from "../index";
 
 async function main(): Promise<void> {
-    /*
+
     var series = new Series([10, 20, 15, 18, 25, 22, 13 ]);
     await series.plot().renderImage("./test-series.png");
-    */
 
+    
 
     /*
     var df = new DataFrame([ 

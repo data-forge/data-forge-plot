@@ -294,6 +294,11 @@ export interface IAxisPlotAPI extends IPlotAPI { //todo: This could be separated
      * Set the position for the label.
      */
     labelPosition(position: VerticalLabelPosition | HorizontalLabelPosition): IAxisPlotAPI;
+
+    /**
+     * Set the type of the axis.
+     */
+    axisType(axisType: AxisType): IAxisPlotAPI;
 }
 
 //
@@ -436,7 +441,21 @@ class PlotAPI implements IAxisPlotAPI {
         axisConfig.label.position = position;
         return this;
     }
-    
+
+    /**
+     * Set the type of the axis.
+     */
+    axisType(axisType: AxisType): IAxisPlotAPI {
+        const plotDef = this.plotDef as any;
+        if (!plotDef[this.curAxisName]) {
+            plotDef[this.curAxisName] = {};
+        }
+
+        const axisConfig: IAxisConfig = plotDef[this.curAxisName];
+        axisConfig.axisType = axisType;        
+        return this;
+    }
+
     /**
      * Render the plot to an image file.
      */
