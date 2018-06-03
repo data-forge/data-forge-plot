@@ -183,6 +183,16 @@ export interface IChartDef {
 }
 
 /**
+ * Options for image rendering.
+ */
+export interface IRenderOptions {
+    /**
+     * Open the image in your default image viewer.
+     */
+    openImage: boolean;
+}
+
+/**
  * Options for exporting web projects for interactive charts.
  */
 export interface IWebExportOptions {
@@ -241,7 +251,7 @@ export interface IPlotAPI {
     /**
      * Render the plot to an image file.
      */
-    /*async*/ renderImage(imageFilePath: string): Promise<void>;
+    /*async*/ renderImage(imageFilePath: string, renderOptions?: IRenderOptions): Promise<void>;
 
     /**
      * Export an interactive web visualization of the chart.
@@ -404,7 +414,7 @@ class PlotAPI implements IAxisPlotAPI {
     /**
      * Render the plot to an image file.
      */
-    async renderImage(imageFilePath: string): Promise<void> {
+    async renderImage(imageFilePath: string, renderOptions?: IRenderOptions): Promise<void> {
         if (globalChartRenderer) {
             // Reused global chart renderer.
             await globalChartRenderer.renderImage(this.serialize(), imageFilePath);
@@ -415,6 +425,10 @@ class PlotAPI implements IAxisPlotAPI {
             await chartRenderer.start(false);
             await chartRenderer.renderImage(this.serialize(), imageFilePath);
             await chartRenderer.end();
+        }
+
+        if (renderOptions && renderOptions.openImage) {
+            opn(imageFilePath);
         }
     }
 
