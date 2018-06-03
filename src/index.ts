@@ -234,6 +234,16 @@ export interface IPlotAPI {
     chartType(chartType: ChartType): IPlotAPI;
 
     /**
+     * Set the width of the chart.
+     */
+    width(width: number): IPlotAPI;
+
+    /**
+     * Set the height of the chart.
+     */
+    height(height: number): IPlotAPI;
+
+    /**
      * Configure the x axis.
      */
     x(): IAxisPlotAPI;
@@ -340,6 +350,22 @@ class PlotAPI implements IAxisPlotAPI {
      */
     chartType(chartType: ChartType): IPlotAPI {
         this.plotDef.chartType = chartType;
+        return this;
+    }
+
+    /**
+     * Set the width of the chart.
+     */
+    width(width: number): IPlotAPI {
+        this.plotDef.width = width;
+        return this;
+    }
+
+    /**
+     * Set the height of the chart.
+     */
+    height(height: number): IPlotAPI {
+        this.plotDef.height = height;
         return this;
     }
 
