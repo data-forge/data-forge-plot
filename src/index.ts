@@ -5,9 +5,10 @@ import { ChartRenderer, IChartRenderer } from './render-chart';
 import * as Sugar from 'sugar';
 import { WebServer } from './web-server';
 const opn = require('opn');
-import * as jetpack from 'fs-jetpack';
 import * as path from 'path';
 import * as fs from 'fs-extra';
+
+const jetpack = require('fs-jetpack');
 
 /** 
  * Defines the type of chart to output.
@@ -222,6 +223,21 @@ export interface IPlotAPI {
     chartType(chartType: ChartType): IPlotAPI;
 
     /**
+     * Configure the x axis.
+     */
+    x(): IAxisPlotAPI;
+
+    /**
+     * Configure the y axis.
+     */
+    y(): IAxisPlotAPI;
+
+    /**
+     * Configure the y axis.
+     */
+    y2(): IAxisPlotAPI;
+
+    /**
      * Render the plot to an image file.
      */
     /*async*/ renderImage(imageFilePath: string): Promise<void>;
@@ -243,6 +259,22 @@ export interface IPlotAPI {
     serialize(): IChartDef;
 }
 
+/**
+ * Plot API for configuring a particular axis.
+ */
+export interface IAxisPlotAPI extends IPlotAPI { //todo: This could be separated into vertical and horizontal axis apis.
+
+    /**
+     * Set the label for the axis.
+     */
+    label(label: string): IAxisPlotAPI;
+    
+    /**
+     * Set the position for the label.
+     */
+    labelPosition(position: VerticalLabelPosition | HorizontalLabelPosition): IAxisPlotAPI;
+}
+
 //
 // Reusable chart renderer. 
 // For improved performance.
@@ -258,7 +290,7 @@ const defaultPlotDef: IPlotDef = {
 /**
  * Fluent API for configuring the plot.
  */
-class PlotAPI implements IPlotAPI {
+class PlotAPI implements IAxisPlotAPI {
 
     /**
      * Data to be plotted.
@@ -275,6 +307,11 @@ class PlotAPI implements IPlotAPI {
      */
     axisMap: IAxisMap;
 
+    /**
+     * Defines the current axis being configured.
+     */
+    curAxisName: string;
+
     constructor(data: any[], plotDef: IPlotDef, axisMap: IAxisMap) {
 
         assert.isArray(data, "Expected 'data' parameter to PlotAPI constructor to be an array.");
@@ -282,6 +319,7 @@ class PlotAPI implements IPlotAPI {
         this.data = data;
         this.plotDef = Object.assign({}, defaultPlotDef, plotDef); // Clone the def and plot map so they can be updated by the fluent API.
         this.axisMap = Object.assign({}, axisMap);
+        this.curAxisName = "x";
     }
 
     /**
@@ -294,6 +332,74 @@ class PlotAPI implements IPlotAPI {
         return this;
     }
 
+    /**
+     * Configure the x axis.
+     */
+    x(): IAxisPlotAPI {
+        this.curAxisName = "x";
+        return this;
+    }
+
+    /**
+     * Configure the y axis.
+     */
+    y(): IAxisPlotAPI {
+        this.curAxisName = "y";
+        return this;
+    }
+
+    /**
+     * Configure the y axis.
+     */
+    y2(): IAxisPlotAPI {
+        this.curAxisName = "y2";
+        return this;
+    }
+
+    /**
+     * Set the label for the axis.
+     */
+    label(label: string): IAxisPlotAPI {
+        const plotDef = this.plotDef as any;
+        if (!plotDef[this.curAxisName]) {
+            plotDef[this.curAxisName] = {};
+        }
+
+        const axisConfig: IAxisConfig = plotDef[this.curAxisName];
+        if (!axisConfig.label) {
+            axisConfig.label = {};
+        }
+        else if (typeof(axisConfig.label) === "string") {
+            axisConfig.label = {};
+        }
+
+        axisConfig.label.text = label;
+        return this;
+    }
+    
+    /**
+     * Set the position for the label.
+     */
+    labelPosition(position: VerticalLabelPosition | HorizontalLabelPosition): IAxisPlotAPI {
+        const plotDef = this.plotDef as any;
+        if (!plotDef[this.curAxisName]) {
+            plotDef[this.curAxisName] = {};
+        }
+
+        const axisConfig: IAxisConfig = plotDef[this.curAxisName];
+        if (!axisConfig.label) {
+            axisConfig.label = {};
+        }
+        else if (typeof(axisConfig.label) === "string") {
+            axisConfig.label = {
+                text: axisConfig.label,
+            };
+        }
+
+        axisConfig.label.position = position;
+        return this;
+    }
+    
     /**
      * Render the plot to an image file.
      */
