@@ -82,6 +82,7 @@ async function main(): Promise<void> {
         .renderImage("./test-dataframe-3.png");
         */
 
+        /*
     var df = new DataFrame([ 
         {
             A: 10,
@@ -96,6 +97,8 @@ async function main(): Promise<void> {
             B: 220,
         },
     ]);
+    */
+
 
     /*
     await df.plot({ 
@@ -124,6 +127,7 @@ async function main(): Promise<void> {
         //.exportWeb("c:/temp/test-output-3");
         //.exportNodejs("c:/temp/test-output-4");
 
+        /*
     await df.plot()
         //todo: move B to y2!!
         .x()
@@ -134,6 +138,16 @@ async function main(): Promise<void> {
             .labelPosition(VerticalLabelPosition.OuterMiddle)
         //.renderImage("./test-dataframe-5.png");
         .exportWeb("c:/temp/test-output-3");
+        */
+
+    const s = new Series({
+        index: ["A", "B", "C"],
+        values: [100, 110, 115],
+    });
+    s.plot()
+        .x()
+            .axisType(AxisType.Category)
+        .renderImage("./test-series2.png", { openImage: true });
 }
 
 main()

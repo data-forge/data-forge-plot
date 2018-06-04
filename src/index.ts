@@ -576,7 +576,10 @@ function plotSeries(this: ISeries<any, any>, plotDef?: IPlotDef): IPlotAPI {
 
     const amt = this.count();
     const dataWithIndex = this.inflate(value => ({ __value__: value }))
-        .withSeries("__index__", this.getIndex().head(amt))
+        .zip(this.getIndex().head(amt), (row: any, index: any) => {
+            row.__index__ = index;
+            return row;
+        })
         .toArray();
     return new PlotAPI(dataWithIndex, plotDef, axisMap);
 }
@@ -657,7 +660,10 @@ function plotDataFrame(this: IDataFrame<any, any>, plotDef?: IPlotDef, axisMap?:
 
     if (includeIndex) {
         const amt = this.count();
-        df = df.withSeries("__index__", df.getIndex().head(amt));
+        df = df.zip(df.getIndex().head(amt), (row: any, index: any) => {
+                row.__index___ = index;
+                return row;
+            });
     }
 
     const data = df.toArray();
