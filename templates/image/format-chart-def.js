@@ -62,7 +62,7 @@ function configureAxis (inputChartDef) {
 
     configureOneAxis("x", inputChartDef, c3Axis);
     configureOneAxis("y", inputChartDef, c3Axis);
-    configureOneAxis("z", inputChartDef, c3Axis);
+    configureOneAxis("y2", inputChartDef, c3Axis);
 
     return c3Axis;
 }
