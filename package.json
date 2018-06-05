@@ -1,6 +1,6 @@
 {
     "name": "data-forge-plot",
-    "version": "0.0.10",
+    "version": "0.0.11",
     "description": "Plotting API for use with Data-Forge.",
     "main": "build/index.js",
     "types": "build/index.d.ts",
@@ -26,7 +26,6 @@
     },
     "homepage": "https://github.com/data-forge/data-forge-plot#readme",
     "dependencies": {
-        "data-forge": "^1.0.10",
         "express": "^4.16.3",
         "fs-extra": "^6.0.1",
         "fs-jetpack": "^1.3.0",
@@ -34,7 +33,7 @@
         "opn": "^5.3.0"
     },
     "peerDependencies": {
-        "data-forge": "^1.0.10"
+        "data-forge": "^1.0.11"
     },
     "devDependencies": {
         "@types/chai": "4.0.4",

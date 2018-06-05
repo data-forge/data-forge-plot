@@ -105,6 +105,26 @@ function configureSeriesNames (inputChartDef) {
  * Convert a data-forge-plot chart definition to a C3 chart definition.
  */
 function formatChartDef (inputChartDef) {
+    
+    var values = inputChartDef.data.values;
+
+    if (inputChartDef.data.columns) {
+        var columnNames = Object.keys(inputChartDef.data.columns);
+        var hasDates = columnNames.filter(columnName => inputChartDef.data.columns[columnName] === "date");
+        if (hasDates) {
+            values = values.slice(); // Clone the date so we can inflate the dates.
+            for (var columnIndex = 0; columnIndex < columnNames.length; ++columnIndex) {
+                var columnName = columnNames[columnIndex];
+                if (inputChartDef.data.columns[columnName] === "date") { // This column is a date.
+                    for (var valueIndex = 0; valueIndex < values.length; ++valueIndex) {
+                        const row = values[valueIndex];
+                        row[columnName] = moment(row[columnName], moment.ISO_8601).toDate();
+                    }    
+                }
+            }
+        }
+    }
+    
     var c3ChartDef = {
         bindto: "#chart",
         size: {
@@ -112,7 +132,7 @@ function formatChartDef (inputChartDef) {
             height: inputChartDef.plotDef.height || 300,
         },
         data: {
-            json: Array.from(inputChartDef.data),
+            json: values,
             keys: {
                 x: inputChartDef.axisMap.x,
                 value: extractSeriesNames("y", inputChartDef).concat(extractSeriesNames("y2", inputChartDef)),

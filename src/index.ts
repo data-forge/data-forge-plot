@@ -321,7 +321,7 @@ class PlotAPI implements IAxisPlotAPI {
     /**
      * Data to be plotted.
      */
-    data: any[];
+    data: any;
 
     /**
      * Defines the chart that is to be plotted.
@@ -338,9 +338,9 @@ class PlotAPI implements IAxisPlotAPI {
      */
     curAxisName: string;
 
-    constructor(data: any[], plotDef: IPlotDef, axisMap: IAxisMap) {
+    constructor(data: any, plotDef: IPlotDef, axisMap: IAxisMap) {
 
-        assert.isArray(data, "Expected 'data' parameter to PlotAPI constructor to be an array.");
+        assert.isObject(data, "Expected 'data' parameter to PlotAPI constructor to be a serialized dataframe.");
 
         this.data = data;
         this.plotDef = Object.assign({}, defaultPlotDef, plotDef); // Clone the def and plot map so they can be updated by the fluent API.
@@ -575,13 +575,13 @@ function plotSeries(this: ISeries<any, any>, plotDef?: IPlotDef): IPlotAPI {
     };
 
     const amt = this.count();
-    const dataWithIndex = this.inflate(value => ({ __value__: value }))
+    const serializedData = this.inflate((value: any) => ({ __value__: value }))
         .zip(this.getIndex().head(amt), (row: any, index: any) => {
             row.__index__ = index;
             return row;
         })
-        .toArray();
-    return new PlotAPI(dataWithIndex, plotDef, axisMap);
+        .serialize();
+    return new PlotAPI(serializedData, plotDef, axisMap);
 }
 
 Series.prototype.startPlot = startPlot;
@@ -666,8 +666,8 @@ function plotDataFrame(this: IDataFrame<any, any>, plotDef?: IPlotDef, axisMap?:
             });
     }
 
-    const data = df.toArray();
-    return new PlotAPI(data, plotDef, axisMap);
+    const serializedData = df.serialize();
+    return new PlotAPI(serializedData, plotDef, axisMap);
 }
 
 DataFrame.prototype.startPlot = startPlot;

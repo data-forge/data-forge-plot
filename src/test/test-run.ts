@@ -1,6 +1,7 @@
 import { DataFrame, Series } from "data-forge";
 import "../index";
 import { ChartType, AxisType, HorizontalLabelPosition, VerticalLabelPosition } from "../index";
+import * as moment from 'moment';
 
 async function main(): Promise<void> {
 
@@ -140,14 +141,22 @@ async function main(): Promise<void> {
         .exportWeb("c:/temp/test-output-3");
         */
 
+        /*
     const s = new Series({
         index: ["A", "B", "C"],
+        values: [100, 110, 115],
+    });
+    */
+    const dateFormat = "YYYY/MM/DD";
+    const s = new Series({
+        index: [moment("2018/05/13", dateFormat).toDate(), moment("2018/05/14", dateFormat).toDate(), moment("2018/05/15", dateFormat).toDate()],
         values: [100, 110, 115],
     });
     s.plot()
         .x()
             .axisType(AxisType.Category)
-        .renderImage("./test-series2.png", { openImage: true });
+        //.renderImage("./test-series2.png", { openImage: true });
+        .exportWeb("c:/temp/test-output-5", { openBrowser: true, overwrite: true });
 }
 
 main()
