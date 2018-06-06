@@ -44,6 +44,21 @@ function determineAxisType (dataType) {
 }
 
 /**
+ * Format values for display.
+ */
+function formatValues (inputChartDef, seriesName, dataType, formatString) {
+    if (dataType === "number") { // Use numeral to format numbers.
+        return inputChartDef.data.values.map(value => numeral(value[seriesName]).format(formatString));
+    }
+    else if (data === "date") { // Use moment for date formating.
+        return inputChartDef.data.values.map(value => moment(value[seriesName]).format(formatString));
+    }
+    else {
+        return undefined;
+    }
+}
+
+/**
  * Configure a single axis.
  */
 function configureOneAxis (axisName, inputChartDef, c3Axis) {
@@ -70,6 +85,17 @@ function configureOneAxis (axisName, inputChartDef, c3Axis) {
         }
 
         c3AxisDef.show = true;
+
+        if (inputChartDef.axisMap.format) {
+            var seriesFormat = inputChartDef.axisMap.format[seriesName];
+            if (seriesFormat) {
+                if (!c3AxisDef.tick) {
+                    c3AxisDef.tick = {};
+                }
+                
+                c3AxisDef.tick.values = formatValues(inputChartDef, seriesName, dataType, seriesFormat);
+            }
+        }
     }
 };
 
@@ -168,6 +194,9 @@ function formatChartDef (inputChartDef) {
             show: false
         }
     };
+
+    console.log(JSON.stringify(inputChartDef, null, 4)); //fio:
+    console.log(JSON.stringify(c3ChartDef, null, 4)); //fio:
 
     return c3ChartDef;
 };

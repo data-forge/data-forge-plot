@@ -135,6 +135,13 @@ export interface IPlotDef {
 }
 
 /**
+ * Used to set format strings for particular series in the data.
+ */
+export interface IFormatSpec {
+    [index: string]: string;
+}
+
+/**
  * Maps the columns in a dataframe to axis in the chart.
  */
 export interface IAxisMap {
@@ -158,6 +165,11 @@ export interface IAxisMap {
      * Configuration for all series.
      */
     series?: ISeriesConfiguration;
+
+    /**
+     * Set formatting for series values.
+     */
+    format: IFormatSpec;
 }
 
 /**
@@ -562,17 +574,19 @@ async function endPlot(): Promise<void> {
     globalChartRenderer = null;
 }
 
-function plotSeries(this: ISeries<any, any>, plotDef?: IPlotDef): IPlotAPI {
+const defaultSeriesAxisMap = {
+    "x": "__index__",
+    "y": [
+        "__value__",
+    ],
+};
+
+function plotSeries(this: ISeries<any, any>, plotDef?: IPlotDef, axisMap?: IAxisMap): IPlotAPI {
     if (!plotDef) {
         plotDef = defaultPlotDef;
     }
 
-    const axisMap = {
-        "x": "__index__",
-        "y": [
-            "__value__",
-        ],
-    };
+    axisMap = Object.assign({}, defaultSeriesAxisMap, axisMap);
 
     const amt = this.count();
     const serializedData = this.inflate((value: any) => ({ __value__: value }))

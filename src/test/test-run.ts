@@ -149,10 +149,11 @@ async function main(): Promise<void> {
     */
     const dateFormat = "YYYY/MM/DD";
     const s = new Series({
-        index: [moment("2018/05/13", dateFormat).toDate(), moment("2018/05/14", dateFormat).toDate(), moment("2018/05/15", dateFormat).toDate()],
+        index: [100.14312232, 110.23232243, 115.2342345234532],
+        //index: [moment("2018/05/13", dateFormat).toDate(), moment("2018/05/14", dateFormat).toDate(), moment("2018/05/15", dateFormat).toDate()],
         values: [100, 110, 115],
     });
-    s.plot()
+    s.plot({}, { format: { __index__: "0.00" }})
         //.x()
         //    .axisType(AxisType.Category)
         .renderImage("./test-series2.png", { openImage: true });
