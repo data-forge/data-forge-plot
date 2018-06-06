@@ -153,10 +153,10 @@ async function main(): Promise<void> {
         values: [100, 110, 115],
     });
     s.plot()
-        .x()
-            .axisType(AxisType.Category)
-        //.renderImage("./test-series2.png", { openImage: true });
-        .exportWeb("c:/temp/test-output-5", { openBrowser: true, overwrite: true });
+        //.x()
+        //    .axisType(AxisType.Category)
+        .renderImage("./test-series2.png", { openImage: true });
+        //.exportWeb("c:/temp/test-output-5", { openBrowser: true, overwrite: true });
 }
 
 main()

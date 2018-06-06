@@ -29,16 +29,35 @@ function configureAxes (inputChartDef) {
 };
 
 /**
+ * Determine the default axis type based on data type.
+ */
+function determineAxisType (dataType) {
+    if (dataType === "number") {
+        return "indexed";
+    }
+    else if (dataType === "date") {
+        return "timeseries";
+    }
+    else { 
+        return "category";
+    }
+}
+
+/**
  * Configure a single axis.
  */
 function configureOneAxis (axisName, inputChartDef, c3Axis) {
     var axisMap = inputChartDef.axisMap;
-
     c3Axis[axisName] = { show: false };
 
-    if (axisMap[axisName]) {
+    var seriesName = axisMap[axisName];
+    if (seriesName) { // Only configure the c3 axis if we are making use of it.
         var axisDef = inputChartDef.plotDef[axisName];
         var c3AxisDef = c3Axis[axisName];
+
+        // Default axis type based on data type.
+        var dataType = inputChartDef.data.columns[seriesName];
+        c3AxisDef.type = determineAxisType(dataType);
 
         if (axisDef) {
             if (axisDef.axisType) {
