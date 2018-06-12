@@ -195,8 +195,5 @@ function formatChartDef (inputChartDef) {
         }
     };
 
-    console.log(JSON.stringify(inputChartDef, null, 4)); //fio:
-    console.log(JSON.stringify(c3ChartDef, null, 4)); //fio:
-
     return c3ChartDef;
 };
