@@ -1,6 +1,5 @@
 import { DataFrame, Series } from "data-forge";
 import "../index";
-import { ChartType, AxisType, HorizontalLabelPosition, VerticalLabelPosition } from "../index";
 import * as moment from 'moment';
 
 async function main(): Promise<void> {

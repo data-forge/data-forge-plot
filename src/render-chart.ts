@@ -1,6 +1,6 @@
 const Nightmare = require("nightmare");
 import { WebServer, IWebServer }  from "./web-server";
-import { IPlotDef, IAxisMap, IChartDef } from ".";
+import { IChartDef } from "./chart-def";
 
 declare const document: any;
 
