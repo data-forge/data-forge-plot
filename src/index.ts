@@ -127,7 +127,7 @@ function plotDataFrame(this: IDataFrame<any, any>, plotDef?: IPlotDef, axisMap?:
     if (includeIndex) {
         const amt = this.count();
         df = df.zip(df.getIndex().head(amt), (row: any, index: any) => {
-                row.__index___ = index;
+                row.__index__ = index;
                 return row;
             });
     }
