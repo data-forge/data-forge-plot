@@ -26,8 +26,6 @@ export async function endPlot(): Promise<void> {
 
 export const defaultPlotDef: IPlotDef = {
     chartType: ChartType.Line,
-    width: 300,
-    height: 300,
 }
 
 /**

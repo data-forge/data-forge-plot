@@ -173,8 +173,8 @@ function formatChartDef (inputChartDef) {
     var c3ChartDef = {
         bindto: "#chart",
         size: {
-            width: inputChartDef.plotDef.width || 300,
-            height: inputChartDef.plotDef.height || 300,
+            width: inputChartDef.plotDef.width || 1200,
+            height: inputChartDef.plotDef.height || 600,
         },
         data: {
             json: values,
