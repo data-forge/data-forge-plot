@@ -11,6 +11,8 @@ Do your prototyping and exploratory data analysis in JavaScript with [Data-Forge
 
 THIS JS LIBRARY IS A WORK IN PROGRESS
 
+If you want to understand and give feedback on this new API, [please first read my introductory blog post](http://www.the-data-wrangler.com/introducing-data-forge-plot/).
+
 ## Project Goals
 
 - To go as simple and conveniently as possihble from a series or dataframe to chart.
