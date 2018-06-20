@@ -13,9 +13,10 @@ import * as fs from 'fs-extra';
 import * as path from 'path';
 
 fs.emptyDirSync("./output");
-fs.emptyDirSync("./output/test-1");
 
-const outputPath = "./output/test-1";
+const outputName = path.basename(__filename, ".ts");
+const outputPath = path.join("./output", outputName);
+fs.emptyDirSync(outputPath);
 
 async function main(): Promise<void> {
 
