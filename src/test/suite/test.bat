@@ -1,0 +1,1 @@
+ts-node test-1.ts
