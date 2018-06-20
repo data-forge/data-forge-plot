@@ -8,7 +8,7 @@ const data1 = [30, 200, 100, 400, 150, 250];
 const data2 = [50, 20, 10, 40, 15, 25];
         
 import { DataFrame } from 'data-forge';
-import '../../index';
+import '../src/index';
 import * as fs from 'fs-extra';
 import * as path from 'path';
 

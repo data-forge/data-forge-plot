@@ -1,0 +1,1 @@
+ts-node example-1.ts
