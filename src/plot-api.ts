@@ -1,9 +1,10 @@
-import { ChartType, IChartDef, VerticalLabelPosition, HorizontalLabelPosition, AxisType, IPlotDef, IAxisMap, IAxisConfig } from "./chart-def";
+import { ChartType, IChartDef, VerticalLabelPosition, HorizontalLabelPosition, AxisType, IPlotDef, IAxisMap, IAxisConfig, ISeriesConfig } from "./chart-def";
 import { assert } from "chai";
 import { IChartRenderer, ChartRenderer } from "./render-chart";
 const opn = require('opn');
 import * as path from 'path';
 import * as fs from 'fs-extra';
+import * as Sugar from 'sugar';
 import { findPackageDir } from './find-package-dir';
 
 const jetpack = require('fs-jetpack');
@@ -129,17 +130,17 @@ export interface IPlotAPI {
 /**
  * Plot API for configuring a particular axis.
  */
-export interface IAxisPlotAPI extends IPlotAPI { //todo: This could be separated into vertical and horizontal axis apis.
+export interface IAxisPlotAPI extends IPlotAPI { //todo: This could be separated into vertical and horizontal axis apis. Or it could simply be generic.
 
     /**
      * Set the label for the axis.
      */
-    label(label: string): IAxisPlotAPI;
+    axisLabel(label: string): IAxisPlotAPI;
     
     /**
      * Set the position for the label.
      */
-    labelPosition(position: VerticalLabelPosition | HorizontalLabelPosition): IAxisPlotAPI;
+    axisLabelPosition(position: VerticalLabelPosition | HorizontalLabelPosition): IAxisPlotAPI;
 
     /**
      * Set the type of the axis.
@@ -149,13 +150,26 @@ export interface IAxisPlotAPI extends IPlotAPI { //todo: This could be separated
     /**
      * Add a data series to the axis.
      */
-    series(seriesName: string): IAxisPlotAPI;
+    series(seriesName: string): IAxisSeriesPlotAPI;
+}
+
+export interface IAxisSeriesPlotAPI extends IAxisPlotAPI {
+
+    /**
+     * Set the label for the series.
+     */
+    seriesLabel(label: string): IAxisSeriesPlotAPI;
+
+    /**
+     * Set the display format for values of this series.
+     */
+    format(formatString: string): IAxisSeriesPlotAPI;
 }
 
 /**
  * Fluent API for configuring the plot.
  */
-export class PlotAPI implements IAxisPlotAPI {
+export class PlotAPI implements IAxisSeriesPlotAPI, IAxisPlotAPI, IPlotAPI {
 
     /**
      * Data to be plotted.
@@ -166,6 +180,11 @@ export class PlotAPI implements IAxisPlotAPI {
      * Defines the chart that is to be plotted.
      */
     plotDef: IPlotDef;
+    
+    /**
+     * Default axis map if it is not explicitly configured.
+     */
+    defaultAxisMap: IAxisMap;
 
     /**
      * Defines how the data is mapped to the axis' in the chart.
@@ -177,14 +196,21 @@ export class PlotAPI implements IAxisPlotAPI {
      */
     curAxisName: string;
 
-    constructor(data: any, plotDef: IPlotDef, axisMap: IAxisMap) {
+    /**
+     * Name of the series that is currently being configured.
+     */
+    curSeriesName: string | null;
+
+    constructor(data: any, plotDef: IPlotDef, defaultAxisMap: IAxisMap, axisMap?: IAxisMap) {
 
         assert.isObject(data, "Expected 'data' parameter to PlotAPI constructor to be a serialized dataframe.");
 
         this.data = data;
         this.plotDef = Object.assign({}, defaultPlotDef, plotDef); // Clone the def and plot map so they can be updated by the fluent API.
+        this.defaultAxisMap = defaultAxisMap;
         this.axisMap = Object.assign({}, axisMap);
         this.curAxisName = "x";
+        this.curSeriesName = null;
     }
 
     /**
@@ -240,7 +266,7 @@ export class PlotAPI implements IAxisPlotAPI {
     /**
      * Set the label for the axis.
      */
-    label(label: string): IAxisPlotAPI {
+    axisLabel(label: string): IAxisPlotAPI {
         const plotDef = this.plotDef as any;
         if (!plotDef[this.curAxisName]) {
             plotDef[this.curAxisName] = {};
@@ -261,7 +287,7 @@ export class PlotAPI implements IAxisPlotAPI {
     /**
      * Set the position for the label.
      */
-    labelPosition(position: VerticalLabelPosition | HorizontalLabelPosition): IAxisPlotAPI {
+    axisLabelPosition(position: VerticalLabelPosition | HorizontalLabelPosition): IAxisPlotAPI {
         const plotDef = this.plotDef as any;
         if (!plotDef[this.curAxisName]) {
             plotDef[this.curAxisName] = {};
@@ -298,7 +324,10 @@ export class PlotAPI implements IAxisPlotAPI {
     /**
      * Add a data series to the axis.
      */
-    series(seriesName: string): IAxisPlotAPI {
+    series(seriesName: string): IAxisSeriesPlotAPI {
+        
+        this.curSeriesName = this.curSeriesName;
+
         const axisMap = this.axisMap as any;
         if (!axisMap[this.curAxisName]) {
             axisMap[this.curAxisName] = {};
@@ -317,6 +346,59 @@ export class PlotAPI implements IAxisPlotAPI {
         return this;
     }
 
+    /**
+     * Set the label for the series.
+     */
+    seriesLabel(label: string): IAxisSeriesPlotAPI {
+        
+        if (!this.axisMap.series) {
+            this.axisMap.series = {};            
+        }
+
+        if (Sugar.Object.isString(this.axisMap.series![this.curAxisName])) {
+            this.axisMap.series![this.curAxisName] = { // Convert to object format.
+                label: label
+            };
+        }
+        else if (!this.axisMap.series![this.curAxisName]) {
+            this.axisMap.series![this.curAxisName] = {
+                label: label,
+            };
+        }
+        else {
+            (this.axisMap.series![this.curAxisName] as ISeriesConfig).label = label;
+        }
+
+        return this;
+    }
+
+    /**
+     * Set the display format for values of this series.
+     */
+    format(formatString: string): IAxisSeriesPlotAPI {
+
+        if (!this.axisMap.series) {
+            this.axisMap.series = {};            
+        }
+
+        if (Sugar.Object.isString(this.axisMap.series![this.curAxisName])) {
+            this.axisMap.series![this.curAxisName] = { // Convert to object format.
+                label: this.axisMap.series![this.curAxisName] as string,
+                format: formatString,
+            };
+        }
+        else if (!this.axisMap.series![this.curAxisName]) {
+            this.axisMap.series![this.curAxisName] = {
+                format: formatString
+            };
+        }
+        else {
+            (this.axisMap.series![this.curAxisName] as ISeriesConfig).label = formatString;
+        }
+
+        return this;
+    }
+    
     /**
      * Render the plot to an image file.
      */
@@ -386,10 +468,19 @@ export class PlotAPI implements IAxisPlotAPI {
      * The JSON definition of the chart can be used to instantiate the chart in a browser.
      */
     serialize(): IChartDef {
+        const axisMap = Object.assign({}, this.axisMap);
+        if (axisMap.x === undefined) {
+            axisMap.x = this.defaultAxisMap.x;
+        }
+
+        if (axisMap.y === undefined) {
+            axisMap.y = this.defaultAxisMap.y;
+        }
+
         return {
             data: this.data,
             plotDef: this.plotDef,
-            axisMap: this.axisMap,
+            axisMap: axisMap,
         };
     }
 }

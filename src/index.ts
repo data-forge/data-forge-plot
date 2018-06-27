@@ -78,62 +78,19 @@ function plotDataFrame(this: IDataFrame<any, any>, plotDef?: IPlotDef, axisMap?:
         plotDef = defaultPlotDef;
     }
 
-    if (!axisMap) {
-        axisMap = {
-            x: "__index__",
-            y: this.getColumnNames(),
-        };
-    }
-    else {
-        axisMap = Object.assign({}, axisMap);
-        if (!axisMap.x) {
-            axisMap.x = "__index__";
-        }
+    const defaultAxisMap = {
+        x: "__index__",
+        y: this.getColumnNames(),
+    };
 
-        if (!axisMap.y) {
-            if (!axisMap.y2) {
-                // All columns on the y axis.
-                axisMap.y = this.getColumnNames();
-            }
-            else {
-                // All columns on y axis, expect those explicitly on the y2 axis.
-                axisMap.y = this.getColumnNames()
-                    .filter(columnName => {
-                        if (Sugar.Object.isArray(axisMap!.y2!)) {
-                            if ((axisMap!.y2 as string[]).indexOf(columnName) >= 0) {{
-                                return false; // This column is moved to y2 axis.
-                            }}
-                        }
-                        else {
-                            if (columnName === axisMap!.y2) {
-                                return false; // This column is moved to y2 axis.
-                            }
-                        }
-
-                        return true; // This column can stay on y axis.
-                    });
-            }            
-        }
-    }
-
-    const includeIndex = axisMap.x === "__index__" ||
-        axisMap.y === "__index__" ||
-        axisMap.y2 === "__index__" ||
-        (Sugar.Object.isArray(axisMap!.y!) && (axisMap!.y! as string[]).filter(y => y === "__index__").length > 0) ||
-        axisMap!.y2 && (Sugar.Object.isArray(axisMap!.y2!) && (axisMap!.y2! as string[]).filter(y => y === "__index__").length > 0);
-
-    let df = this;
-
-    if (includeIndex) {
-        const amt = this.count();
-        df = df.zip(df.getIndex().head(amt), (row: any, index: any) => {
-                row.__index__ = index;
-                return row;
-            });
-    }
+    const amt = this.count();
+    const df = this.zip(this.getIndex().head(amt), (row: any, index: any) => {
+            row.__index__ = index;
+            return row;
+        });
 
     const serializedData = df.serialize();
-    return new PlotAPI(serializedData, plotDef, axisMap);
+    return new PlotAPI(serializedData, plotDef, defaultAxisMap, axisMap);
 }
 
 DataFrame.prototype.startPlot = startPlot;

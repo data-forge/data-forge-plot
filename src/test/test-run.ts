@@ -152,11 +152,15 @@ async function main(): Promise<void> {
         //index: [moment("2018/05/13", dateFormat).toDate(), moment("2018/05/14", dateFormat).toDate(), moment("2018/05/15", dateFormat).toDate()],
         values: [100, 110, 115],
     });
-    s.plot({}, { format: { __index__: "0.00" }})
+    s.plot(/*{}, { format: { __index__: "0.00" }}*/)
         //.x()
         //    .axisType(AxisType.Category)
-        .renderImage("./test-series2.png", { openImage: true });
-        //.exportWeb("c:/temp/test-output-5", { openBrowser: true, overwrite: true });
+        //.renderImage("./test-series2.png", { openImage: true });
+        .x()
+            .series("__index__")
+                .seriesLabel("Fooey")
+                .format("0.00")
+        .exportWeb("c:/temp/test-output-5", { openBrowser: true, overwrite: true });
 }
 
 main()

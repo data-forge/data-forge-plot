@@ -86,14 +86,14 @@ function configureOneAxis (axisName, inputChartDef, c3Axis) {
 
         c3AxisDef.show = true;
 
-        if (inputChartDef.axisMap.format) {
-            var seriesFormat = inputChartDef.axisMap.format[seriesName];
-            if (seriesFormat) {
+        if (inputChartDef.axisMap.series) {
+            var seriesConfig = inputChartDef.axisMap.series[seriesName];
+            if (seriesConfig && seriesConfig.format) {
                 if (!c3AxisDef.tick) {
                     c3AxisDef.tick = {};
                 }
                 
-                c3AxisDef.tick.values = formatValues(inputChartDef, seriesName, dataType, seriesFormat);
+                c3AxisDef.tick.values = formatValues(inputChartDef, seriesName, dataType, seriesConfig.format);
             }
         }
     }

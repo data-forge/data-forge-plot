@@ -40,7 +40,10 @@ export enum VerticalLabelPosition {
     OuterBottom = "outer-bottom",
 }
 
-export interface ILabelConfig {
+/**
+ * Defines the configuration of an axis label.
+ */
+export interface IAxisLabelConfig {
     /**
      * The text for the label.
      */
@@ -65,7 +68,7 @@ export interface IAxisConfig {
     /**
      * Label for the axis.
      */
-    label?: string | ILabelConfig;
+    label?: string | IAxisLabelConfig; //TODO: would be good if got rid of these options. Would make it simpler.
 }
 
 /**
@@ -75,14 +78,19 @@ export interface ISeriesConfig {
     /**
      * The label for the series.
      */
-    label: string;
+    label?: string;
+
+    /**
+     * The format for the series.
+     */
+    format?: string;
 }
 
 /**
  * Configuration for all series.
  */
 export interface ISeriesConfiguration {
-    [index: string]: string | ISeriesConfig;
+    [index: string]: string | ISeriesConfig; //TODO: would be good if got rid of these options. Would make it simpler.
 }
 
 /**
@@ -122,13 +130,6 @@ export interface IPlotDef {
 }
 
 /**
- * Used to set format strings for particular series in the data.
- */
-export interface IFormatSpec {
-    [index: string]: string;
-}
-
-/**
  * Maps the columns in a dataframe to axis in the chart.
  */
 export interface IAxisMap {
@@ -151,12 +152,7 @@ export interface IAxisMap {
     /**
      * Configuration for all series.
      */
-    series?: ISeriesConfiguration;
-
-    /**
-     * Set formatting for series values.
-     */
-    format?: IFormatSpec;
+    series?: ISeriesConfiguration; //TODO: Consider moving this in with the axis configs above.
 }
 
 /**
