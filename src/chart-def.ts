@@ -1,3 +1,4 @@
+import { ISerializedDataFrame } from 'data-forge/build/lib/dataframe';
 /** 
  * Defines the type of chart to output.
  */
@@ -68,35 +69,13 @@ export interface IAxisConfig {
     /**
      * Label for the axis.
      */
-    label?: string | IAxisLabelConfig; //TODO: would be good if got rid of these options. Would make it simpler.
-}
-
-/**
- * Configuration for a single series.
- */
-export interface ISeriesConfig { 
-    /**
-     * The label for the series.
-     */
-    label?: string;
-
-    /**
-     * The format for the series.
-     */
-    format?: string;
-}
-
-/**
- * Configuration for all series.
- */
-export interface ISeriesConfiguration {
-    [index: string]: string | ISeriesConfig; //TODO: would be good if got rid of these options. Would make it simpler.
+    label?: string | IAxisLabelConfig;
 }
 
 /**
  * Defines the chart.
  */
-export interface IPlotDef {
+export interface IPlotConfig {
 
     /**
      * The type of chart to render.
@@ -130,29 +109,81 @@ export interface IPlotDef {
 }
 
 /**
- * Maps the columns in a dataframe to axis in the chart.
+ * Relates a single axis to data series.
+ */
+export interface ISingleAxisMap {
+
+    /**
+     * The name of the series to render on the axis.
+     */
+    series: string;
+
+    /**
+     * The label for the series on this axis.
+     */
+    label?: string;
+
+    /**
+     * The format for rendering values of the series.
+     */
+    format?: string;
+
+    /**
+     * The color to render to assign to the series.
+     */
+    color?: string;
+}
+
+/**
+ * Relates a single Y axis to data series.
+ */
+export interface ISingleYAxisMap extends ISingleAxisMap {
+    /**
+     * Configure a separate X axis for the y axis.
+     */
+    x?: string | ISingleAxisMap;
+}
+
+/**
+ * Maps the columns in a dataframe to an axis in the chart.
  */
 export interface IAxisMap {
 
     /**
      * The x axis for the chart.
      */
-    x?: string;
+    x?: string | ISingleAxisMap;
 
     /**
      * The y axis for the chart.
      */
-    y?: string | string[];
+    y?: string | string[] | ISingleYAxisMap | ISingleYAxisMap[];
 
     /**
      * The optional  second y axis for the chart.
      */
-    y2?: string | string[];
+    y2?: string | string[] | ISingleYAxisMap | ISingleYAxisMap[];
+}
+
+/**
+ * Maps the columns in a dataframe to axis in the chart.
+ */
+export interface IExpandedAxisMap {
 
     /**
-     * Configuration for all series.
+     * The default x axis for the chart.
      */
-    series?: ISeriesConfiguration; //TODO: Consider moving this in with the axis configs above.
+    x: ISingleAxisMap;
+
+    /**
+     * The y axis for the chart.
+     */
+    y: ISingleYAxisMap[];
+
+    /**
+     * The optional  second y axis for the chart.
+     */
+    y2: ISingleYAxisMap[];
 }
 
 /**
@@ -164,15 +195,15 @@ export interface IChartDef {
     /**
      * JSON serializable representation of the data.
      */
-    data: any[],
+    data: ISerializedDataFrame;
 
     /**
      * Defines the look of the chart.
      */
-    plotDef: IPlotDef;
+    plotDef: IPlotConfig;
 
     /**
      * Maps fields in the data to axis' on the chart.
      */
-    axisMap: IAxisMap;
+    axisMap: IExpandedAxisMap;
 }

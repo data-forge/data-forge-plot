@@ -1,4 +1,4 @@
-import { ChartType, IChartDef, VerticalLabelPosition, HorizontalLabelPosition, AxisType, IPlotDef, IAxisMap, IAxisConfig, ISeriesConfig } from "./chart-def";
+import { ChartType, IChartDef, VerticalLabelPosition, HorizontalLabelPosition, AxisType, IPlotConfig, IAxisMap, IAxisConfig, IExpandedAxisMap, ISingleAxisMap, ISingleYAxisMap } from "./chart-def";
 import { assert } from "chai";
 import { IChartRenderer, ChartRenderer } from "./render-chart";
 const opn = require('opn');
@@ -6,6 +6,7 @@ import * as path from 'path';
 import * as fs from 'fs-extra';
 import * as Sugar from 'sugar';
 import { findPackageDir } from './find-package-dir';
+import { ISerializedDataFrame } from 'data-forge/build/lib/dataframe';
 
 const jetpack = require('fs-jetpack');
 
@@ -25,8 +26,7 @@ export async function endPlot(): Promise<void> {
     globalChartRenderer = null;
 }
 
-export const defaultPlotDef: IPlotDef = {
-    chartType: ChartType.Line,
+export const defaultPlotDef: IPlotConfig = {
 }
 
 /**
@@ -93,17 +93,17 @@ export interface IPlotAPI {
     /**
      * Configure the x axis.
      */
-    x(): IAxisPlotAPI;
+    x(seriesName: string): IXAxisConfigAPI;
 
     /**
      * Configure the y axis.
      */
-    y(): IAxisPlotAPI;
+    y(seriesName: string): IYAxisConfigAPI;
 
     /**
      * Configure the y axis.
      */
-    y2(): IAxisPlotAPI;
+    y2(seriesName: string): IYAxisConfigAPI;
 
     /**
      * Render the plot to an image file.
@@ -130,87 +130,102 @@ export interface IPlotAPI {
 /**
  * Plot API for configuring a particular axis.
  */
-export interface IAxisPlotAPI extends IPlotAPI { //todo: This could be separated into vertical and horizontal axis apis. Or it could simply be generic.
+export interface IAxisConfigAPI<FluentT> extends IPlotAPI {
 
     /**
      * Set the label for the axis.
      */
-    axisLabel(label: string): IAxisPlotAPI;
+    axisLabel(label: string): FluentT;
+    
+    /**
+     * Set the type of the axis.
+     */
+    type(axisType: AxisType): FluentT;
+}
+
+/**
+ * Plot API for configuring a particular axis.
+ */
+export interface IXAxisConfigAPI extends IAxisConfigAPI<IXAxisConfigAPI> {
+
+    /**
+     * Set the position for the label.
+     */
+    axisLabelPosition(position: HorizontalLabelPosition): IXAxisConfigAPI;
+}
+
+/**
+ * Plot API for configuring a particular Y axis.
+ */
+export interface IYAxisConfigAPI extends IAxisConfigAPI<IYAxisConfigAPI> {
+
+    /**
+     * Set the series label.
+     */
+    seriesLabel(label: string): IYAxisConfigAPI;
+    
+    /**
+     * Set the display format for values of this series.
+     */
+    format(formatString: string): IYAxisConfigAPI;
     
     /**
      * Set the position for the label.
      */
-    axisLabelPosition(position: VerticalLabelPosition | HorizontalLabelPosition): IAxisPlotAPI;
-
+    axisLabelPosition(position: VerticalLabelPosition): IYAxisConfigAPI;
+    
     /**
-     * Set the type of the axis.
+     * Configure an explicit x axis for the y axis.
      */
-    axisType(axisType: AxisType): IAxisPlotAPI;
-
-    /**
-     * Add a data series to the axis.
-     */
-    series(seriesName: string): IAxisSeriesPlotAPI;
+    x(seriesName: string): IXAxisConfigAPI;
 }
 
-export interface IAxisSeriesPlotAPI extends IAxisPlotAPI {
+//
+// Maps the columns in a dataframe to axis in the chart.
+//
+export interface IInternalAxisMap {
 
     /**
-     * Set the label for the series.
+     * The x axis for the chart.
      */
-    seriesLabel(label: string): IAxisSeriesPlotAPI;
+    x: ISingleAxisMap;
 
     /**
-     * Set the display format for values of this series.
+     * The y axis for the chart.
      */
-    format(formatString: string): IAxisSeriesPlotAPI;
+    y: ISingleYAxisMap[];
+
+    /**
+     * The optional  second y axis for the chart.
+     */
+    y2: ISingleYAxisMap[];
 }
 
 /**
  * Fluent API for configuring the plot.
  */
-export class PlotAPI implements IAxisSeriesPlotAPI, IAxisPlotAPI, IPlotAPI {
+export abstract class AbstractPlotAPI implements IPlotAPI {
 
     /**
      * Data to be plotted.
      */
-    data: any;
+    protected data: ISerializedDataFrame;
 
     /**
      * Defines the chart that is to be plotted.
      */
-    plotDef: IPlotDef;
-    
-    /**
-     * Default axis map if it is not explicitly configured.
-     */
-    defaultAxisMap: IAxisMap;
+    protected plotConfig: IPlotConfig;
 
     /**
      * Defines how the data is mapped to the axis' in the chart.
      */
-    axisMap: IAxisMap;
+    protected globalAxisMap: IInternalAxisMap;
 
-    /**
-     * Defines the current axis being configured.
-     */
-    curAxisName: string;
-
-    /**
-     * Name of the series that is currently being configured.
-     */
-    curSeriesName: string | null;
-
-    constructor(data: any, plotDef: IPlotDef, defaultAxisMap: IAxisMap, axisMap?: IAxisMap) {
-
-        assert.isObject(data, "Expected 'data' parameter to PlotAPI constructor to be a serialized dataframe.");
-
+    constructor(data: ISerializedDataFrame, plotConfig: IPlotConfig, globalAxisMap: IInternalAxisMap) {
+    
         this.data = data;
-        this.plotDef = Object.assign({}, defaultPlotDef, plotDef); // Clone the def and plot map so they can be updated by the fluent API.
-        this.defaultAxisMap = defaultAxisMap;
-        this.axisMap = Object.assign({}, axisMap);
-        this.curAxisName = "x";
-        this.curSeriesName = null;
+        this.plotConfig = plotConfig;
+        this.globalAxisMap = globalAxisMap;
     }
 
     /**
@@ -219,15 +234,15 @@ export class PlotAPI implements IAxisSeriesPlotAPI, IAxisPlotAPI, IPlotAPI {
      * @param chartType Specifies the chart type.
      */
     chartType(chartType: ChartType): IPlotAPI {
-        this.plotDef.chartType = chartType;
+        this.plotConfig.chartType = chartType;
         return this;
     }
 
     /**
      * Set the width of the chart.
      */
-    width(width: number): IPlotAPI {
-        this.plotDef.width = width;
+     width(width: number): IPlotAPI {
+        this.plotConfig.width = width;
         return this;
     }
 
@@ -235,168 +250,34 @@ export class PlotAPI implements IAxisSeriesPlotAPI, IAxisPlotAPI, IPlotAPI {
      * Set the height of the chart.
      */
     height(height: number): IPlotAPI {
-        this.plotDef.height = height;
+        this.plotConfig.height = height;
         return this;
     }
 
     /**
-     * Configure the x axis.
+     * Configure the default x axis.
      */
-    x(): IAxisPlotAPI {
-        this.curAxisName = "x";
-        return this;
-    }
-
-    /**
-     * Configure the y axis.
-     */
-    y(): IAxisPlotAPI {
-        this.curAxisName = "y";
-        return this;
+    x(seriesName: string): IXAxisConfigAPI {
+        this.globalAxisMap.x.series = seriesName;
+        return new XAxisConfigAPI("x", seriesName, this.plotConfig.x!, this.globalAxisMap.x, this.data, this.plotConfig, this.globalAxisMap);
     }
 
     /**
      * Configure the y axis.
      */
-    y2(): IAxisPlotAPI {
-        this.curAxisName = "y2";
-        return this;
+    y(seriesName: string): IYAxisConfigAPI {
+        const singleAxisMap: ISingleYAxisMap = { series: seriesName };
+        (this.globalAxisMap.y as ISingleYAxisMap[]).push(singleAxisMap);
+        return new YAxisConfigAPI("y", seriesName, this.plotConfig.y!, singleAxisMap, this.data, this.plotConfig, this.globalAxisMap);
     }
 
     /**
-     * Set the label for the axis.
+     * Configure the y axis.
      */
-    axisLabel(label: string): IAxisPlotAPI {
-        const plotDef = this.plotDef as any;
-        if (!plotDef[this.curAxisName]) {
-            plotDef[this.curAxisName] = {};
-        }
-
-        const axisConfig: IAxisConfig = plotDef[this.curAxisName];
-        if (!axisConfig.label) {
-            axisConfig.label = {};
-        }
-        else if (typeof(axisConfig.label) === "string") {
-            axisConfig.label = {};
-        }
-
-        axisConfig.label.text = label;
-        return this;
-    }
-    
-    /**
-     * Set the position for the label.
-     */
-    axisLabelPosition(position: VerticalLabelPosition | HorizontalLabelPosition): IAxisPlotAPI {
-        const plotDef = this.plotDef as any;
-        if (!plotDef[this.curAxisName]) {
-            plotDef[this.curAxisName] = {};
-        }
-
-        const axisConfig: IAxisConfig = plotDef[this.curAxisName];
-        if (!axisConfig.label) {
-            axisConfig.label = {};
-        }
-        else if (typeof(axisConfig.label) === "string") {
-            axisConfig.label = {
-                text: axisConfig.label,
-            };
-        }
-
-        axisConfig.label.position = position;
-        return this;
-    }
-
-    /**
-     * Set the type of the axis.
-     */
-    axisType(axisType: AxisType): IAxisPlotAPI {
-        const plotDef = this.plotDef as any;
-        if (!plotDef[this.curAxisName]) {
-            plotDef[this.curAxisName] = {};
-        }
-
-        const axisConfig: IAxisConfig = plotDef[this.curAxisName];
-        axisConfig.axisType = axisType;        
-        return this;
-    }
-
-    /**
-     * Add a data series to the axis.
-     */
-    series(seriesName: string): IAxisSeriesPlotAPI {
-        
-        this.curSeriesName = this.curSeriesName;
-
-        const axisMap = this.axisMap as any;
-        if (!axisMap[this.curAxisName]) {
-            axisMap[this.curAxisName] = {};
-        }
-
-        if (Sugar.Object.isString(axisMap[this.curAxisName])) {
-            axisMap[this.curAxisName] = [axisMap[this.curAxisName], seriesName]; // Add second series to axis.
-        }
-        else if (Sugar.Object.isArray(axisMap[this.curAxisName])) {
-            axisMap[this.curAxisName].push(seriesName); // Add next series to axis.
-        }
-        else {
-            axisMap[this.curAxisName] = seriesName; // Add first series to axis.
-        }
-        
-        return this;
-    }
-
-    /**
-     * Set the label for the series.
-     */
-    seriesLabel(label: string): IAxisSeriesPlotAPI {
-        
-        if (!this.axisMap.series) {
-            this.axisMap.series = {};            
-        }
-
-        if (Sugar.Object.isString(this.axisMap.series![this.curAxisName])) {
-            this.axisMap.series![this.curAxisName] = { // Convert to object format.
-                label: label
-            };
-        }
-        else if (!this.axisMap.series![this.curAxisName]) {
-            this.axisMap.series![this.curAxisName] = {
-                label: label,
-            };
-        }
-        else {
-            (this.axisMap.series![this.curAxisName] as ISeriesConfig).label = label;
-        }
-
-        return this;
-    }
-
-    /**
-     * Set the display format for values of this series.
-     */
-    format(formatString: string): IAxisSeriesPlotAPI {
-
-        if (!this.axisMap.series) {
-            this.axisMap.series = {};            
-        }
-
-        if (Sugar.Object.isString(this.axisMap.series![this.curAxisName])) {
-            this.axisMap.series![this.curAxisName] = { // Convert to object format.
-                label: this.axisMap.series![this.curAxisName] as string,
-                format: formatString,
-            };
-        }
-        else if (!this.axisMap.series![this.curAxisName]) {
-            this.axisMap.series![this.curAxisName] = {
-                format: formatString
-            };
-        }
-        else {
-            (this.axisMap.series![this.curAxisName] as ISeriesConfig).label = formatString;
-        }
-
-        return this;
+    y2(seriesName: string): IYAxisConfigAPI {
+        const singleAxisMap: ISingleYAxisMap = { series: seriesName };
+        (this.globalAxisMap.y2 as ISingleYAxisMap[]).push(singleAxisMap);
+        return new YAxisConfigAPI("y2", seriesName, this.plotConfig.y2!, singleAxisMap, this.data, this.plotConfig, this.globalAxisMap);
     }
     
     /**
@@ -468,19 +349,269 @@ export class PlotAPI implements IAxisSeriesPlotAPI, IAxisPlotAPI, IPlotAPI {
      * The JSON definition of the chart can be used to instantiate the chart in a browser.
      */
     serialize(): IChartDef {
-        const axisMap = Object.assign({}, this.axisMap);
-        if (axisMap.x === undefined) {
-            axisMap.x = this.defaultAxisMap.x;
-        }
-
-        if (axisMap.y === undefined) {
-            axisMap.y = this.defaultAxisMap.y;
-        }
-
         return {
             data: this.data,
-            plotDef: this.plotDef,
-            axisMap: axisMap,
+            plotDef: this.plotConfig,
+            axisMap: this.globalAxisMap,
         };
+    }
+}
+
+/**
+ * Fluent API for configuring the plot.
+ */
+export class PlotAPI extends AbstractPlotAPI {
+
+    constructor(data: ISerializedDataFrame, plotConfig: IPlotConfig, globalAxisMap?: IAxisMap) {
+        assert.isObject(data, "Expected 'data' parameter to PlotAPI constructor to be a serialized dataframe.");
+
+        const expandedPlotConfig: IPlotConfig = Object.assign({}, defaultPlotDef, plotConfig); // Clone the def and plot map so they can be updated by the fluent API.
+        if (expandedPlotConfig.x) {
+            expandedPlotConfig.x = {};
+        }
+
+        if (expandedPlotConfig.y) {
+            expandedPlotConfig.y = {};
+        }
+
+        if (expandedPlotConfig.y2) {
+            expandedPlotConfig.y2 = {};
+        }
+        
+        const expandedGlobalAxisMap: IInternalAxisMap = {
+            x: { 
+                series: "__index__",
+            },
+            y: [],
+            y2: [],
+        };
+
+        if (globalAxisMap) {
+            if (globalAxisMap.x) {
+                if (Sugar.Object.isString(globalAxisMap.x)) {
+                    expandedGlobalAxisMap.x = {
+                        series: globalAxisMap.x,
+                    };
+                }
+                else {
+                    expandedGlobalAxisMap.x = globalAxisMap.x as ISingleAxisMap;
+                }   
+            }    
+
+            if (globalAxisMap.y) {
+                if (Sugar.Object.isString(globalAxisMap.y)) {
+                    expandedGlobalAxisMap.y = [ 
+                        {
+                            series: globalAxisMap.y,
+                        },
+                    ];
+                }
+                else if (Sugar.Object.isArray(globalAxisMap.y)) {
+                    expandedGlobalAxisMap.y = (globalAxisMap.y as any[]).map(series => {
+                        if (Sugar.Object.isString(series)) {
+                            return {
+                                series: series,
+                            };
+                        }
+                        else {
+                            return series;
+                        }
+                    });
+                }
+                else {
+                    expandedGlobalAxisMap.y = [ 
+                        globalAxisMap.y,
+                    ];            
+                }        
+            }
+            else {
+                expandedGlobalAxisMap.y = [];
+            }
+
+            if (globalAxisMap.y2) {
+                if (Sugar.Object.isString(globalAxisMap.y2)) {
+                    expandedGlobalAxisMap.y2 = [ 
+                        {
+                            series: globalAxisMap.y2,
+                        },
+                    ];
+                }
+                else if (Sugar.Object.isArray(globalAxisMap.y2)) {
+                    expandedGlobalAxisMap.y2 = (globalAxisMap.y2 as any[]).map(series => {
+                        if (Sugar.Object.isString(series)) {
+                            return {
+                                series: series,
+                            };
+                        }
+                        else {
+                            return series;
+                        }
+                    });
+                }
+                else {
+                    expandedGlobalAxisMap.y2 = [ 
+                        globalAxisMap.y2,
+                    ];            
+                }        
+            }
+        }
+
+        if (expandedGlobalAxisMap.y.length === 0) {
+            // Default the primary Y axis.
+            expandedGlobalAxisMap.y = data.columnOrder
+                .filter(columnName => columnName !== expandedGlobalAxisMap.x.series)
+                .map(columnName => ({
+                    series: columnName,
+                }));
+        }
+        
+        super(data, expandedPlotConfig, expandedGlobalAxisMap);
+    }
+}
+
+/**
+ * Fluent API for configuring an axis of the chart.
+ */
+class AxisConfigAPI<FluentT, AxisMapT> extends AbstractPlotAPI implements IAxisConfigAPI<FluentT> {
+
+    /**
+     * The name of the axis being configured.
+     */
+    protected axisName: string;
+
+    /**
+     * The name of the series being added to the axis.
+     */
+    protected seriesName: string;
+
+    /**
+     * Configuration for the axis.
+     */
+    protected axisConfig: IAxisConfig;
+
+    /**
+     * Series map for the axis.
+     */
+    protected singleAxisMap: AxisMapT;
+
+    constructor(axisName: string, seriesName: string, axisConfig: IAxisConfig, singleAxisMap: AxisMapT, data: ISerializedDataFrame, plotConfig: IPlotConfig, globalAxisMap: IInternalAxisMap) {
+        super(data, plotConfig, globalAxisMap);
+
+        this.axisName = axisName;
+        this.seriesName = seriesName;
+        this.axisConfig = axisConfig;
+        this.singleAxisMap = singleAxisMap;
+    }
+    
+    /**
+     * Set the label for the axis.
+     */
+    axisLabel(label: string): FluentT {
+
+        if (!this.axisConfig.label) {
+            this.axisConfig.label = {};
+        }
+        else if (typeof(this.axisConfig.label) === "string") {
+            this.axisConfig.label = {};
+        }
+
+        this.axisConfig.label.text = label;
+        return this as any as FluentT;
+    }
+    
+    /**
+     * Set the type of the axis.
+     */
+    type(axisType: AxisType): FluentT {
+        this.axisConfig.axisType = axisType;        
+        return this as any as FluentT;
+    }
+
+}
+
+/**
+ * Fluent API for configuring an axis of the chart.
+ */
+class XAxisConfigAPI extends AxisConfigAPI<IXAxisConfigAPI, ISingleAxisMap> implements IXAxisConfigAPI {
+
+    constructor(axisName: string, seriesName: string, axisConfig: IAxisConfig, singleAxisMap: ISingleAxisMap, data: ISerializedDataFrame, plotConfig: IPlotConfig, globalAxisMap: IInternalAxisMap) {
+        super(axisName, seriesName, axisConfig, singleAxisMap, data, plotConfig, globalAxisMap);
+    }
+    
+    /**
+     * Set the position for the label.
+     */
+    axisLabelPosition(position: HorizontalLabelPosition): IXAxisConfigAPI {
+        if (!this.axisConfig.label) {
+            this.axisConfig.label = {};
+        }
+        else if (typeof(this.axisConfig.label) === "string") {
+            this.axisConfig.label = {
+                text: this.axisConfig.label,
+            };
+        }
+
+        this.axisConfig.label.position = position;
+        return this;
+    }
+}
+
+/**
+ * Fluent API for configuring an axis of the chart.
+ */
+class YAxisConfigAPI extends AxisConfigAPI<IYAxisConfigAPI, ISingleYAxisMap> implements IYAxisConfigAPI {
+
+    constructor(axisName: string, seriesName: string, axisConfig: IAxisConfig, singleAxisMap: ISingleAxisMap, data: ISerializedDataFrame, plotConfig: IPlotConfig, globalAxisMap: IInternalAxisMap) {
+        super(axisName, seriesName, axisConfig, singleAxisMap, data, plotConfig, globalAxisMap);
+    }
+
+    /**
+     * Set the label for the series.
+     */
+    seriesLabel(label: string): IYAxisConfigAPI  {
+        this.singleAxisMap.label = label;
+        return this;
+    }
+
+    /**
+     * Set the display format for values of this series.
+     */
+    format(formatString: string): IYAxisConfigAPI  {
+        this.singleAxisMap.format = formatString;
+        return this;
+    }
+    
+    /**
+     * Set the position for the label.
+     */
+    axisLabelPosition(position: VerticalLabelPosition): IYAxisConfigAPI {
+        if (!this.axisConfig.label) {
+            this.axisConfig.label = {};
+        }
+        else if (typeof(this.axisConfig.label) === "string") {
+            this.axisConfig.label = {
+                text: this.axisConfig.label,
+            };
+        }
+
+        this.axisConfig.label.position = position;
+        return this;
+    }
+
+    /**
+     * Configure an explicit x axis for the y axis.
+     */
+    x(seriesName: string): IXAxisConfigAPI {
+        if (!this.singleAxisMap.x) {
+            this.singleAxisMap.x = { series: seriesName };
+        }
+        else if (Sugar.Object.isString(this.singleAxisMap.x)) {
+            this.singleAxisMap.x = { series: seriesName };
+        }
+        else {
+            this.singleAxisMap.x.series = seriesName;
+        }
+
+        return new XAxisConfigAPI("x", seriesName, this.plotConfig.x!, this.singleAxisMap.x, this.data, this.plotConfig, this.globalAxisMap);
     }
 }

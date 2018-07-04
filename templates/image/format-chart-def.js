@@ -5,17 +5,18 @@
  */
 function configureOneAxe (axisName, inputChartDef, c3Axes) {
     var axisMap = inputChartDef.axisMap;
-    var seriesName = axisMap[axisName];
-    if (seriesName) {
-        if (Array.isArray(seriesName)) {
-            for (var i = 0; i < seriesName.length; ++i) {
-                c3Axes[seriesName[i]] = axisName;
-            }
-        }
-        else {
-            c3Axes[seriesName] = axisName;
-        }
+    if (!axisMap) {
+        return;
     }
+
+    var series = axisMap[axisName];
+    if (!series) {
+        return;
+    }
+
+    series.forEach(function (seriesConfig) {
+        c3Axes[seriesConfig.series] = axisName;
+    });
 }
 
 /**
@@ -39,6 +40,7 @@ function determineAxisType (dataType) {
         return "timeseries";
     }
     else { 
+        console.log(dataType);
         return "category";
     }
 }
@@ -58,44 +60,59 @@ function formatValues (inputChartDef, seriesName, dataType, formatString) {
     }
 }
 
+function configureOneSeries(seriesConfig, inputChartDef, axisDef, c3AxisDef) {
+    // Default axis type based on data type.
+    var seriesName = seriesConfig.series;
+    var dataType = inputChartDef.data.columns[seriesName];
+    c3AxisDef.type = determineAxisType(dataType);
+
+    if (axisDef) {
+        if (axisDef.axisType) {
+            c3AxisDef.type = axisDef.axisType;
+        }
+
+        if (axisDef.label) {
+            c3AxisDef.label = axisDef.label;
+        }
+    }
+
+    c3AxisDef.show = true;
+
+    if (seriesConfig.format) {
+        if (!c3AxisDef.tick) {
+            c3AxisDef.tick = {};
+        }
+        
+        c3AxisDef.tick.values = formatValues(inputChartDef, series, dataType, seriesConfig.format);
+    }
+}
+
 /**
  * Configure a single axis.
  */
 function configureOneAxis (axisName, inputChartDef, c3Axis) {
     var axisMap = inputChartDef.axisMap;
+    if (!axisMap) {
+        return;
+    }
+
     c3Axis[axisName] = { show: false };
 
-    var seriesName = axisMap[axisName];
-    if (seriesName) { // Only configure the c3 axis if we are making use of it.
-        var axisDef = inputChartDef.plotDef[axisName];
-        var c3AxisDef = c3Axis[axisName];
+    var axisDef = inputChartDef.plotDef[axisName];
+    var c3AxisDef = c3Axis[axisName];
 
-        // Default axis type based on data type.
-        var dataType = inputChartDef.data.columns[seriesName];
-        c3AxisDef.type = determineAxisType(dataType);
+    var series = axisMap[axisName];
+    if (!series) {
+        return;
+    }
 
-        if (axisDef) {
-            if (axisDef.axisType) {
-                c3AxisDef.type = axisDef.axisType;
-            }
-
-            if (axisDef.label) {
-                c3AxisDef.label = axisDef.label;
-            }
-        }
-
-        c3AxisDef.show = true;
-
-        if (inputChartDef.axisMap.series) {
-            var seriesConfig = inputChartDef.axisMap.series[seriesName];
-            if (seriesConfig && seriesConfig.format) {
-                if (!c3AxisDef.tick) {
-                    c3AxisDef.tick = {};
-                }
-                
-                c3AxisDef.tick.values = formatValues(inputChartDef, seriesName, dataType, seriesConfig.format);
-            }
-        }
+    if (Array.isArray(series)) {
+        series.forEach(function (seriesConfig) {
+            configureOneSeries(seriesConfig, inputChartDef, axisDef, c3AxisDef);
+        })
+    }
+    else {
+        configureOneSeries(series, inputChartDef, axisDef, c3AxisDef);        
     }
 };
 
@@ -113,38 +130,96 @@ function configureAxis (inputChartDef) {
 }
 
 /**
- * Extract series names to display on the particular axis.
- */
-function extractSeriesNames (axisName, inputChartDef) {
-    if (!inputChartDef.axisMap[axisName]) {
-        return [];
-    }
-    
-    return Array.isArray(inputChartDef.axisMap[axisName]) ? 
-        inputChartDef.axisMap[axisName] : 
-        [inputChartDef.axisMap[axisName]];
-}
-
-/**
  * Configure the names of series.
  */
 function configureSeriesNames (inputChartDef) {
     var seriesNames = {};
 
-    if (inputChartDef.axisMap.series) {
-        for (var seriesName in inputChartDef.axisMap.series) {
-            var seriesConfig = inputChartDef.axisMap.series[seriesName];
-            if (typeof(seriesConfig) === "string") {
-                seriesNames[seriesName] = seriesConfig;
+    if (inputChartDef.axisMap) {
+        for (var axis in inputChartDef.axisMap) {
+            var series = inputChartDef.axisMap[axis];
+            if (Array.isArray(series)) {
+                series.forEach(function (seriesConfig) {
+                    if (seriesConfig.label) {
+                        seriesNames[seriesConfig.series] = seriesConfig.label;
+                    }                
+                });    
             }
-            else if (seriesConfig.label !== undefined) {
-                seriesNames[seriesName] = seriesConfig.label;
+            else {
+                if (series.label) {
+                    seriesNames[series.series] = series.label;
+                }            
             }
         }
     }
 
     return seriesNames;
 };
+
+/**
+ * Extract x axis series for y axis series.
+ */
+function extractXS (axisName, inputChartDef, xs) {
+    var axisMap = inputChartDef.axisMap;
+    if (!axisMap) {
+        return;
+    }
+
+    var series = axisMap[axisName];
+    if (!series) {
+        return;
+    }
+
+    series.forEach(function (seriesConfig) {
+        const ySeriesName = seriesConfig.series;
+        if (xs[ySeriesName]) {
+            return; // Already set.
+        }
+
+        if (seriesConfig.x) {
+            xs[ySeriesName] = seriesConfig.x.series; // X explicitly associated with Y.
+        }
+        else if (inputChartDef.axisMap && inputChartDef.axisMap.x) {
+            xs[ySeriesName] = inputChartDef.axisMap.x.series; // Default X.
+        }       
+    });
+}
+
+function addColumn (seriesName, inputChartDef, columns, columnsSet) {
+    if (columnsSet[seriesName]) {
+        return; // Already set.
+    }
+
+    const columnData = inputChartDef.data.values.map(row => row[seriesName]);
+
+    columnsSet[seriesName] = true;
+    columns.push([seriesName].concat(columnData));
+}
+
+/**
+ * Extract column data.
+ */
+function extractColumns (axisName, inputChartDef, columns, columnsSet) {
+    var axisMap = inputChartDef.axisMap;
+    if (!axisMap) {
+        return;
+    }
+
+    var series = axisMap[axisName];
+    if (!series) {
+        return;
+    }
+
+    series.forEach(function (seriesConfig) {
+
+        addColumn(seriesConfig.series, inputChartDef, columns, columnsSet);
+
+        const xSeriesName = seriesConfig.x && seriesConfig.x.series || inputChartDef.axisMap && inputChartDef.axisMap.x && inputChartDef.axisMap.x.series || null;
+        if (xSeriesName) {
+            addColumn(xSeriesName, inputChartDef, columns, columnsSet);
+        }
+    });
+}
 
 /**
  * Convert a data-forge-plot chart definition to a C3 chart definition.
@@ -162,27 +237,34 @@ function formatChartDef (inputChartDef) {
                 var columnName = columnNames[columnIndex];
                 if (inputChartDef.data.columns[columnName] === "date") { // This column is a date.
                     for (var valueIndex = 0; valueIndex < values.length; ++valueIndex) {
-                        const row = values[valueIndex];
+                        var row = values[valueIndex];
                         row[columnName] = moment(row[columnName], moment.ISO_8601).toDate();
                     }    
                 }
             }
         }
     }
+
+    var xs = {};
+    var xsSet = {};
+    extractXS("y", inputChartDef, xs, xsSet);
+    extractXS("y2", inputChartDef, xs, xsSet);
+
+    var columns = [];
+    var columnsSet = {};
+    extractColumns("y", inputChartDef, columns, columnsSet);
+    extractColumns("y2", inputChartDef, columns, columnsSet);
     
     var c3ChartDef = {
         bindto: "#chart",
         size: {
-            width: inputChartDef.plotDef.width || 1200,
-            height: inputChartDef.plotDef.height || 600,
+            width: inputChartDef.plotDef && inputChartDef.plotDef.width || 1200,
+            height: inputChartDef.plotDef && inputChartDef.plotDef.height || 600,
         },
         data: {
-            json: values,
-            keys: {
-                x: inputChartDef.axisMap.x,
-                value: extractSeriesNames("y", inputChartDef).concat(extractSeriesNames("y2", inputChartDef)),
-            },
-            type: inputChartDef.plotDef.chartType || "line",
+            xs: xs,
+            columns: columns,
+            type: inputChartDef.plotDef && inputChartDef.plotDef.chartType || "line",
             axes: configureAxes(inputChartDef),
             names: configureSeriesNames(inputChartDef),
         },
@@ -197,3 +279,5 @@ function formatChartDef (inputChartDef) {
 
     return c3ChartDef;
 };
+
+module.exports = formatChartDef; //todo: Will this work ok in the web app?

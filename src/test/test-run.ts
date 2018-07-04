@@ -158,7 +158,7 @@ async function main(): Promise<void> {
         //.renderImage("./test-series2.png", { openImage: true });
         .x()
             .series("__index__")
-                .seriesLabel("Fooey")
+                .label("Fooey")
                 .format("0.00")
         .exportWeb("c:/temp/test-output-5", { openBrowser: true, overwrite: true });
 }

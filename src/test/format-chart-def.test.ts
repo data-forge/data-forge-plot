@@ -1,0 +1,503 @@
+import { assert, expect } from 'chai';
+import 'mocha';
+import { IChartDef } from '../chart-def';
+
+const formatChartDef = require("../../templates/image/format-chart-def");
+
+describe('format-chart-def', () => {
+
+    it('throws when configuration is invalid', () => {
+        expect (() => formatChartDef({})).to.throw();
+    })
+
+    it('minimal chart def', ()  => {
+
+        const chartDef: IChartDef = {
+            data: {
+                columnOrder: ["__index__", "__value__"],
+                columns: {
+                    "__index__": "number",
+                     "__value__": "number",
+                },
+                values: [
+                    {
+                        __index__: 5,
+                        __value__: 10,
+                    },
+                    {
+                        __index__: 6,
+                        __value__: 20,
+                    },
+                ],
+            },
+
+            plotDef: {
+            },
+
+            axisMap: {
+                x: { series: "__index__" },
+                y: [ { series: "__value__" } ],
+                y2: [],
+            },
+        };
+
+        const c3ChartDef = formatChartDef(chartDef);
+        expect(c3ChartDef).to.eql({
+            "bindto": "#chart",
+            "size": {
+                "width": 1200,
+                "height": 600
+            },
+            "data": {
+                "xs": {
+                    "__value__": "__index__"
+                },
+                "columns": [
+                    [
+                        "__value__",
+                        10,
+                        20
+                    ],
+                    [
+                        "__index__",
+                        5,
+                        6
+                    ]
+                ],
+                "type": "line",
+                "axes": {
+                    "__value__": "y"
+                },
+                "names": {}
+            },
+            "axis": {
+                "x": {
+                    "show": true,
+                    "type": "indexed"
+                },
+                "y": {
+                    "show": true,
+                    "type": "indexed"
+                },
+                "y2": {
+                    "show": false
+                }
+            },
+            "transition": {
+                "duration": 0
+            },
+            "point": {
+                "show": false
+            }
+        });
+    });
+
+    it('can set x and y axis expicitly', ()  => {
+
+        const chartDef: IChartDef = {
+            data: {
+                columnOrder: ["__index__", "a", "b", "c", "d"],
+                columns: {
+                    "__index__": "number",
+                     "a": "number",
+                     "b": "number",
+                     "c": "number",
+                     "d": "number",
+                },
+                values: [
+                    {
+                        __index__: 5,
+                        a: 10,
+                        b: 100,
+                        c: 1000,
+                        d: 10000,
+                    },
+                    {
+                        __index__: 6,
+                        a: 20,
+                        b: 200,
+                        c: 2000,
+                        d: 20000,
+                    },
+                ],
+            },
+
+            plotDef: {
+            },
+
+            axisMap: {
+                x: { series: "a" },
+                y: [ { series: "b" } ],
+                y2: [],
+            },
+        };
+
+        const c3ChartDef = formatChartDef(chartDef);
+        expect(c3ChartDef).to.eql({                                 
+            "bindto": "#chart",           
+            "size": {                     
+                "width": 1200,            
+                "height": 600             
+            },                            
+            "data": {
+                "xs": {
+                    "b": "a",
+                },
+                "columns": [
+                    ["b", 100, 200],
+                    ["a", 10, 20],
+                ],
+                "type": "line",           
+                "axes": {                 
+                    "b": "y",             
+                },                        
+                "names": {}               
+            },                            
+            "axis": {                     
+                "x": {                    
+                    "show": true,         
+                    "type": "indexed"     
+                },                        
+                "y": {                    
+                    "show": true,         
+                    "type": "indexed"    
+                },                        
+                "y2": {                   
+                    "show": false,
+                }                         
+            },                            
+            "transition": {               
+                "duration": 0             
+            },                            
+            "point": {                    
+                "show": false             
+            }                             
+        }                                 );
+    });
+
+    it('can set second y axis', ()  => {
+
+        const chartDef: IChartDef = {
+            data: {
+                columnOrder: ["__index__", "a", "b", "c", "d"],
+                columns: {
+                    "__index__": "number",
+                     "a": "number",
+                     "b": "number",
+                     "c": "number",
+                     "d": "number",
+                },
+                values: [
+                    {
+                        __index__: 5,
+                        a: 10,
+                        b: 100,
+                        c: 1000,
+                        d: 10000,
+                    },
+                    {
+                        __index__: 6,
+                        a: 20,
+                        b: 200,
+                        c: 2000,
+                        d: 20000,
+                    },
+                ],
+            },
+
+            plotDef: {
+            },
+
+            axisMap: {
+                x: { series: "a" },
+                y: [ { series: "b" } ],
+                y2: [ { series: "c" } ],
+            },
+        };
+
+        const c3ChartDef = formatChartDef(chartDef);
+        expect(c3ChartDef).to.eql({
+            "bindto": "#chart",
+            "size": {
+                "width": 1200,
+                "height": 600
+            },
+            "data": {
+                "xs": {
+                    "b": "a",
+                    "c": "a"
+                },
+                "columns": [
+                    [
+                        "b",
+                        100,
+                        200
+                    ],
+                    [
+                        "a",
+                        10,
+                        20
+                    ],
+                    [
+                        "c",
+                        1000,
+                        2000
+                    ]
+                ],
+                "type": "line",
+                "axes": {
+                    "b": "y",
+                    "c": "y2"
+                },
+                "names": {}
+            },
+            "axis": {
+                "x": {
+                    "show": true,
+                    "type": "indexed"
+                },
+                "y": {
+                    "show": true,
+                    "type": "indexed"
+                },
+                "y2": {
+                    "show": true,
+                    "type": "indexed"
+                }
+            },
+            "transition": {
+                "duration": 0
+            },
+            "point": {
+                "show": false
+            }
+        });
+    });
+    
+    it('can set multiple y axis', ()  => {
+
+        const chartDef: IChartDef = {
+            data: {
+                columnOrder: ["__index__", "a", "b", "c", "d", "e"],
+                columns: {
+                    "__index__": "number",
+                     "a": "number",
+                     "b": "number",
+                     "c": "number",
+                     "d": "number",
+                     "e": "number",
+                },
+                values: [
+                    {
+                        __index__: 5,
+                        a: 10,
+                        b: 100,
+                        c: 1000,
+                        d: 10000,
+                        e: 100000,
+                    },
+                    {
+                        __index__: 6,
+                        a: 20,
+                        b: 200,
+                        c: 2000,
+                        d: 20000,
+                        e: 200000,
+                    },
+                ],
+            },
+
+            plotDef: {
+            },
+
+            axisMap: {
+                x: { series: "a" },
+                y: [ { series: "b" }, { series: "c" } ],
+                y2: [ { series: "d" }, { series: "e" } ],
+            },
+        };
+
+        const c3ChartDef = formatChartDef(chartDef);
+        
+        expect(c3ChartDef).to.eql({
+            "bindto": "#chart",
+            "size": {
+                "width": 1200,
+                "height": 600
+            },
+            "data": {
+                "xs": {
+                    "b": "a",
+                    "c": "a",
+                    "d": "a",
+                    "e": "a"
+                },
+                "columns": [
+                    [
+                        "b",
+                        100,
+                        200
+                    ],
+                    [
+                        "a",
+                        10,
+                        20
+                    ],
+                    [
+                        "c",
+                        1000,
+                        2000
+                    ],
+                    [
+                        "d",
+                        10000,
+                        20000
+                    ],
+                    [
+                        "e",
+                        100000,
+                        200000
+                    ]
+                ],
+                "type": "line",
+                "axes": {
+                    "b": "y",
+                    "c": "y",
+                    "d": "y2",
+                    "e": "y2"
+                },
+                "names": {}
+            },
+            "axis": {
+                "x": {
+                    "show": true,
+                    "type": "indexed"
+                },
+                "y": {
+                    "show": true,
+                    "type": "indexed"
+                },
+                "y2": {
+                    "show": true,
+                    "type": "indexed"
+                }
+            },
+            "transition": {
+                "duration": 0
+            },
+            "point": {
+                "show": false
+            }
+        });
+    });
+    
+    it('can set x axis for y axis', ()  => {
+
+        const chartDef: IChartDef = {
+            data: {
+                columnOrder: ["__index__", "a", "b", "c", "d", "e"],
+                columns: {
+                    "__index__": "number",
+                     "a": "number",
+                     "b": "number",
+                     "c": "number",
+                     "d": "number",
+                     "e": "number",
+                },
+                values: [
+                    {
+                        __index__: 5,
+                        a: 10,
+                        b: 100,
+                        c: 1000,
+                        d: 10000,
+                        e: 100000,
+                    },
+                    {
+                        __index__: 6,
+                        a: 20,
+                        b: 200,
+                        c: 2000,
+                        d: 20000,
+                        e: 200000,
+                    },
+                ],
+            },
+
+            plotDef: {
+            },
+
+            axisMap: {
+                x: { series: "__index__" },
+                y: [ { series: "b", x: { series: "a" } }, { series: "c", x: { series: "d" } } ],
+                y2: [ { series: "d", x: { series: "a" } } ],
+            },
+        };
+
+        const c3ChartDef = formatChartDef(chartDef);
+        expect(c3ChartDef).to.eql({
+            "bindto": "#chart",
+            "size": {
+                "width": 1200,
+                "height": 600
+            },
+            "data": {
+                "xs": {       
+                    "b": "a", 
+                    "c": "d", 
+                    "d": "a"  
+                },
+                "columns": [
+                    [
+                        "b",
+                        100,
+                        200
+                    ],
+                    [
+                        "a",
+                        10,
+                        20
+                    ],
+                    [
+                        "c",
+                        1000,
+                        2000
+                    ],
+                    [
+                        "d",
+                        10000,
+                        20000
+                    ]
+                ],
+                "type": "line",
+                "axes": {
+                    "b": "y",
+                    "c": "y",
+                    "d": "y2"
+                },
+                "names": {}
+            },
+            "axis": {
+                "x": {
+                    "show": true,
+                    "type": "indexed"
+                },
+                "y": {
+                    "show": true,
+                    "type": "indexed"
+                },
+                "y2": {
+                    "show": true,
+                    "type": "indexed"
+                }
+            },
+            "transition": {
+                "duration": 0
+            },
+            "point": {
+                "show": false
+            }
+        });
+    });
+
+});
