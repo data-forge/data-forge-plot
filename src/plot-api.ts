@@ -349,10 +349,20 @@ export abstract class AbstractPlotAPI implements IPlotAPI {
      * The JSON definition of the chart can be used to instantiate the chart in a browser.
      */
     serialize(): IChartDef {
+        const defaultedGlobalAxis = Object.assign({}, this.globalAxisMap);
+        if (defaultedGlobalAxis.y.length === 0) {
+            // Default the primary Y axis.
+            defaultedGlobalAxis.y = this.data.columnOrder
+                .filter(columnName => columnName !== defaultedGlobalAxis.x.series)
+                .map(columnName => ({
+                    series: columnName,
+                }));
+        }
+        
         return {
             data: this.data,
             plotDef: this.plotConfig,
-            axisMap: this.globalAxisMap,
+            axisMap: defaultedGlobalAxis,
         };
     }
 }
@@ -454,15 +464,6 @@ export class PlotAPI extends AbstractPlotAPI {
                     ];            
                 }        
             }
-        }
-
-        if (expandedGlobalAxisMap.y.length === 0) {
-            // Default the primary Y axis.
-            expandedGlobalAxisMap.y = data.columnOrder
-                .filter(columnName => columnName !== expandedGlobalAxisMap.x.series)
-                .map(columnName => ({
-                    series: columnName,
-                }));
         }
         
         super(data, expandedPlotConfig, expandedGlobalAxisMap);
