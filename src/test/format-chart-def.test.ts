@@ -1,8 +1,7 @@
 import { assert, expect } from 'chai';
 import 'mocha';
 import { IChartDef } from '../chart-def';
-
-const formatChartDef = require("../../templates/image/format-chart-def");
+import { formatChartDef } from '../../templates/c3/format-chart-def';
 
 describe('format-chart-def', () => {
 

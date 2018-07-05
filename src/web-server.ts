@@ -80,7 +80,7 @@ export class WebServer implements IWebServer {
                     const app = express();
                     this.server = http.createServer(app);
             
-                    const staticFilesPath = path.join(parentDir, "templates/image");
+                    const staticFilesPath = path.join(parentDir, "templates/c3/image");
                     const staticFilesMiddleWare = express.static(staticFilesPath);
                     app.use("/", staticFilesMiddleWare);
             

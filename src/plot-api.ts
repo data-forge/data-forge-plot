@@ -312,8 +312,8 @@ export abstract class AbstractPlotAPI implements IPlotAPI {
 
         const packageFolderPath = await findPackageDir(__dirname);
 
-        await jetpack.copyAsync(path.join(packageFolderPath, "templates", "web"), outputFolderPath);
-        await jetpack.copyAsync(path.join(packageFolderPath, "templates", "image", "format-chart-def.js"), path.join(outputFolderPath, "format-chart-def.js"));
+        await jetpack.copyAsync(path.join(packageFolderPath, "templates", "c3", "web"), outputFolderPath);
+        await jetpack.copyAsync(path.join(packageFolderPath, "templates", "c3", "image", "format-chart-def.js"), path.join(outputFolderPath, "format-chart-def.js"));
 
         const jsonChartDef = JSON.stringify(this.serialize(), null, 4);
 
@@ -337,8 +337,8 @@ export abstract class AbstractPlotAPI implements IPlotAPI {
 
         const packageFolderPath = await findPackageDir(__dirname);
 
-        await jetpack.copyAsync(path.join(packageFolderPath, "templates", "nodejs"), outputFolderPath);
-        await jetpack.copyAsync(path.join(packageFolderPath, "templates", "image", "format-chart-def.js"), path.join(outputFolderPath, "public", "format-chart-def.js"));
+        await jetpack.copyAsync(path.join(packageFolderPath, "templates", "c3", "nodejs"), outputFolderPath);
+        await jetpack.copyAsync(path.join(packageFolderPath, "templates", "c3", "image", "format-chart-def.js"), path.join(outputFolderPath, "public", "format-chart-def.js"));
 
         const jsonChartDef = JSON.stringify(this.serialize(), null, 4);
         await jetpack.writeAsync(path.join(outputFolderPath, "chart-def.json"), jsonChartDef);

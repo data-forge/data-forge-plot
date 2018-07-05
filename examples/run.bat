@@ -5,3 +5,6 @@ ts-node example-4.ts
 ts-node example-5.ts
 ts-node example-6.ts
 ts-node example-7.ts
+ts-node example-8.ts
+ts-node example-9.ts
+ts-node example-10.ts
