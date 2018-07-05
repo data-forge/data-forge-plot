@@ -34,7 +34,11 @@ describe('data-forge-plot - series', () => {
                     }                             
                 ]                                 
             },                                    
-            "plotDef": {},                        
+            "plotDef": {
+                "x": {},
+                "y": {},
+                "y2": {},
+            },
             "axisMap": {                          
                 "x": {                            
                     "series": "__index__"         

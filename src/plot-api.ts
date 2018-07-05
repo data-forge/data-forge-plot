@@ -376,15 +376,15 @@ export class PlotAPI extends AbstractPlotAPI {
         assert.isObject(data, "Expected 'data' parameter to PlotAPI constructor to be a serialized dataframe.");
 
         const expandedPlotConfig: IPlotConfig = Object.assign({}, defaultPlotDef, plotConfig); // Clone the def and plot map so they can be updated by the fluent API.
-        if (expandedPlotConfig.x) {
+        if (!expandedPlotConfig.x) {
             expandedPlotConfig.x = {};
         }
 
-        if (expandedPlotConfig.y) {
+        if (!expandedPlotConfig.y) {
             expandedPlotConfig.y = {};
         }
 
-        if (expandedPlotConfig.y2) {
+        if (!expandedPlotConfig.y2) {
             expandedPlotConfig.y2 = {};
         }
         

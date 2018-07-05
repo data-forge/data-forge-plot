@@ -36,7 +36,11 @@ describe('data-forge-plot - dataframe fluent', () => {
                     }
                 ]
             },
-            "plotDef": {},
+            "plotDef": {
+                "x": {},
+                "y": {},
+                "y2": {},
+            },
             "axisMap": {
                 "x": {
                     "series": "__index__"
