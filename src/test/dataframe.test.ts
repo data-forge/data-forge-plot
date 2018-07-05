@@ -3,7 +3,7 @@ import 'mocha';
 import { DataFrame } from 'data-forge';
 import "../index";
 
-describe('data-forge-plot - dataframe', () => {
+describe('data-forge-plot - dataframe configuration', () => {
 
     it('plot dataframe with no configuration', ()  => {
 
@@ -35,6 +35,7 @@ describe('data-forge-plot - dataframe', () => {
                 ]
             },
             "plotDef": {
+                "template": "c3",
                 "x": {},
                 "y": {},
                 "y2": {},
@@ -53,4 +54,44 @@ describe('data-forge-plot - dataframe', () => {
         });
     });
 
+    it('cal select template', ()  => {
+
+        const series = new DataFrame({ index: [ 1 ], values: [{ A: 10 } ] });
+        const plotAPI = series.plot({ template: "woo" });
+        expect(plotAPI.serialize()).to.eql({
+            "data": {
+                "columnOrder": [
+                    "A",
+                    "__index__"
+                ],
+                "columns": {
+                    "A": "number",
+                    "__index__": "number"
+                },
+                "values": [
+                    {
+                        "A": 10,
+                        "__index__": 1
+                    },
+                ]
+            },
+            "plotDef": {
+                "template": "woo",
+                "x": {},
+                "y": {},
+                "y2": {},
+            },
+            "axisMap": {
+                "x": {
+                    "series": "__index__"
+                },
+                "y": [
+                    {
+                        "series": "A"
+                    }
+                ],
+                "y2": []
+            }
+        });
+    });
 });

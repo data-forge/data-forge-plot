@@ -37,6 +37,51 @@ describe('data-forge-plot - dataframe fluent', () => {
                 ]
             },
             "plotDef": {
+                "template": "c3",
+                "x": {},
+                "y": {},
+                "y2": {},
+            },
+            "axisMap": {
+                "x": {
+                    "series": "__index__"
+                },
+                "y": [
+                    {
+                        "series": "A"
+                    }
+                ],
+                "y2": []
+            }
+        });
+    });
+
+
+    it('can set template', ()  => {
+
+        const series = new DataFrame({ index: [ 1 ], values: [{ A: 10 }, ] });
+        const plotAPI = series.plot()
+            .template("wug");
+
+        expect(plotAPI.serialize()).to.eql({
+            "data": {
+                "columnOrder": [
+                    "A",
+                    "__index__"
+                ],
+                "columns": {
+                    "A": "number",
+                    "__index__": "number"
+                },
+                "values": [
+                    {
+                        "A": 10,
+                        "__index__": 1
+                    },
+                ]
+            },
+            "plotDef": {
+                "template": "wug",
                 "x": {},
                 "y": {},
                 "y2": {},

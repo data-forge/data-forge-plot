@@ -73,6 +73,12 @@ export interface INodejsExportOptions {
  */
 export interface IPlotAPI {
 
+    /***
+     * Set the chart template to use.
+     * This defaults to "c3".
+     */
+    template(templateName: string): IPlotAPI;
+
     /**
      * Set the type of the chart to be plotted.
      * 
@@ -222,19 +228,27 @@ export abstract class AbstractPlotAPI implements IPlotAPI {
     protected globalAxisMap: IInternalAxisMap;
 
     constructor(data: ISerializedDataFrame, plotConfig: IPlotConfig, globalAxisMap: IInternalAxisMap) {
-    
         this.data = data;
         this.plotConfig = plotConfig;
         this.globalAxisMap = globalAxisMap;
     }
 
+    /***
+     * Set the chart template to use.
+     * This defaults to "c3".
+     */
+    template(templateName: string): IPlotAPI {
+        this.plotConfig.template = templateName; //TODO: could call toLower, would have to also toLower the config.
+        return this;
+    }
+    
     /**
      * Set the type of the chart to be plotted.
      * 
      * @param chartType Specifies the chart type.
      */
     chartType(chartType: ChartType): IPlotAPI {
-        this.plotConfig.chartType = chartType;
+        this.plotConfig.chartType = chartType; //TODO: could call toLower, would have to also toLower the config.
         return this;
     }
 
@@ -312,8 +326,8 @@ export abstract class AbstractPlotAPI implements IPlotAPI {
 
         const packageFolderPath = await findPackageDir(__dirname);
 
-        await jetpack.copyAsync(path.join(packageFolderPath, "templates", "c3", "web"), outputFolderPath);
-        await jetpack.copyAsync(path.join(packageFolderPath, "templates", "c3", "image", "format-chart-def.js"), path.join(outputFolderPath, "format-chart-def.js"));
+        await jetpack.copyAsync(path.join(packageFolderPath, "templates", this.plotConfig.template!, "web"), outputFolderPath);
+        await jetpack.copyAsync(path.join(packageFolderPath, "templates", this.plotConfig.template!, "image", "format-chart-def.js"), path.join(outputFolderPath, "format-chart-def.js"));
 
         const jsonChartDef = JSON.stringify(this.serialize(), null, 4);
 
@@ -337,8 +351,8 @@ export abstract class AbstractPlotAPI implements IPlotAPI {
 
         const packageFolderPath = await findPackageDir(__dirname);
 
-        await jetpack.copyAsync(path.join(packageFolderPath, "templates", "c3", "nodejs"), outputFolderPath);
-        await jetpack.copyAsync(path.join(packageFolderPath, "templates", "c3", "image", "format-chart-def.js"), path.join(outputFolderPath, "public", "format-chart-def.js"));
+        await jetpack.copyAsync(path.join(packageFolderPath, "templates", this.plotConfig.template!, "nodejs"), outputFolderPath);
+        await jetpack.copyAsync(path.join(packageFolderPath, "templates", this.plotConfig.template!, "image", "format-chart-def.js"), path.join(outputFolderPath, "public", "format-chart-def.js"));
 
         const jsonChartDef = JSON.stringify(this.serialize(), null, 4);
         await jetpack.writeAsync(path.join(outputFolderPath, "chart-def.json"), jsonChartDef);
@@ -376,6 +390,10 @@ export class PlotAPI extends AbstractPlotAPI {
         assert.isObject(data, "Expected 'data' parameter to PlotAPI constructor to be a serialized dataframe.");
 
         const expandedPlotConfig: IPlotConfig = Object.assign({}, defaultPlotDef, plotConfig); // Clone the def and plot map so they can be updated by the fluent API.
+        if (!expandedPlotConfig.template) {
+            expandedPlotConfig.template = "c3";
+        }
+
         if (!expandedPlotConfig.x) {
             expandedPlotConfig.x = {};
         }

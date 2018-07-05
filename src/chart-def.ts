@@ -78,6 +78,12 @@ export interface IAxisConfig {
 export interface IPlotConfig {
 
     /**
+     * The template to use for the chart.
+     * Defaults to "c3".
+     */
+    template?: string;
+
+    /**
      * The type of chart to render.
      */
     chartType?: ChartType;
