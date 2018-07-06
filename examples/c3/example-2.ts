@@ -9,7 +9,7 @@ const data1 = [30, 200, 100, 400, 150, 250];
 const data2 = [130, 340, 200, 500, 250, 350];
 
 import { DataFrame } from 'data-forge';
-import '../src/index';
+import '../../src/index';
 import * as fs from 'fs-extra';
 import * as path from 'path';
 

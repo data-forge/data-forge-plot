@@ -9,7 +9,7 @@ const data1 = [30, 200, 100, 400, 150, 250];
 const data2 = [130, 340, 200, 500, 250, 350];
 
 import { DataFrame } from 'data-forge';
-import '../src/index';
+import '../../src/index';
 import * as fs from 'fs-extra';
 import * as path from 'path';
 
@@ -32,13 +32,11 @@ async function main(): Promise<void> {
     
     console.log(df.toString());
     
-    const plot = df.plot()
-        .x("date")
-        .y("data1")
-        .y("data2");
+    const plot = df.plot({}, { x: "date", y: [ "data1", "data2" ]});
     await plot.renderImage(path.join(outputPath, "image.png"), { openImage: true });
     await plot.exportWeb(path.join(outputPath, "web"), { overwrite: true, openBrowser: true });
-    await plot.exportNodejs(path.join(outputPath, "nodejs"), { overwrite: true });    
+    await plot.exportNodejs(path.join(outputPath, "nodejs"), { overwrite: true });
+    
 }
 
 main()

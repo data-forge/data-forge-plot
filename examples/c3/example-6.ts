@@ -9,10 +9,10 @@ const data2 = [130, 100, 140, 200, 150, 50];
 const data3 = [130, -150, 200, 300, -200, 100];
 
 import { DataFrame } from 'data-forge';
-import '../src/index';
+import '../../src/index';
 import * as fs from 'fs-extra';
 import * as path from 'path';
-import { ChartType } from '../src/chart-def';
+import { ChartType } from '../../src/chart-def';
 
 fs.emptyDirSync("./output");
 

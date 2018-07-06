@@ -1,4 +1,4 @@
-import { ChartType, IChartDef, VerticalLabelPosition, HorizontalLabelPosition, AxisType, IPlotConfig, IAxisMap, IAxisConfig, IExpandedAxisMap, ISingleAxisMap, ISingleYAxisMap } from "./chart-def";
+import { ChartType, IChartDef, VerticalLabelPosition, HorizontalLabelPosition, AxisType, IPlotConfig, IAxisMap, IAxisConfig, IExpandedAxisMap, ISingleAxisMap, ISingleYAxisMap, IExpandedPlotConfig } from "./chart-def";
 import { assert } from "chai";
 import { IChartRenderer, ChartRenderer } from "./render-chart";
 const opn = require('opn');
@@ -7,8 +7,14 @@ import * as fs from 'fs-extra';
 import * as Sugar from 'sugar';
 import { findPackageDir } from './find-package-dir';
 import { ISerializedDataFrame } from 'data-forge/build/lib/dataframe';
+import * as globby from 'globby';
+import * as Handlebars from 'handlebars';
 
 const jetpack = require('fs-jetpack');
+
+Handlebars.registerHelper('json', context => {
+    return JSON.stringify(context, null, 4);
+});
 
 //
 // Reusable chart renderer. 
@@ -24,9 +30,6 @@ export async function startPlot(): Promise<void> {
 export async function endPlot(): Promise<void> {
     await globalChartRenderer!.end();
     globalChartRenderer = null;
-}
-
-export const defaultPlotDef: IPlotConfig = {
 }
 
 /**
@@ -220,14 +223,14 @@ export abstract class AbstractPlotAPI implements IPlotAPI {
     /**
      * Defines the chart that is to be plotted.
      */
-    protected plotConfig: IPlotConfig;
+    protected plotConfig: IExpandedPlotConfig;
 
     /**
      * Defines how the data is mapped to the axis' in the chart.
      */
     protected globalAxisMap: IInternalAxisMap;
 
-    constructor(data: ISerializedDataFrame, plotConfig: IPlotConfig, globalAxisMap: IInternalAxisMap) {
+    constructor(data: ISerializedDataFrame, plotConfig: IExpandedPlotConfig, globalAxisMap: IInternalAxisMap) {
         this.data = data;
         this.plotConfig = plotConfig;
         this.globalAxisMap = globalAxisMap;
@@ -315,6 +318,47 @@ export abstract class AbstractPlotAPI implements IPlotAPI {
         }
     }
 
+    //
+    // Read a file to expand it.
+    //
+    private readFile(inputFilePath: string): Promise<string> {
+        return new Promise((resolve, reject) => {
+            fs.readFile(inputFilePath, 'utf8', (err, data) => {
+                if (err) {
+                    reject(err);
+                }
+                else {
+                    resolve(data);
+                }
+            });
+        });
+    }
+
+    //
+    // Write an expanded file.
+    //
+    private writeFile(outputFilePath: string , fileContent: string): Promise<void> {
+        return new Promise((resolve, reject) => {
+            fs.writeFile(outputFilePath, fileContent, err => {
+                if (err) {
+                    reject(err);
+                }
+                else {
+                    resolve();
+                }
+            });
+        });
+    }
+
+    //
+    // Expand a file using a mustach template.
+    //
+    private async expandFile(inputFilePath: string, chartDef: IChartDef): Promise<void> {
+        const fileContent = await this.readFile(inputFilePath);
+        const expandedContent = Handlebars.compile(fileContent)({ chartDef: chartDef });
+        await this.writeFile(inputFilePath, expandedContent);
+    }
+
     /**
      * Export an interactive web visualization of the chart.
      */
@@ -324,16 +368,16 @@ export abstract class AbstractPlotAPI implements IPlotAPI {
             await fs.remove(outputFolderPath);
         }
 
+        const chartDef = this.serialize();
+
         const packageFolderPath = await findPackageDir(__dirname);
+        const templateFolderPath = path.join(packageFolderPath, "templates", this.plotConfig.template!, "web");
+        await jetpack.copyAsync(templateFolderPath, outputFolderPath);
 
-        await jetpack.copyAsync(path.join(packageFolderPath, "templates", this.plotConfig.template!, "web"), outputFolderPath);
-        await jetpack.copyAsync(path.join(packageFolderPath, "templates", this.plotConfig.template!, "image", "format-chart-def.js"), path.join(outputFolderPath, "format-chart-def.js"));
+        const templateFileWildcard = path.join(outputFolderPath, "*");
+        const templateFilePaths = await globby(templateFileWildcard);
 
-        const jsonChartDef = JSON.stringify(this.serialize(), null, 4);
-
-        const indexJsPath = path.join(outputFolderPath, "index.js");
-        await jetpack.appendAsync(indexJsPath, "var chartDef =\r\n");
-        await jetpack.appendAsync(indexJsPath, jsonChartDef);
+        await Promise.all(templateFilePaths.map(templateFilePath => this.expandFile(templateFilePath, chartDef)));
 
         if (exportOptions && exportOptions.openBrowser) {
             opn("file://" + path.resolve(path.join(outputFolderPath, "index.html")));
@@ -352,7 +396,6 @@ export abstract class AbstractPlotAPI implements IPlotAPI {
         const packageFolderPath = await findPackageDir(__dirname);
 
         await jetpack.copyAsync(path.join(packageFolderPath, "templates", this.plotConfig.template!, "nodejs"), outputFolderPath);
-        await jetpack.copyAsync(path.join(packageFolderPath, "templates", this.plotConfig.template!, "image", "format-chart-def.js"), path.join(outputFolderPath, "public", "format-chart-def.js"));
 
         const jsonChartDef = JSON.stringify(this.serialize(), null, 4);
         await jetpack.writeAsync(path.join(outputFolderPath, "chart-def.json"), jsonChartDef);
@@ -363,6 +406,7 @@ export abstract class AbstractPlotAPI implements IPlotAPI {
      * The JSON definition of the chart can be used to instantiate the chart in a browser.
      */
     serialize(): IChartDef {
+        const expandedPlotConfig = Object.assign({}, this.plotConfig);
         const defaultedGlobalAxis = Object.assign({}, this.globalAxisMap);
         if (defaultedGlobalAxis.y.length === 0) {
             // Default the primary Y axis.
@@ -375,7 +419,7 @@ export abstract class AbstractPlotAPI implements IPlotAPI {
         
         return {
             data: this.data,
-            plotDef: this.plotConfig,
+            plotConfig: expandedPlotConfig,
             axisMap: defaultedGlobalAxis,
         };
     }
@@ -389,23 +433,72 @@ export class PlotAPI extends AbstractPlotAPI {
     constructor(data: ISerializedDataFrame, plotConfig: IPlotConfig, globalAxisMap?: IAxisMap) {
         assert.isObject(data, "Expected 'data' parameter to PlotAPI constructor to be a serialized dataframe.");
 
-        const expandedPlotConfig: IPlotConfig = Object.assign({}, defaultPlotDef, plotConfig); // Clone the def and plot map so they can be updated by the fluent API.
+        const expandedPlotConfig: IExpandedPlotConfig = Object.assign({}, plotConfig) as IExpandedPlotConfig; // Clone the def and plot map so they can be updated by the fluent API.
+
+        if (!expandedPlotConfig.chartType) {
+            expandedPlotConfig.chartType = ChartType.Line;
+        }
+
+        if (!expandedPlotConfig.width) {
+            expandedPlotConfig.width = 800;
+        }
+
+        if (!expandedPlotConfig.height) {
+            expandedPlotConfig.height = 600;
+        }
+
         if (!expandedPlotConfig.template) {
             expandedPlotConfig.template = "c3";
         }
 
         if (!expandedPlotConfig.x) {
-            expandedPlotConfig.x = {};
+            expandedPlotConfig.x = {
+                axisType: AxisType.Indexed,
+                label: {},
+            };
+        }
+        else {
+            if (!expandedPlotConfig.x.axisType) {
+                expandedPlotConfig.x.axisType = AxisType.Indexed;
+            }
+
+            if (!expandedPlotConfig.x.label) {
+                expandedPlotConfig.x.label = {};
+            }
         }
 
         if (!expandedPlotConfig.y) {
-            expandedPlotConfig.y = {};
+            expandedPlotConfig.y = {
+                axisType: AxisType.Indexed,
+                label: {},
+            };
+        }
+        else {
+            if (!expandedPlotConfig.y.axisType) {
+                expandedPlotConfig.y.axisType = AxisType.Indexed;
+            }
+
+            if (!expandedPlotConfig.y.label) {
+                expandedPlotConfig.y.label = {};
+            }
         }
 
         if (!expandedPlotConfig.y2) {
-            expandedPlotConfig.y2 = {};
+            expandedPlotConfig.y2 = {
+                axisType: AxisType.Indexed,
+                label: {},
+            };
         }
-        
+        else {
+            if (!expandedPlotConfig.y2.axisType) {
+                expandedPlotConfig.y2.axisType = AxisType.Indexed;
+            }
+
+            if (!expandedPlotConfig.y2.label) {
+                expandedPlotConfig.y2.label = {};
+            }
+        }
+                
         const expandedGlobalAxisMap: IInternalAxisMap = {
             x: { 
                 series: "__index__",
@@ -483,7 +576,7 @@ export class PlotAPI extends AbstractPlotAPI {
                 }        
             }
         }
-        
+                
         super(data, expandedPlotConfig, expandedGlobalAxisMap);
     }
 }
@@ -513,7 +606,7 @@ class AxisConfigAPI<FluentT, AxisMapT> extends AbstractPlotAPI implements IAxisC
      */
     protected singleAxisMap: AxisMapT;
 
-    constructor(axisName: string, seriesName: string, axisConfig: IAxisConfig, singleAxisMap: AxisMapT, data: ISerializedDataFrame, plotConfig: IPlotConfig, globalAxisMap: IInternalAxisMap) {
+    constructor(axisName: string, seriesName: string, axisConfig: IAxisConfig, singleAxisMap: AxisMapT, data: ISerializedDataFrame, plotConfig: IExpandedPlotConfig, globalAxisMap: IInternalAxisMap) {
         super(data, plotConfig, globalAxisMap);
 
         this.axisName = axisName;
@@ -553,7 +646,7 @@ class AxisConfigAPI<FluentT, AxisMapT> extends AbstractPlotAPI implements IAxisC
  */
 class XAxisConfigAPI extends AxisConfigAPI<IXAxisConfigAPI, ISingleAxisMap> implements IXAxisConfigAPI {
 
-    constructor(axisName: string, seriesName: string, axisConfig: IAxisConfig, singleAxisMap: ISingleAxisMap, data: ISerializedDataFrame, plotConfig: IPlotConfig, globalAxisMap: IInternalAxisMap) {
+    constructor(axisName: string, seriesName: string, axisConfig: IAxisConfig, singleAxisMap: ISingleAxisMap, data: ISerializedDataFrame, plotConfig: IExpandedPlotConfig, globalAxisMap: IInternalAxisMap) {
         super(axisName, seriesName, axisConfig, singleAxisMap, data, plotConfig, globalAxisMap);
     }
     
@@ -580,7 +673,7 @@ class XAxisConfigAPI extends AxisConfigAPI<IXAxisConfigAPI, ISingleAxisMap> impl
  */
 class YAxisConfigAPI extends AxisConfigAPI<IYAxisConfigAPI, ISingleYAxisMap> implements IYAxisConfigAPI {
 
-    constructor(axisName: string, seriesName: string, axisConfig: IAxisConfig, singleAxisMap: ISingleAxisMap, data: ISerializedDataFrame, plotConfig: IPlotConfig, globalAxisMap: IInternalAxisMap) {
+    constructor(axisName: string, seriesName: string, axisConfig: IAxisConfig, singleAxisMap: ISingleAxisMap, data: ISerializedDataFrame, plotConfig: IExpandedPlotConfig, globalAxisMap: IInternalAxisMap) {
         super(axisName, seriesName, axisConfig, singleAxisMap, data, plotConfig, globalAxisMap);
     }
 

@@ -1,22 +1,102 @@
 import { assert, expect } from 'chai';
 import 'mocha';
-import { IChartDef } from '../chart-def';
+import { IChartDef, AxisType, ChartType, ISingleYAxisMap } from '../chart-def';
 import { formatChartDef } from '../../templates/c3/format-chart-def';
+import { ISerializedDataFrame } from 'data-forge/build/lib/dataframe';
+import * as Sugar from 'sugar';
 
-describe('format-chart-def', () => {
+export interface ITestChartDef {
+    data: ISerializedDataFrame;
+    x: string;
+    y: string | string[] | ISingleYAxisMap | ISingleYAxisMap[];
+    y2?: string | string[] | ISingleYAxisMap | ISingleYAxisMap[];
+}
+
+describe('format c3 chart', () => {
 
     it('throws when configuration is invalid', () => {
-        expect (() => formatChartDef({})).to.throw();
+        expect (() => formatChartDef({} as IChartDef)).to.throw();
     })
+
+    function formatSeries(series?: string | string[] | ISingleYAxisMap | ISingleYAxisMap[]): ISingleYAxisMap[] {
+        if (!series) {
+            return [];
+        }
+
+        if (Sugar.Object.isString(series)) {
+            return [
+                {
+                    series: series,
+                },
+            ];
+        }
+
+        if (Sugar.Object.isObject(series)) {
+            return [
+                series as ISingleYAxisMap,
+            ];
+        }
+
+        if (Sugar.Object.isArray(series)) {
+            return (series as ISingleYAxisMap[]).map(seriesConfig => {
+                if (Sugar.Object.isString(seriesConfig)) {
+                    return {
+                        series: seriesConfig,
+                    };
+                }
+                else {
+                    if (seriesConfig.x && Sugar.Object.isString(seriesConfig.x)) {
+                        seriesConfig.x = {
+                            series: seriesConfig.x,
+                        };
+                    }
+                    return seriesConfig;
+                }
+            });
+        }
+
+        throw new Error("Invalid series config.");
+    }
+
+    function createMinimalChartDef(testChartDef: ITestChartDef) {
+        const chartDef: IChartDef = {
+            data: testChartDef.data,
+            plotConfig: {
+                template: "c3",
+                chartType: ChartType.Line,
+                width: 800,
+                height: 600,
+                x: { 
+                    axisType: AxisType.Indexed,
+                    label: {},
+                },
+                y: { 
+                    axisType: AxisType.Indexed,
+                    label: {},
+                },
+                y2: { 
+                    axisType: AxisType.Indexed,
+                    label: {},
+                },
+            },
+
+            axisMap: {
+                x: { series: testChartDef.x },
+                y: formatSeries(testChartDef.y),
+                y2: formatSeries(testChartDef.y2),
+            },
+        };        
+        return chartDef;
+    }
 
     it('minimal chart def', ()  => {
 
-        const chartDef: IChartDef = {
+        const chartDef = createMinimalChartDef({
             data: {
                 columnOrder: ["__index__", "__value__"],
                 columns: {
                     "__index__": "number",
-                     "__value__": "number",
+                        "__value__": "number",
                 },
                 values: [
                     {
@@ -29,22 +109,15 @@ describe('format-chart-def', () => {
                     },
                 ],
             },
-
-            plotDef: {
-            },
-
-            axisMap: {
-                x: { series: "__index__" },
-                y: [ { series: "__value__" } ],
-                y2: [],
-            },
-        };
+            x: "__index__",
+            y: "__value__",
+        });
 
         const c3ChartDef = formatChartDef(chartDef);
         expect(c3ChartDef).to.eql({
             "bindto": "#chart",
             "size": {
-                "width": 1200,
+                "width": 800,
                 "height": 600
             },
             "data": {
@@ -72,11 +145,13 @@ describe('format-chart-def', () => {
             "axis": {
                 "x": {
                     "show": true,
-                    "type": "indexed"
+                    "type": "indexed",
+                    "label": {},
                 },
                 "y": {
                     "show": true,
-                    "type": "indexed"
+                    "type": "indexed",
+                    "label": {},
                 },
                 "y2": {
                     "show": false
@@ -93,15 +168,15 @@ describe('format-chart-def', () => {
 
     it('can set x and y axis expicitly', ()  => {
 
-        const chartDef: IChartDef = {
+        const chartDef = createMinimalChartDef({
             data: {
                 columnOrder: ["__index__", "a", "b", "c", "d"],
                 columns: {
                     "__index__": "number",
-                     "a": "number",
-                     "b": "number",
-                     "c": "number",
-                     "d": "number",
+                    "a": "number",
+                    "b": "number",
+                    "c": "number",
+                    "d": "number",
                 },
                 values: [
                     {
@@ -120,22 +195,15 @@ describe('format-chart-def', () => {
                     },
                 ],
             },
-
-            plotDef: {
-            },
-
-            axisMap: {
-                x: { series: "a" },
-                y: [ { series: "b" } ],
-                y2: [],
-            },
-        };
-
+            x: "a",
+            y: "b",            
+        });
+        
         const c3ChartDef = formatChartDef(chartDef);
         expect(c3ChartDef).to.eql({                                 
             "bindto": "#chart",           
             "size": {                     
-                "width": 1200,            
+                "width": 800,            
                 "height": 600             
             },                            
             "data": {
@@ -155,11 +223,13 @@ describe('format-chart-def', () => {
             "axis": {                     
                 "x": {                    
                     "show": true,         
-                    "type": "indexed"     
+                    "type": "indexed",
+                    "label": {},
                 },                        
                 "y": {                    
                     "show": true,         
-                    "type": "indexed"    
+                    "type": "indexed",
+                    "label": {},
                 },                        
                 "y2": {                   
                     "show": false,
@@ -171,20 +241,20 @@ describe('format-chart-def', () => {
             "point": {                    
                 "show": false             
             }                             
-        }                                 );
+        });
     });
 
     it('can set second y axis', ()  => {
 
-        const chartDef: IChartDef = {
+        const chartDef = createMinimalChartDef({
             data: {
                 columnOrder: ["__index__", "a", "b", "c", "d"],
                 columns: {
                     "__index__": "number",
-                     "a": "number",
-                     "b": "number",
-                     "c": "number",
-                     "d": "number",
+                    "a": "number",
+                    "b": "number",
+                    "c": "number",
+                    "d": "number",
                 },
                 values: [
                     {
@@ -203,22 +273,16 @@ describe('format-chart-def', () => {
                     },
                 ],
             },
-
-            plotDef: {
-            },
-
-            axisMap: {
-                x: { series: "a" },
-                y: [ { series: "b" } ],
-                y2: [ { series: "c" } ],
-            },
-        };
+            x: "a",
+            y: "b",
+            y2: "c",
+        });
 
         const c3ChartDef = formatChartDef(chartDef);
         expect(c3ChartDef).to.eql({
             "bindto": "#chart",
             "size": {
-                "width": 1200,
+                "width": 800,
                 "height": 600
             },
             "data": {
@@ -253,15 +317,18 @@ describe('format-chart-def', () => {
             "axis": {
                 "x": {
                     "show": true,
-                    "type": "indexed"
+                    "type": "indexed",
+                    "label": {},
                 },
                 "y": {
                     "show": true,
-                    "type": "indexed"
+                    "type": "indexed",
+                    "label": {},
                 },
                 "y2": {
                     "show": true,
-                    "type": "indexed"
+                    "type": "indexed",
+                    "label": {},
                 }
             },
             "transition": {
@@ -275,16 +342,16 @@ describe('format-chart-def', () => {
     
     it('can set multiple y axis', ()  => {
 
-        const chartDef: IChartDef = {
+        const chartDef = createMinimalChartDef({
             data: {
                 columnOrder: ["__index__", "a", "b", "c", "d", "e"],
                 columns: {
                     "__index__": "number",
-                     "a": "number",
-                     "b": "number",
-                     "c": "number",
-                     "d": "number",
-                     "e": "number",
+                        "a": "number",
+                        "b": "number",
+                        "c": "number",
+                        "d": "number",
+                        "e": "number",
                 },
                 values: [
                     {
@@ -305,23 +372,17 @@ describe('format-chart-def', () => {
                     },
                 ],
             },
-
-            plotDef: {
-            },
-
-            axisMap: {
-                x: { series: "a" },
-                y: [ { series: "b" }, { series: "c" } ],
-                y2: [ { series: "d" }, { series: "e" } ],
-            },
-        };
+            x: "a",
+            y: [ "b", "c" ],
+            y2: [ "d", "e" ],
+        });
 
         const c3ChartDef = formatChartDef(chartDef);
         
         expect(c3ChartDef).to.eql({
             "bindto": "#chart",
             "size": {
-                "width": 1200,
+                "width": 800,
                 "height": 600
             },
             "data": {
@@ -370,15 +431,18 @@ describe('format-chart-def', () => {
             "axis": {
                 "x": {
                     "show": true,
-                    "type": "indexed"
+                    "type": "indexed",
+                    "label": {},
                 },
                 "y": {
                     "show": true,
-                    "type": "indexed"
+                    "type": "indexed",
+                    "label": {},
                 },
                 "y2": {
                     "show": true,
-                    "type": "indexed"
+                    "type": "indexed",
+                    "label": {},
                 }
             },
             "transition": {
@@ -392,16 +456,16 @@ describe('format-chart-def', () => {
     
     it('can set x axis for y axis', ()  => {
 
-        const chartDef: IChartDef = {
+        const chartDef = createMinimalChartDef({
             data: {
                 columnOrder: ["__index__", "a", "b", "c", "d", "e"],
                 columns: {
                     "__index__": "number",
-                     "a": "number",
-                     "b": "number",
-                     "c": "number",
-                     "d": "number",
-                     "e": "number",
+                    "a": "number",
+                    "b": "number",
+                    "c": "number",
+                    "d": "number",
+                    "e": "number",
                 },
                 values: [
                     {
@@ -422,29 +486,37 @@ describe('format-chart-def', () => {
                     },
                 ],
             },
-
-            plotDef: {
-            },
-
-            axisMap: {
-                x: { series: "__index__" },
-                y: [ { series: "b", x: { series: "a" } }, { series: "c", x: { series: "d" } } ],
-                y2: [ { series: "d", x: { series: "a" } } ],
-            },
-        };
+            x: "__index__",
+            y: [
+                {
+                    series: "b",
+                    x: "a",
+                },
+                {
+                    series: "c",
+                    x: "d",
+                },
+            ],
+            y2: [
+                {
+                    series: "e",
+                    x: "a",
+                },
+            ]
+        });
 
         const c3ChartDef = formatChartDef(chartDef);
         expect(c3ChartDef).to.eql({
             "bindto": "#chart",
             "size": {
-                "width": 1200,
+                "width": 800,
                 "height": 600
             },
             "data": {
                 "xs": {       
                     "b": "a", 
                     "c": "d", 
-                    "d": "a"  
+                    "e": "a"  
                 },
                 "columns": [
                     [
@@ -466,28 +538,36 @@ describe('format-chart-def', () => {
                         "d",
                         10000,
                         20000
+                    ],
+                    [
+                        "e",
+                        100000,
+                        200000
                     ]
                 ],
                 "type": "line",
                 "axes": {
                     "b": "y",
                     "c": "y",
-                    "d": "y2"
+                    "e": "y2"
                 },
                 "names": {}
             },
             "axis": {
                 "x": {
                     "show": true,
-                    "type": "indexed"
+                    "type": "indexed",
+                    "label": {},
                 },
                 "y": {
                     "show": true,
-                    "type": "indexed"
+                    "type": "indexed",
+                    "label": {},
                 },
                 "y2": {
                     "show": true,
-                    "type": "indexed"
+                    "type": "indexed",
+                    "label": {},
                 }
             },
             "transition": {

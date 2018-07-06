@@ -1,15 +1,14 @@
 //
 // This example modelled on the C3 example line chart.
 //
-// http://c3js.org/samples/timeseries.html
+// http://c3js.org/samples/simple_multiple.html
 //
 
-const x = ['2013-01-01', '2013-01-02', '2013-01-03', '2013-01-04', '2013-01-05', '2013-01-06'];
 const data1 = [30, 200, 100, 400, 150, 250];
-const data2 = [130, 340, 200, 500, 250, 350];
-
+const data2 = [50, 20, 10, 40, 15, 25];
+        
 import { DataFrame } from 'data-forge';
-import '../src/index';
+import '../../src/index';
 import * as fs from 'fs-extra';
 import * as path from 'path';
 
@@ -22,17 +21,15 @@ fs.emptyDirSync(outputPath);
 async function main(): Promise<void> {
 
     const df = new DataFrame({
-            columns: {
-                date: x,
-                data1: data1,
-                data2: data2
-            },
-        })
-        .parseDates("date", "YYYY-MM-DD");
+        columns: {
+            data1: data1,
+            data2: data2
+        },
+    });
     
     console.log(df.toString());
     
-    const plot = df.plot({}, { x: "date", y: [ "data1", "data2" ]});
+    const plot = df.plot();
     await plot.renderImage(path.join(outputPath, "image.png"), { openImage: true });
     await plot.exportWeb(path.join(outputPath, "web"), { overwrite: true, openBrowser: true });
     await plot.exportNodejs(path.join(outputPath, "nodejs"), { overwrite: true });

@@ -1,3 +1,4 @@
+(function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 "use strict";
 exports.__esModule = true;
 "use strict";
@@ -13,9 +14,10 @@ function configureOneAxe(axisName, inputChartDef, c3Axes) {
     if (!series) {
         return;
     }
-    series.forEach(function (seriesConfig) {
+    for (var _i = 0, series_1 = series; _i < series_1.length; _i++) {
+        var seriesConfig = series_1[_i];
         c3Axes[seriesConfig.series] = axisName;
-    });
+    }
 }
 /**
  * Configure C3 axes.
@@ -86,7 +88,7 @@ function configureOneAxis(axisName, inputChartDef, c3Axis) {
         return;
     }
     c3Axis[axisName] = { show: false };
-    var axisDef = inputChartDef.plotDef[axisName];
+    var axisDef = inputChartDef.plotConfig[axisName];
     var c3AxisDef = c3Axis[axisName];
     var series = axisMap[axisName];
     if (!series) {
@@ -149,7 +151,8 @@ function extractXS(axisName, inputChartDef, xs) {
     if (!series) {
         return;
     }
-    series.forEach(function (seriesConfig) {
+    for (var _i = 0, series_2 = series; _i < series_2.length; _i++) {
+        var seriesConfig = series_2[_i];
         var ySeriesName = seriesConfig.series;
         if (xs[ySeriesName]) {
             return; // Already set.
@@ -160,7 +163,7 @@ function extractXS(axisName, inputChartDef, xs) {
         else if (inputChartDef.axisMap && inputChartDef.axisMap.x) {
             xs[ySeriesName] = inputChartDef.axisMap.x.series; // Default X.
         }
-    });
+    }
 }
 function addColumn(seriesName, inputChartDef, columns, columnsSet) {
     if (columnsSet[seriesName]) {
@@ -182,13 +185,14 @@ function extractColumns(axisName, inputChartDef, columns, columnsSet) {
     if (!series) {
         return;
     }
-    series.forEach(function (seriesConfig) {
+    for (var _i = 0, series_3 = series; _i < series_3.length; _i++) {
+        var seriesConfig = series_3[_i];
         addColumn(seriesConfig.series, inputChartDef, columns, columnsSet);
         var xSeriesName = seriesConfig.x && seriesConfig.x.series || inputChartDef.axisMap && inputChartDef.axisMap.x && inputChartDef.axisMap.x.series || null;
         if (xSeriesName) {
             addColumn(xSeriesName, inputChartDef, columns, columnsSet);
         }
-    });
+    }
 }
 /**
  * Convert a data-forge-plot chart definition to a C3 chart definition.
@@ -221,13 +225,13 @@ function formatChartDef(inputChartDef) {
     var c3ChartDef = {
         bindto: "#chart",
         size: {
-            width: inputChartDef.plotDef && inputChartDef.plotDef.width || 1200,
-            height: inputChartDef.plotDef && inputChartDef.plotDef.height || 600
+            width: inputChartDef.plotConfig && inputChartDef.plotConfig.width || 1200,
+            height: inputChartDef.plotConfig && inputChartDef.plotConfig.height || 600
         },
         data: {
             xs: xs,
             columns: columns,
-            type: inputChartDef.plotDef && inputChartDef.plotDef.chartType || "line",
+            type: inputChartDef.plotConfig && inputChartDef.plotConfig.chartType || "line",
             axes: configureAxes(inputChartDef),
             names: configureSeriesNames(inputChartDef)
         },
@@ -243,3 +247,8 @@ function formatChartDef(inputChartDef) {
 }
 exports.formatChartDef = formatChartDef;
 ;
+
+},{}],2:[function(require,module,exports){
+
+window.formatChartDef = require('./build/format-chart-def').formatChartDef;
+},{"./build/format-chart-def":1}]},{},[2]);

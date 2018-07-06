@@ -19,9 +19,9 @@ function configureOneAxe (axisName: string, inputChartDef: IChartDef, c3Axes: an
         return;
     }
 
-    series.forEach(function (seriesConfig) { //todo: expand thi
+    for (const seriesConfig of series) {
         c3Axes[seriesConfig.series] = axisName;
-    });
+    }
 }
 
 /**
@@ -103,7 +103,7 @@ function configureOneAxis (axisName: string, inputChartDef: IChartDef, c3Axis: a
 
     c3Axis[axisName] = { show: false };
 
-    const axisDef: IAxisConfig = (inputChartDef.plotDef as any)[axisName];
+    const axisDef: IAxisConfig = (inputChartDef.plotConfig as any)[axisName];
     const c3AxisDef = c3Axis[axisName];
 
     const series: ISingleAxisMap = axisMap[axisName];
@@ -175,7 +175,7 @@ function extractXS (axisName: string, inputChartDef: IChartDef, xs: any): void {
         return;
     }
 
-    series.forEach(function (seriesConfig) { //todo: expand this.
+    for (const seriesConfig of series) {
         const ySeriesName = seriesConfig.series;
         if (xs[ySeriesName]) {
             return; // Already set.
@@ -187,7 +187,7 @@ function extractXS (axisName: string, inputChartDef: IChartDef, xs: any): void {
         else if (inputChartDef.axisMap && inputChartDef.axisMap.x) {
             xs[ySeriesName] = inputChartDef.axisMap.x.series; // Default X.
         }       
-    });
+    }
 }
 
 function addColumn (seriesName: string, inputChartDef: IChartDef, columns: any[], columnsSet: any): void {
@@ -215,15 +215,14 @@ function extractColumns (axisName: string, inputChartDef: IChartDef, columns: an
         return;
     }
 
-    series.forEach(function (seriesConfig) { //todo: expand this.
-
+    for (const seriesConfig of series) {
         addColumn(seriesConfig.series, inputChartDef, columns, columnsSet);
 
         const xSeriesName = seriesConfig.x && (seriesConfig.x as ISingleAxisMap).series || inputChartDef.axisMap && inputChartDef.axisMap.x && inputChartDef.axisMap.x.series || null;
         if (xSeriesName) {
             addColumn(xSeriesName, inputChartDef, columns, columnsSet);
         }
-    });
+    }
 }
 
 /**
@@ -262,13 +261,13 @@ export function formatChartDef (inputChartDef: IChartDef): any {
     const c3ChartDef = {
         bindto: "#chart",
         size: {
-            width: inputChartDef.plotDef && inputChartDef.plotDef.width || 1200,
-            height: inputChartDef.plotDef && inputChartDef.plotDef.height || 600,
+            width: inputChartDef.plotConfig && inputChartDef.plotConfig.width || 1200,
+            height: inputChartDef.plotConfig && inputChartDef.plotConfig.height || 600,
         },
         data: {
             xs: xs,
             columns: columns,
-            type: inputChartDef.plotDef && inputChartDef.plotDef.chartType || "line",
+            type: inputChartDef.plotConfig && inputChartDef.plotConfig.chartType || "line",
             axes: configureAxes(inputChartDef),
             names: configureSeriesNames(inputChartDef),
         },

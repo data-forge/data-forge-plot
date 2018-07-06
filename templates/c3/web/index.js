@@ -7,3 +7,4 @@ $(function () {
     var chart = c3.generate(c3ChartDef);
 });
 
+var chartDef = {{{json chartDef}}};

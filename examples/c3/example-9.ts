@@ -10,10 +10,10 @@ const setosa_x = [ 3.5, 3.0, 3.2, 3.1, 3.6, 3.9, 3.4, 3.4, 2.9, 3.1, 3.7, 3.4, 3
 const setosa_y = [ 0.2, 0.2, 0.2, 0.2, 0.2, 0.4, 0.3, 0.2, 0.2, 0.1, 0.2, 0.2, 0.1, 0.1, 0.2, 0.4, 0.4, 0.3, 0.3, 0.3, 0.2, 0.4, 0.2, 0.5, 0.2, 0.2, 0.4, 0.2, 0.2, 0.2, 0.2, 0.4, 0.1, 0.2, 0.2, 0.2, 0.2, 0.1, 0.2, 0.2, 0.3, 0.3, 0.2, 0.6, 0.4, 0.3, 0.2, 0.2, 0.2, 0.2 ];
 
 import { DataFrame } from 'data-forge';
-import '../src/index';
+import '../../src/index';
 import * as fs from 'fs-extra';
 import * as path from 'path';
-import { ChartType, IAxisMap } from '../src/chart-def';
+import { ChartType, IAxisMap } from '../../src/chart-def';
 
 fs.emptyDirSync("./output");
 
@@ -34,16 +34,31 @@ async function main(): Promise<void> {
     
     console.log(df.head(10).toString());
     
-    const plot = df.plot()
-        .chartType(ChartType.Scatter)
-        .y("versicolor_y")
-            .seriesLabel("Versicolor")
-            //todo: .color("blue")
-            .x("versicolor_x")
-        .y("setosa_y")
-            .seriesLabel("Setosa")
-            //todo: .color("green")
-            .x("setosa_x");
+    const plot = df.plot(
+        { 
+            chartType: ChartType.Scatter 
+        }, 
+        {
+            y: [
+                {
+                    series: "versicolor_y",
+                    label: "Versicolor",
+                    color: "blue",
+                    x: {
+                        series: "versicolor_x",
+                    }
+                },
+                {
+                    series: "setosa_y",
+                    label: "Setosa",
+                    color: "green",
+                    x: {
+                        series: "setosa_x",
+                    }
+                },
+            ],
+        }
+    );
 
     await plot.renderImage(path.join(outputPath, "image.png"), { openImage: true });
     await plot.exportWeb(path.join(outputPath, "web"), { overwrite: true, openBrowser: true });

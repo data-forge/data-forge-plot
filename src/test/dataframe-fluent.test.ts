@@ -10,49 +10,61 @@ describe('data-forge-plot - dataframe fluent', () => {
         const series = new DataFrame({ index: [1, 2, 3], values: [{ A: 10 }, { A: 20 }, { A: 30 } ] });
         const plotAPI = series.plot()
             .y("A");
-
-        expect(plotAPI.serialize()).to.eql({
-            "data": {
-                "columnOrder": [
-                    "A",
-                    "__index__"
-                ],
-                "columns": {
-                    "A": "number",
-                    "__index__": "number"
-                },
-                "values": [
-                    {
-                        "A": 10,
-                        "__index__": 1
-                    },
-                    {
-                        "A": 20,
-                        "__index__": 2
-                    },
-                    {
-                        "A": 30,
-                        "__index__": 3
-                    }
-                ]
-            },
-            "plotDef": {
-                "template": "c3",
-                "x": {},
-                "y": {},
-                "y2": {},
-            },
-            "axisMap": {
-                "x": {
-                    "series": "__index__"
-                },
-                "y": [
-                    {
-                        "series": "A"
-                    }
-                ],
-                "y2": []
-            }
+            
+        expect(plotAPI.serialize()).to.eql({                                        
+            "data": {                            
+                "columnOrder": [                 
+                    "A",                         
+                    "__index__"                  
+                ],                               
+                "columns": {                     
+                    "A": "number",               
+                    "__index__": "number"        
+                },                               
+                "values": [                      
+                    {                            
+                        "A": 10,                 
+                        "__index__": 1           
+                    },                           
+                    {                            
+                        "A": 20,                 
+                        "__index__": 2           
+                    },                           
+                    {                            
+                        "A": 30,                 
+                        "__index__": 3           
+                    }                            
+                ]                                
+            },                                   
+            "plotConfig": {                      
+                "chartType": "line",             
+                "width": 800,                    
+                "height": 600,                   
+                "template": "c3",                
+                "x": {                           
+                    "axisType": "indexed",       
+                    "label": {}                  
+                },                               
+                "y": {                           
+                    "axisType": "indexed",       
+                    "label": {}                  
+                },                               
+                "y2": {                          
+                    "axisType": "indexed",       
+                    "label": {}                  
+                }                                
+            },                                   
+            "axisMap": {                         
+                "x": {                           
+                    "series": "__index__"        
+                },                               
+                "y": [                           
+                    {                            
+                        "series": "A"            
+                    }                            
+                ],                               
+                "y2": []                         
+            }                                    
         });
     });
 
@@ -61,42 +73,54 @@ describe('data-forge-plot - dataframe fluent', () => {
 
         const series = new DataFrame({ index: [ 1 ], values: [{ A: 10 }, ] });
         const plotAPI = series.plot()
-            .template("wug");
+            .template("wug");                
 
-        expect(plotAPI.serialize()).to.eql({
-            "data": {
-                "columnOrder": [
-                    "A",
-                    "__index__"
-                ],
-                "columns": {
-                    "A": "number",
-                    "__index__": "number"
-                },
-                "values": [
-                    {
-                        "A": 10,
-                        "__index__": 1
-                    },
-                ]
-            },
-            "plotDef": {
-                "template": "wug",
-                "x": {},
-                "y": {},
-                "y2": {},
-            },
-            "axisMap": {
-                "x": {
-                    "series": "__index__"
-                },
-                "y": [
-                    {
-                        "series": "A"
-                    }
-                ],
-                "y2": []
-            }
+        expect(plotAPI.serialize()).to.eql({                                                     
+            "data": {                                         
+                "columnOrder": [                              
+                    "A",                                      
+                    "__index__"                               
+                ],                                            
+                "columns": {                                  
+                    "A": "number",                            
+                    "__index__": "number"                     
+                },                                            
+                "values": [                                   
+                    {                                         
+                        "A": 10,                              
+                        "__index__": 1                        
+                    }                                         
+                ]                                             
+            },                                                
+            "plotConfig": {                                   
+                "chartType": "line",                          
+                "width": 800,                                 
+                "height": 600,                                
+                "template": "wug",                            
+                "x": {                                        
+                    "axisType": "indexed",                    
+                    "label": {}                               
+                },                                            
+                "y": {                                        
+                    "axisType": "indexed",                    
+                    "label": {}                               
+                },                                            
+                "y2": {                                       
+                    "axisType": "indexed",                    
+                    "label": {}                               
+                }                                             
+            },                                                
+            "axisMap": {                                      
+                "x": {                                        
+                    "series": "__index__"                     
+                },                                            
+                "y": [                                        
+                    {                                         
+                        "series": "A"                         
+                    }                                         
+                ],                                            
+                "y2": []                                      
+            }                                                 
         });
     });
 

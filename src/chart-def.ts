@@ -85,16 +85,19 @@ export interface IPlotConfig {
 
     /**
      * The type of chart to render.
+     * Default to "line".
      */
     chartType?: ChartType;
 
     /**
      * Width of the plot.
+     * Default to 800.
      */
     width?: number;
 
     /**
      * Height of the plot.
+     * Default to 600.
      */
     height?: number;
 
@@ -172,6 +175,63 @@ export interface IAxisMap {
 }
 
 /**
+ * Configures an axis of the chart.
+ */
+export interface IExpandedAxisConfig {
+    /**
+     * Sets the type of the axis' data.
+     * Default: AxisType.Indexed ("indexed")
+     */
+    axisType: AxisType;
+
+    /**
+     * Label for the axis.
+     */
+    label: IAxisLabelConfig;
+}
+
+/**
+ * Defines the chart.
+ */
+export interface IExpandedPlotConfig {
+
+    /**
+     * The template to use for the chart.
+     */
+    template: string;
+
+    /**
+     * The type of chart to render.
+     */
+    chartType: ChartType;
+
+    /**
+     * Width of the plot.
+     */
+    width: number;
+
+    /**
+     * Height of the plot.
+     */
+    height: number;
+
+    /**
+     * Configuration for the x axis.
+     */
+    x: IExpandedAxisConfig;
+
+    /**
+     * Configuration for the y axis.
+     */
+    y: IExpandedAxisConfig;
+
+    /**
+     * Configuration for the second y axis.
+     */
+    y2: IExpandedAxisConfig;
+}
+
+/**
  * Maps the columns in a dataframe to axis in the chart.
  */
 export interface IExpandedAxisMap {
@@ -206,7 +266,7 @@ export interface IChartDef {
     /**
      * Defines the look of the chart.
      */
-    plotDef: IPlotConfig;
+    plotConfig: IExpandedPlotConfig;
 
     /**
      * Maps fields in the data to axis' on the chart.
