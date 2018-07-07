@@ -11,7 +11,6 @@
     "visualization",
     "graph"
   ],
-  "homepage": "https://github.com/codecapers/c3-chart-maker",
   "ignore": [
     "**/.*",
     "node_modules",

@@ -4,8 +4,6 @@ import { IChartDef } from "./chart-def";
 
 declare const document: any;
 
-const selector = "svg";
-
 /**
  * Interface to the chart renderer.
  * This component is responsible for turning data and a chart definition into a chart.
@@ -16,7 +14,7 @@ export interface IChartRenderer {
      * Start the chart renderer.
      * For performance reasons the chart render can be reused to render multiple charts.
      */
-    start (showBrowser: boolean): void;
+    start (chartTemplatesPath: string, showBrowser: boolean): void;
 
     /**
      * Finish the chart renderer.
@@ -26,7 +24,7 @@ export interface IChartRenderer {
     /**
      * Create a chart from data and a chart definition and render it to an image file.
      */
-    /*async*/ renderImage (chartDef: IChartDef, outputFilePath: string): Promise<void>;
+    /*async*/ renderImage (chartDef: IChartDef, outputFilePath: string, chartRootSelector: string): Promise<void>;
 }
 
 /**
@@ -48,14 +46,14 @@ export class ChartRenderer implements IChartRenderer {
      * Start the chart renderer.
      * For performance reasons the chart render can be reused to render multiple charts.
      */
-    async start (showBrowser: boolean): Promise<void> {
+    async start (chartTemplatesPath: string, showBrowser: boolean): Promise<void> {
         const autoAssignPortNo = 0; // Use port no 0, to automatically assign a port number.
         this.webServer = new WebServer(autoAssignPortNo);
-        await this.webServer.start();
+        await this.webServer.start(chartTemplatesPath);
 
         this.nightmare = new Nightmare({
-            show: showBrowser,
-            frame: showBrowser,
+            show: false,
+            frame: false,
         });
 
         this.nightmare.on('crashed', (evt: any) => {
@@ -96,24 +94,25 @@ export class ChartRenderer implements IChartRenderer {
     /**
      * Load the chart into the Electron browser.
      */
-    async loadChart (chartDef: IChartDef): Promise<void> {
+    async loadChart (chartDef: IChartDef, chartRootSelector: string): Promise<void> {
 
         this.webServer!.chartDef = chartDef; //todo: this might prevent charts from being rendered in parallel!
 
-        this.nightmare.goto(this.webServer!.getUrl()); 
-        await this.nightmare.wait(selector);
+        const chartTemplateUrl = this.webServer!.getUrl() + "/" + chartDef.plotConfig.template + "/image/index.html";
+        this.nightmare.goto(chartTemplateUrl); 
+        await this.nightmare.wait(chartRootSelector);
     }
 
     /**
      * Create a chart from data and a chart definition and render it to an image file.
      */
-    async renderImage (chartDef: IChartDef, outputFilePath: string): Promise<void> {
-        await this.loadChart(chartDef);
+    async renderImage (chartDef: IChartDef, outputFilePath: string, chartRootSelector: string): Promise<void> { //todo: need to pass in the selector we are waiting for!!
+        await this.loadChart(chartDef, chartRootSelector);
 
         await this.nightmare.evaluate(
-                (selector: string) => {
+                (chartRootSelector: string) => {
                     const body = document.querySelector('body');
-                    const element = document.querySelector(selector);
+                    const element = document.querySelector(chartRootSelector);
                     const rect = element.getBoundingClientRect();
                     return {
                         bodyWidth: body.scrollWidth,
@@ -124,7 +123,7 @@ export class ChartRenderer implements IChartRenderer {
                         width: rect.right - rect.left,
                     };
                 }, 
-                selector
+                chartRootSelector
             )
             .then((rect: any) => {
                 return this.nightmare

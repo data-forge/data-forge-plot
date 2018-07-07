@@ -69,3 +69,4 @@ src/test/test-series2.png
 examples/output/
 examples/c3/output/
 *.bak
+examples/flot/output/

@@ -20,8 +20,8 @@
   ],
   "dependencies": {
     "jquery": "^3.3.1",
-    "c3": "^0.4.21",
     "moment": "^2.22.2",
-    "numeral": "^2.0.6"
+    "numeral": "^2.0.6",
+    "Flot": "flot#^0.8.3"
   }
 }

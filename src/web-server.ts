@@ -22,7 +22,7 @@ export interface IWebServer {
     /**
      * Start the web-server.
      */
-    /*async*/ start (): Promise<void>;
+    /*async*/ start (staticFilesPath: string): Promise<void>;
 
     /**
      * Stop the web-server.
@@ -73,34 +73,30 @@ export class WebServer implements IWebServer {
     /**
      * Start the web-server.
      */
-    start (): Promise<void> {
-        return findPackageDir(__dirname)
-            .then(parentDir => {
-                return new Promise<void>((resolve, reject) => {
-                    const app = express();
-                    this.server = http.createServer(app);
-            
-                    const staticFilesPath = path.join(parentDir, "templates/c3/image");
-                    const staticFilesMiddleWare = express.static(staticFilesPath);
-                    app.use("/", staticFilesMiddleWare);
-            
-                    app.get("/chart-data", (request, response) => {
-                        response.json({
-                            chartDef: this.chartDef,
-                        });
-                    });
-                    
-                    this.server.listen(this.requestedPortNo, (err: any) => {
-                        if (err) {
-                            reject(err);
-                        }
-                        else {
-                            this.assignedPortNo = this.server.address().port
-                            resolve();
-                        }
-                    });
+    start (staticFilesPath: string): Promise<void> {
+        return new Promise<void>((resolve, reject) => {
+            const app = express();
+            this.server = http.createServer(app);
+    
+            const staticFilesMiddleWare = express.static(staticFilesPath);
+            app.use("/", staticFilesMiddleWare);
+    
+            app.get("/chart-data", (request, response) => {
+                response.json({
+                    chartDef: this.chartDef,
                 });
             });
+            
+            this.server.listen(this.requestedPortNo, (err: any) => {
+                if (err) {
+                    reject(err);
+                }
+                else {
+                    this.assignedPortNo = this.server.address().port
+                    resolve();
+                }
+            });
+        });
     }
 
     /**
@@ -124,8 +120,11 @@ export class WebServer implements IWebServer {
 
 if (require.main === module) {
     // For command line testing.
-    new WebServer(3000)
-        .start()
+    findPackageDir(__dirname)
+        .then(parentDir => {
+            const staticFilesPath = path.join(parentDir, "templates");
+            return (new WebServer(3000)).start(staticFilesPath);
+        })
         .then(() => {
             console.log("Server started;")
         })

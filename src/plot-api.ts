@@ -16,15 +16,29 @@ Handlebars.registerHelper('json', context => {
     return JSON.stringify(context, null, 4);
 });
 
+//TODO: Need to have this come from the template some how.
+const chartRootSelectors = {
+    c3: "svg",
+    flot: "canvas",
+};
+
 //
 // Reusable chart renderer. 
 // For improved performance.
 //
 export let globalChartRenderer: IChartRenderer | null = null;
 
+async function findChartTemplatesPath(): Promise<string> {
+    const parentDir = await findPackageDir(__dirname);
+    const chartTemplatesPath = path.join(parentDir, "templates");
+    return chartTemplatesPath;
+}
+
 export async function startPlot(): Promise<void> {
     globalChartRenderer = new ChartRenderer();
-    await globalChartRenderer.start(false);
+
+    const chartTemplatesPath = await findChartTemplatesPath();
+    await globalChartRenderer.start(chartTemplatesPath, false);
 }
 
 export async function endPlot(): Promise<void> {
@@ -301,15 +315,22 @@ export abstract class AbstractPlotAPI implements IPlotAPI {
      * Render the plot to an image file.
      */
     async renderImage(imageFilePath: string, renderOptions?: IRenderOptions): Promise<void> {
+
+        const chartDef = this.serialize();
+
+        const chartRootSelector = (chartRootSelectors as any)[chartDef.plotConfig.template]
+        assert.isString(chartRootSelector, "Unknown root chart selector for template " + chartDef.plotConfig.template);
+
         if (globalChartRenderer) {
             // Reused global chart renderer.
-            await globalChartRenderer.renderImage(this.serialize(), imageFilePath);
+            await globalChartRenderer.renderImage(chartDef, imageFilePath, chartRootSelector);
         }
         else {
             // Create a new chart renderer.
             const chartRenderer: IChartRenderer = new ChartRenderer();
-            await chartRenderer.start(false);
-            await chartRenderer.renderImage(this.serialize(), imageFilePath);
+            const chartTemplatesPath = await findChartTemplatesPath();
+            await chartRenderer.start(chartTemplatesPath, false);
+            await chartRenderer.renderImage(chartDef, imageFilePath, chartRootSelector);
             await chartRenderer.end();
         }
 

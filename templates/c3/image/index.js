@@ -2,7 +2,7 @@
 
 $(function () {
 
-    $.get("chart-data")
+    $.get("/chart-data")
         .then(function (response) {
             //console.log("Input chart def:");
             //console.log(JSON.stringify(response.chartDef, null, 4));
