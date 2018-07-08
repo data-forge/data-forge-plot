@@ -4,7 +4,7 @@ import { IDataFrame, DataFrame } from 'data-forge';
 import { ChartRenderer, IChartRenderer } from './render-chart';
 import * as Sugar from 'sugar';
 import { WebServer } from './web-server';
-import { IPlotAPI, PlotAPI, globalChartRenderer, defaultPlotDef, startPlot, endPlot } from './plot-api';
+import { IPlotAPI, PlotAPI, globalChartRenderer, startPlot, endPlot } from './plot-api';
 import { IPlotConfig, ChartType, IAxisMap } from './chart-def';
 
 //
@@ -27,9 +27,6 @@ declare module "data-forge/build/lib/series" {
 }
 
 function plotSeries(this: ISeries<any, any>, plotDef?: IPlotConfig, axisMap?: IAxisMap): IPlotAPI {
-    if (!plotDef) {
-        plotDef = defaultPlotDef;
-    }
 
     const amt = this.count();
     const serializedData = this.inflate((value: any) => ({ __value__: value }))
@@ -38,7 +35,7 @@ function plotSeries(this: ISeries<any, any>, plotDef?: IPlotConfig, axisMap?: IA
             return row;
         })
         .serialize();
-    return new PlotAPI(serializedData, plotDef, axisMap!);
+    return new PlotAPI(serializedData, plotDef || {}, axisMap!);
 }
 
 Series.prototype.startPlot = startPlot;
@@ -65,10 +62,6 @@ declare module "data-forge/build/lib/dataframe" {
 }
 
 function plotDataFrame(this: IDataFrame<any, any>, plotDef?: IPlotConfig, axisMap?: IAxisMap): IPlotAPI {
-    if (!plotDef) {
-        plotDef = defaultPlotDef;
-    }
-
     const amt = this.count();
     const df = this.zip(this.getIndex().head(amt), (row: any, index: any) => {
             row.__index__ = index;
@@ -76,7 +69,7 @@ function plotDataFrame(this: IDataFrame<any, any>, plotDef?: IPlotConfig, axisMa
         });
 
     const serializedData = df.serialize();
-    return new PlotAPI(serializedData, plotDef, axisMap);
+    return new PlotAPI(serializedData, plotDef || {}, axisMap);
 }
 
 DataFrame.prototype.startPlot = startPlot;

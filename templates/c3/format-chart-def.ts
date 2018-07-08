@@ -53,7 +53,7 @@ function determineAxisType (dataType: string): string { //todo: return val could
 /**
  * Format values for display.
  */
-function formatValues (inputChartDef: IChartDef, seriesName: string, dataType: string, formatString: string): string[] | undefined { //todo: this shuldn't be done by the template. It should be done by the plot API!
+function formatValues (inputChartDef: IChartDef, seriesName: string, dataType: string, formatString: string): string[] | undefined {
     if (dataType === "number") { // Use numeral to format numbers.
         return inputChartDef.data.values.map(value => numeral(value[seriesName]).format(formatString));
     }
