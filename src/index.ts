@@ -7,6 +7,8 @@ import { WebServer } from './web-server';
 import { IPlotAPI, PlotAPI, globalChartRenderer, startPlot, endPlot } from './plot-api';
 import { IPlotConfig, ChartType, IAxisMap } from './chart-def';
 
+export { ChartType } from './chart-def';
+
 //
 // Augment ISeries and Series with plot function.
 //
