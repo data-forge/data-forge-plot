@@ -1,6 +1,6 @@
 {
     "name": "data-forge-plot",
-    "version": "0.0.21",
+    "version": "0.0.22",
     "description": "Plotting API for use with Data-Forge.",
     "main": "build/index.js",
     "types": "build/index.d.ts",
