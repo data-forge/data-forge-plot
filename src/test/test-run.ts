@@ -156,10 +156,9 @@ async function main(): Promise<void> {
         //.x()
         //    .axisType(AxisType.Category)
         //.renderImage("./test-series2.png", { openImage: true });
-        .x()
-            .series("__index__")
-                .label("Fooey")
-                .format("0.00")
+        .x("__index__")
+            //.label("Fooey")
+            //.format("0.00")
         .exportWeb("c:/temp/test-output-5", { openBrowser: true, overwrite: true });
 }
 
