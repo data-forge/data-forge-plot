@@ -12,7 +12,7 @@
         "clean-build:watch": "rm -rf build/* && tsc --watch",
         "test": "nyc mocha --opts ./src/test/mocha.opts",
         "test:watch": "mocha --watch --watch-extensions ts --opts ./src/test/mocha.opts",
-        "prepublishOnly": "tsc"
+        "xprepublishOnly": "tsc"
     },
     "repository": {
         "type": "git",
