@@ -1,6 +1,6 @@
 {
     "name": "data-forge-plot",
-    "version": "0.0.22",
+    "version": "0.0.23",
     "description": "Plotting API for use with Data-Forge.",
     "main": "build/index.js",
     "types": "build/index.d.ts",
@@ -12,7 +12,7 @@
         "clean-build:watch": "rm -rf build/* && tsc --watch",
         "test": "nyc mocha --opts ./src/test/mocha.opts",
         "test:watch": "mocha --watch --watch-extensions ts --opts ./src/test/mocha.opts",
-        "xprepublishOnly": "tsc"
+        "prepublishOnly": "tsc"
     },
     "repository": {
         "type": "git",
