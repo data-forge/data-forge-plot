@@ -36,6 +36,7 @@ function configureAxes (inputChartDef: IChartDef): any { //todo: I could type th
 
 /**
  * Determine the default axis type based on data type.
+ * TODO: This code could be simplified by removing this function. This should be choosen server-side!
  */
 function determineAxisType (dataType: string): string { //todo: return val could be an enum.
     if (dataType === "number") {
@@ -72,7 +73,7 @@ function configureOneSeries(seriesConfig: ISingleAxisMap, inputChartDef: IChartD
     c3AxisDef.type = determineAxisType(dataType);
 
     if (axisDef) {
-        if (axisDef.axisType) {
+        if (axisDef.axisType && axisDef.axisType !== "default") {
             c3AxisDef.type = axisDef.axisType;
         }
 

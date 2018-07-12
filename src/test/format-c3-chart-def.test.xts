@@ -67,15 +67,15 @@ describe('format c3 chart', () => {
                 width: 800,
                 height: 600,
                 x: { 
-                    axisType: AxisType.Indexed,
+                    axisType: AxisType.Default,
                     label: {},
                 },
                 y: { 
-                    axisType: AxisType.Indexed,
+                    axisType: AxisType.Default,
                     label: {},
                 },
                 y2: { 
-                    axisType: AxisType.Indexed,
+                    axisType: AxisType.Default,
                     label: {},
                 },
             },

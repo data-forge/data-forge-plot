@@ -474,13 +474,13 @@ export class PlotAPI extends AbstractPlotAPI {
 
         if (!expandedPlotConfig.x) {
             expandedPlotConfig.x = {
-                axisType: AxisType.Indexed,
+                axisType: AxisType.Default,
                 label: {},
             };
         }
         else {
             if (!expandedPlotConfig.x.axisType) {
-                expandedPlotConfig.x.axisType = AxisType.Indexed;
+                expandedPlotConfig.x.axisType = AxisType.Default;
             }
 
             if (!expandedPlotConfig.x.label) {
@@ -490,13 +490,13 @@ export class PlotAPI extends AbstractPlotAPI {
 
         if (!expandedPlotConfig.y) {
             expandedPlotConfig.y = {
-                axisType: AxisType.Indexed,
+                axisType: AxisType.Default,
                 label: {},
             };
         }
         else {
             if (!expandedPlotConfig.y.axisType) {
-                expandedPlotConfig.y.axisType = AxisType.Indexed;
+                expandedPlotConfig.y.axisType = AxisType.Default;
             }
 
             if (!expandedPlotConfig.y.label) {
@@ -506,13 +506,13 @@ export class PlotAPI extends AbstractPlotAPI {
 
         if (!expandedPlotConfig.y2) {
             expandedPlotConfig.y2 = {
-                axisType: AxisType.Indexed,
+                axisType: AxisType.Default,
                 label: {},
             };
         }
         else {
             if (!expandedPlotConfig.y2.axisType) {
-                expandedPlotConfig.y2.axisType = AxisType.Indexed;
+                expandedPlotConfig.y2.axisType = AxisType.Default;
             }
 
             if (!expandedPlotConfig.y2.label) {

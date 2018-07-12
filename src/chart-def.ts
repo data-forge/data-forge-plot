@@ -12,6 +12,7 @@ export enum ChartType {
  * Defines the type of an axis.
  */
 export enum AxisType {
+    Default =  "default",
     Indexed = "indexed",
     Timeseries = "timeseries",
     Category = "category",

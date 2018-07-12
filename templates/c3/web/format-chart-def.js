@@ -31,6 +31,7 @@ function configureAxes(inputChartDef) {
 ;
 /**
  * Determine the default axis type based on data type.
+ * TODO: This code could be simplified by removing this function. This should be choosen server-side!
  */
 function determineAxisType(dataType) {
     if (dataType === "number") {
@@ -64,7 +65,7 @@ function configureOneSeries(seriesConfig, inputChartDef, axisDef, c3AxisDef) {
     var dataType = inputChartDef.data.columns[seriesName];
     c3AxisDef.type = determineAxisType(dataType);
     if (axisDef) {
-        if (axisDef.axisType) {
+        if (axisDef.axisType && axisDef.axisType !== "default") {
             c3AxisDef.type = axisDef.axisType;
         }
         if (axisDef.label) {
