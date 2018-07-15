@@ -444,6 +444,10 @@ export abstract class AbstractPlotAPI implements IPlotAPI {
             axisMap: defaultedGlobalAxis,
         };
     }
+
+    getTypeCode (): string {
+        return "plot";
+    }        
 }
 
 /**
