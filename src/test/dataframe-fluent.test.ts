@@ -42,15 +42,15 @@ describe('data-forge-plot - dataframe fluent', () => {
                 "height": 600,                   
                 "template": "c3",                
                 "x": {                           
-                    "axisType": "indexed",       
+                    "axisType": "default",       
                     "label": {}                  
                 },                               
                 "y": {                           
-                    "axisType": "indexed",       
+                    "axisType": "default",       
                     "label": {}                  
                 },                               
                 "y2": {                          
-                    "axisType": "indexed",       
+                    "axisType": "default",       
                     "label": {}                  
                 }                                
             },                                   
@@ -98,15 +98,15 @@ describe('data-forge-plot - dataframe fluent', () => {
                 "height": 600,                                
                 "template": "wug",                            
                 "x": {                                        
-                    "axisType": "indexed",                    
+                    "axisType": "default",                    
                     "label": {}                               
                 },                                            
                 "y": {                                        
-                    "axisType": "indexed",                    
+                    "axisType": "default",                    
                     "label": {}                               
                 },                                            
                 "y2": {                                       
-                    "axisType": "indexed",                    
+                    "axisType": "default",                    
                     "label": {}                               
                 }                                             
             },                                                
