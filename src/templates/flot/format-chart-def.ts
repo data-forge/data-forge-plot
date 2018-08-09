@@ -1,4 +1,4 @@
-import { IChartDef, ISingleYAxisMap, ISingleAxisMap, IAxisConfig } from "../../src/chart-def";
+import { IChartDef, ISingleYAxisMap, ISingleAxisMap, IAxisConfig } from "../../../src/chart-def";
 
 declare var moment: any;
 declare var numeral: any;

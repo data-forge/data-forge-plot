@@ -1,6 +1,6 @@
 (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 "use strict";
-exports.__esModule = true;
+Object.defineProperty(exports, "__esModule", { value: true });
 "use strict";
 /**
  * Configure a single axe.
@@ -227,14 +227,14 @@ function formatChartDef(inputChartDef) {
         bindto: "#chart",
         size: {
             width: inputChartDef.plotConfig && inputChartDef.plotConfig.width || 1200,
-            height: inputChartDef.plotConfig && inputChartDef.plotConfig.height || 600
+            height: inputChartDef.plotConfig && inputChartDef.plotConfig.height || 600,
         },
         data: {
             xs: xs,
             columns: columns,
             type: inputChartDef.plotConfig && inputChartDef.plotConfig.chartType || "line",
             axes: configureAxes(inputChartDef),
-            names: configureSeriesNames(inputChartDef)
+            names: configureSeriesNames(inputChartDef),
         },
         axis: configureAxis(inputChartDef),
         transition: {
@@ -251,5 +251,5 @@ exports.formatChartDef = formatChartDef;
 
 },{}],2:[function(require,module,exports){
 
-window.formatChartDef = require('./build/format-chart-def').formatChartDef;
-},{"./build/format-chart-def":1}]},{},[2]);
+window.formatChartDef = require('../../build/templates/c3/format-chart-def').formatChartDef;
+},{"../../build/templates/c3/format-chart-def":1}]},{},[2]);

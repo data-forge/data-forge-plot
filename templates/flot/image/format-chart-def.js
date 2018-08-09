@@ -1,12 +1,12 @@
 (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 "use strict";
-exports.__esModule = true;
+Object.defineProperty(exports, "__esModule", { value: true });
 "use strict";
 function addSeries(seriesLabel, xSeriesName, ySeriesName, inputChartDef, flotChartDef) {
     var seriesData = inputChartDef.data.values.map(function (row) { return [row[xSeriesName], row[ySeriesName]]; });
     flotChartDef.data.push({
         label: seriesLabel,
-        data: seriesData
+        data: seriesData,
     });
 }
 function extractSeries(axisName, inputChartDef, flotChartDef) {
@@ -31,7 +31,7 @@ function extractSeries(axisName, inputChartDef, flotChartDef) {
 function formatChartDef(inputChartDef) {
     var flotChartDef = {
         data: [],
-        options: {}
+        options: {},
     };
     extractSeries("y", inputChartDef, flotChartDef);
     extractSeries("y2", inputChartDef, flotChartDef);
@@ -42,5 +42,5 @@ exports.formatChartDef = formatChartDef;
 
 },{}],2:[function(require,module,exports){
 
-window.formatChartDef = require('./build/format-chart-def').formatChartDef;
-},{"./build/format-chart-def":1}]},{},[2]);
+window.formatChartDef = require('../../build/templates/flot/format-chart-def').formatChartDef;
+},{"../../build/templates/flot/format-chart-def":1}]},{},[2]);

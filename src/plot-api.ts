@@ -1,6 +1,5 @@
 import { ChartType, IChartDef, VerticalLabelPosition, HorizontalLabelPosition, AxisType, IPlotConfig, IAxisMap, IAxisConfig, IExpandedAxisMap, ISingleAxisMap, ISingleYAxisMap, IExpandedPlotConfig } from "./chart-def";
 import { assert } from "chai";
-import { IChartRenderer, ChartRenderer } from "./render-chart";
 const opn = require('opn');
 import * as path from 'path';
 import * as fs from 'fs-extra';
@@ -8,25 +7,14 @@ import * as Sugar from 'sugar';
 import { findPackageDir } from './find-package-dir';
 import { ISerializedDataFrame } from 'data-forge/build/lib/dataframe';
 import * as globby from 'globby';
-import * as Handlebars from 'handlebars';
-
-const jetpack = require('fs-jetpack');
-
-Handlebars.registerHelper('json', context => {
-    return JSON.stringify(context, null, 4);
-});
-
-//TODO: Need to have this come from the template some how.
-const chartRootSelectors = {
-    c3: "svg",
-    flot: "canvas",
-};
+import { exportTemplate } from 'inflate-template';
+import { captureImage } from 'capture-template';
 
 //
 // Reusable chart renderer. 
 // For improved performance.
 //
-export let globalChartRenderer: IChartRenderer | null = null;
+//TODO :export let globalChartRenderer: IChartRenderer | null = null;
 
 async function findChartTemplatesPath(): Promise<string> {
     const parentDir = await findPackageDir(__dirname);
@@ -35,15 +23,19 @@ async function findChartTemplatesPath(): Promise<string> {
 }
 
 export async function startPlot(): Promise<void> {
+    /*TODO:
     globalChartRenderer = new ChartRenderer();
 
     const chartTemplatesPath = await findChartTemplatesPath();
     await globalChartRenderer.start(chartTemplatesPath, false);
+    */
 }
 
 export async function endPlot(): Promise<void> {
+    /*TODO:
     await globalChartRenderer!.end();
     globalChartRenderer = null;
+    */
 }
 
 /**
@@ -317,88 +309,24 @@ export abstract class AbstractPlotAPI implements IPlotAPI {
     async renderImage(imageFilePath: string, renderOptions?: IRenderOptions): Promise<void> {
 
         const chartDef = this.serialize();
-
-        const chartRootSelector = (chartRootSelectors as any)[chartDef.plotConfig.template]
-        assert.isString(chartRootSelector, "Unknown root chart selector for template " + chartDef.plotConfig.template);
-
-        if (globalChartRenderer) {
-            // Reused global chart renderer.
-            await globalChartRenderer.renderImage(chartDef, imageFilePath, chartRootSelector);
-        }
-        else {
-            // Create a new chart renderer.
-            const chartRenderer: IChartRenderer = new ChartRenderer();
-            const chartTemplatesPath = await findChartTemplatesPath();
-            await chartRenderer.start(chartTemplatesPath, false);
-            await chartRenderer.renderImage(chartDef, imageFilePath, chartRootSelector);
-            await chartRenderer.end();
-        }
+        const templatesPath = await findChartTemplatesPath();
+        const chartTemplatePath = path.join(templatesPath, chartDef.plotConfig.template, "web");
+        await captureImage({ chartDef: chartDef }, chartTemplatePath, imageFilePath);
 
         if (renderOptions && renderOptions.openImage) {
             opn(path.resolve(imageFilePath));
         }
     }
 
-    //
-    // Read a file to expand it.
-    //
-    private readFile(inputFilePath: string): Promise<string> {
-        return new Promise((resolve, reject) => {
-            fs.readFile(inputFilePath, 'utf8', (err, data) => {
-                if (err) {
-                    reject(err);
-                }
-                else {
-                    resolve(data);
-                }
-            });
-        });
-    }
-
-    //
-    // Write an expanded file.
-    //
-    private writeFile(outputFilePath: string , fileContent: string): Promise<void> {
-        return new Promise((resolve, reject) => {
-            fs.writeFile(outputFilePath, fileContent, err => {
-                if (err) {
-                    reject(err);
-                }
-                else {
-                    resolve();
-                }
-            });
-        });
-    }
-
-    //
-    // Expand a file using a mustach template.
-    //
-    private async expandFile(inputFilePath: string, chartDef: IChartDef): Promise<void> {
-        const fileContent = await this.readFile(inputFilePath);
-        const expandedContent = Handlebars.compile(fileContent)({ chartDef: chartDef });
-        await this.writeFile(inputFilePath, expandedContent);
-    }
-
     /**
      * Export an interactive web visualization of the chart.
      */
     async exportWeb(outputFolderPath: string, exportOptions?: IWebExportOptions): Promise<void> {
-
-        if (exportOptions && exportOptions.overwrite) {
-            await fs.remove(outputFolderPath);
-        }
-
         const chartDef = this.serialize();
-
-        const packageFolderPath = await findPackageDir(__dirname);
-        const templateFolderPath = path.join(packageFolderPath, "templates", this.plotConfig.template!, "web");
-        await jetpack.copyAsync(templateFolderPath, outputFolderPath);
-
-        const templateFileWildcard = path.join(outputFolderPath, "*");
-        const templateFilePaths = await globby(templateFileWildcard);
-
-        await Promise.all(templateFilePaths.map(templateFilePath => this.expandFile(templateFilePath, chartDef)));
+        const templatesPath = await findChartTemplatesPath();
+        const chartTemplatePath = path.join(templatesPath, chartDef.plotConfig.template, "web"); //todo: the template could also be an absolute or relative path.
+        const overwrite = exportOptions && !!exportOptions.overwrite || false;
+        await exportTemplate({ chartDef: chartDef }, outputFolderPath, { templatePath: chartTemplatePath, overwrite: overwrite });
 
         if (exportOptions && exportOptions.openBrowser) {
             opn("file://" + path.resolve(path.join(outputFolderPath, "index.html")));
@@ -409,17 +337,11 @@ export abstract class AbstractPlotAPI implements IPlotAPI {
      * Export a Node.js project to host a web visualization of the char.
      */
     async exportNodejs(outputFolderPath: string, exportOptions?: INodejsExportOptions): Promise<void> {
-
-        if (exportOptions && exportOptions.overwrite) {
-            await fs.remove(outputFolderPath);
-        }
-
-        const packageFolderPath = await findPackageDir(__dirname);
-
-        await jetpack.copyAsync(path.join(packageFolderPath, "templates", this.plotConfig.template!, "nodejs"), outputFolderPath);
-
-        const jsonChartDef = JSON.stringify(this.serialize(), null, 4);
-        await jetpack.writeAsync(path.join(outputFolderPath, "chart-def.json"), jsonChartDef);
+       const chartDef = this.serialize();
+       const templatesPath = await findChartTemplatesPath();
+       const chartTemplatePath = path.join(templatesPath, chartDef.plotConfig.template, "nodejs");
+       const overwrite = exportOptions && !!exportOptions.overwrite || false;
+       await exportTemplate({ chartDef: chartDef }, outputFolderPath, { templatePath: chartTemplatePath, overwrite: overwrite });
     }
 
     /**
