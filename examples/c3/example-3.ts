@@ -13,8 +13,6 @@ import '../../src/index';
 import * as fs from 'fs-extra';
 import * as path from 'path';
 
-fs.emptyDirSync("./output");
-
 const outputName = path.basename(__filename, ".ts");
 const outputPath = path.join("./output", outputName);
 fs.emptyDirSync(outputPath);
@@ -30,13 +28,12 @@ async function main(): Promise<void> {
         })
         .parseDates("date", "YYYY-MM-DD");
     
-    console.log(df.toString());
+    //console.log(df.toString());
     
     const plot = df.plot({}, { x: "date", y: [ "data1", "data2" ]});
-    await plot.renderImage(path.join(outputPath, "image.png"), { openImage: true });
-    await plot.exportWeb(path.join(outputPath, "web"), { overwrite: true, openBrowser: true });
-    await plot.exportNodejs(path.join(outputPath, "nodejs"), { overwrite: true });
-    
+    await plot.renderImage(path.join(outputPath, "image.png"), { openImage: false });
+    await plot.exportWeb(path.join(outputPath, "web"), { overwrite: true, openBrowser: false });
+    await plot.exportNodejs(path.join(outputPath, "nodejs"), { overwrite: true });    
 }
 
 main()

@@ -1,2 +1,2 @@
 
-window.formatChartDef = require('./build/format-chart-def').formatChartDef;
+window.formatChartDef = require('../../build/templates/flot/format-chart-def').formatChartDef;

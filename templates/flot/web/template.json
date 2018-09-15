@@ -1,0 +1,4 @@
+{
+    "waitSelector": "canvas",
+    "noExpand": "lib/**/*"
+}

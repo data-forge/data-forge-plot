@@ -1,10 +1,8 @@
 import { assert } from 'chai';
 import { ISeries, Series } from 'data-forge';
 import { IDataFrame, DataFrame } from 'data-forge';
-import { ChartRenderer, IChartRenderer } from './render-chart';
 import * as Sugar from 'sugar';
-import { WebServer } from './web-server';
-import { IPlotAPI, PlotAPI, globalChartRenderer, startPlot, endPlot } from './plot-api';
+import { IPlotAPI, PlotAPI, /*todo: globalChartRenderer,*/ startPlot, endPlot } from './plot-api';
 import { IPlotConfig, ChartType, IAxisMap } from './chart-def';
 
 export { ChartType } from './chart-def';

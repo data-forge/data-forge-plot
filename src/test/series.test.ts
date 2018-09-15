@@ -40,15 +40,15 @@ describe('data-forge-plot - series', () => {
                 "height": 600,                      
                 "template": "c3",                   
                 "x": {                              
-                    "axisType": "indexed",          
+                    "axisType": "default",          
                     "label": {}                     
                 },                                  
                 "y": {                              
-                    "axisType": "indexed",          
+                    "axisType": "default",          
                     "label": {}                     
                 },                                  
                 "y2": {                             
-                    "axisType": "indexed",          
+                    "axisType": "default",          
                     "label": {}                     
                 }                                   
             },                                      
@@ -95,15 +95,15 @@ describe('data-forge-plot - series', () => {
                 "height": 600,                     
                 "template": "smig",                
                 "x": {                             
-                    "axisType": "indexed",         
+                    "axisType": "default",         
                     "label": {}                    
                 },                                 
                 "y": {                             
-                    "axisType": "indexed",         
+                    "axisType": "default",         
                     "label": {}                    
                 },                                 
                 "y2": {                            
-                    "axisType": "indexed",         
+                    "axisType": "default",         
                     "label": {}                    
                 }                                  
             },                                     

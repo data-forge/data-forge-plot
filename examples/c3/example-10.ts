@@ -15,8 +15,6 @@ import * as fs from 'fs-extra';
 import * as path from 'path';
 import { ChartType, IAxisMap } from '../../src/chart-def';
 
-fs.emptyDirSync("./output");
-
 const outputName = path.basename(__filename, ".ts");
 const outputPath = path.join("./output", outputName);
 fs.emptyDirSync(outputPath);
@@ -32,7 +30,7 @@ async function main(): Promise<void> {
             },
         });
     
-    console.log(df.head(10).toString());
+    //console.log(df.head(10).toString());
     
     const plot = df.plot()
         .chartType(ChartType.Scatter)
@@ -45,8 +43,8 @@ async function main(): Promise<void> {
             //todo: .color("green")
             .x("setosa_x");
 
-    await plot.renderImage(path.join(outputPath, "image.png"), { openImage: true });
-    await plot.exportWeb(path.join(outputPath, "web"), { overwrite: true, openBrowser: true });
+    await plot.renderImage(path.join(outputPath, "image.png"), { openImage: false });
+    await plot.exportWeb(path.join(outputPath, "web"), { overwrite: true, openBrowser: false });
     await plot.exportNodejs(path.join(outputPath, "nodejs"), { overwrite: true });    
 }
 
