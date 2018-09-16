@@ -18,7 +18,7 @@ describe('format c3 chart', () => {
         expect (() => formatChartDef({} as IChartDef)).to.throw();
     });
 
-    function formatSeries (series?: string | string[] | ISingleYAxisMap | ISingleYAxisMap[]): ISingleYAxisMap[] {
+    function formatSeries(series?: string | string[] | ISingleYAxisMap | ISingleYAxisMap[]): ISingleYAxisMap[] {
         if (!series) {
             return [];
         }
@@ -38,7 +38,7 @@ describe('format c3 chart', () => {
         }
 
         if (Sugar.Object.isArray(series)) {
-            return (series as ISingleYAxisMap[]).map((seriesConfig) => {
+            return (series as ISingleYAxisMap[]).map(seriesConfig => {
                 if (Sugar.Object.isString(seriesConfig)) {
                     return {
                         series: seriesConfig,
@@ -58,7 +58,7 @@ describe('format c3 chart', () => {
         throw new Error('Invalid series config.');
     }
 
-    function createMinimalChartDef (testChartDef: ITestChartDef) {
+    function createMinimalChartDef(testChartDef: ITestChartDef) {
         const chartDef: IChartDef = {
             data: testChartDef.data,
             plotConfig: {
