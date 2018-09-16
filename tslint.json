@@ -1,6 +1,12 @@
 {
     "extends": ["tslint:recommended"],
-    "rules": [],
+    "rules": {
+        "no-var-requires": false,
+        "space-before-function-paren": [
+            true, "always"
+        ],
+        "ordered-imports": false,
+        "quotemark": [true, "single", "avoid-template", "avoid-escape"]
+    },
     "defaultSeverity": "error"
-
 }

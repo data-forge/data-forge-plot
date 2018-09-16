@@ -1,45 +1,45 @@
 import { ISerializedDataFrame } from 'data-forge/build/lib/dataframe';
-/** 
+/**
  * Defines the type of chart to output.
  */
 export enum ChartType {
-    Line = "line",
-    Bar = "bar",
-    Scatter = "scatter",
+    Line = 'line',
+    Bar = 'bar',
+    Scatter = 'scatter',
 }
 
 /**
  * Defines the type of an axis.
  */
 export enum AxisType {
-    Default =  "default",
-    Indexed = "indexed",
-    Timeseries = "timeseries",
-    Category = "category",
+    Default =  'default',
+    Indexed = 'indexed',
+    Timeseries = 'timeseries',
+    Category = 'category',
 }
 
 /**
  * Defines the position of a horizontal label.
  */
 export enum HorizontalLabelPosition {
-    InnerRight = "inner-right", // Default
-    InnerCenter = "inner-center",
-    InnerLeft = "inner-left",
-    OuterRight = "outer-right",
-    OuterCenter = "outer-center",
-    OuterLeft = "outer-left",
+    InnerRight = 'inner-right', // Default
+    InnerCenter = 'inner-center',
+    InnerLeft = 'inner-left',
+    OuterRight = 'outer-right',
+    OuterCenter = 'outer-center',
+    OuterLeft = 'outer-left',
 }
 
 /**
  * Defines the position of a vertical label.
  */
 export enum VerticalLabelPosition {
-    InnerTop = "inner-top", // Default
-    InnerMiddle = "inner-middle",
-    InnerBottom = "inner-bottom",
-    OuterTop = "outer-top",
-    OuterMiddle = "outer-middle",
-    OuterBottom = "outer-bottom",
+    InnerTop = 'inner-top', // Default
+    InnerMiddle = 'inner-middle',
+    InnerBottom = 'inner-bottom',
+    OuterTop = 'outer-top',
+    OuterMiddle = 'outer-middle',
+    OuterBottom = 'outer-bottom',
 }
 
 /**

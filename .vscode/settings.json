@@ -7,4 +7,5 @@
     "files.trimTrailingWhitespace": true,
     "tslint.jsEnable": true,
     "tslint.run": "onType",
+    "typescript.tsdk": "node_modules/typescript/lib",
 }
