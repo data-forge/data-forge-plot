@@ -4,16 +4,14 @@ import {
     VerticalLabelPosition, HorizontalLabelPosition,
     AxisType,
     IPlotConfig, IExpandedPlotConfig,
-    IAxisMap, IAxisConfig, IExpandedAxisMap, ISingleAxisMap, ISingleYAxisMap
+    IAxisMap, IAxisConfig, ISingleAxisMap, ISingleYAxisMap
 } from './chart-def';
 import { assert } from 'chai';
 const opn = require('opn');
 import * as path from 'path';
-import * as fs from 'fs-extra';
 import * as Sugar from 'sugar';
 import { findPackageDir } from './find-package-dir';
 import { ISerializedDataFrame } from 'data-forge/build/lib/dataframe';
-import * as globby from 'globby';
 import { exportTemplate } from 'inflate-template';
 import { captureImage } from 'capture-template';
 

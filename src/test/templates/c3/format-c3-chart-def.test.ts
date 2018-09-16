@@ -1,4 +1,4 @@
-import { assert, expect } from 'chai';
+import { expect } from 'chai';
 import 'mocha';
 import { IChartDef, AxisType, ChartType, ISingleYAxisMap } from '../../../chart-def';
 import { formatChartDef } from '../../../templates/c3/format-chart-def';

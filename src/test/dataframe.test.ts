@@ -1,4 +1,4 @@
-import { assert, expect } from 'chai';
+import { expect } from 'chai';
 import 'mocha';
 import { DataFrame } from 'data-forge';
 import '../index';

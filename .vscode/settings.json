@@ -4,7 +4,6 @@
     "editor.insertSpaces": true,
     "typescript.reportStyleChecksAsWarnings": true,
     "editor.trimAutoWhitespace": true,
-    "files.trimTrailingWhitespace": true,
     "tslint.jsEnable": true,
     "tslint.run": "onType",
     "typescript.tsdk": "node_modules/typescript/lib",
