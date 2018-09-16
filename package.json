@@ -12,7 +12,9 @@
         "clean-build:watch": "rm -rf build/* && tsc --watch",
         "test": "nyc mocha --opts ./src/test/mocha.opts",
         "test:watch": "mocha --watch --watch-extensions ts --opts ./src/test/mocha.opts",
-        "prepublishOnly": "build.bat"
+        "prepublishOnly": "build.bat",
+        "lint": "npx tslint -p tsconfig.json -t stylish",
+        "fix-lint": "npx tslint -p tsconfig.json -t stylish"
     },
     "repository": {
         "type": "git",

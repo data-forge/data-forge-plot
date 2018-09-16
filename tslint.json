@@ -2,13 +2,28 @@
     "extends": ["tslint:recommended"],
     "rules": {
         "no-var-requires": false,
-        "space-before-function-paren": [
-            true, "always"
-        ],
         "ordered-imports": false,
         "quotemark": [true, "single", "avoid-template", "avoid-escape"],
         "object-literal-sort-keys": false,
-        "one-line": false
+        "one-line": false,
+        "no-unused-variable": true,
+        "trailing-comma": [
+            true,
+            {
+                "multiline": {
+                    "objects": true,
+                    "arrays": true
+                },
+                "singleline": {
+                    "objects": true,
+                    "arrays": true
+                },
+                "esSpecCompliant": true
+            }
+        ],
+        "member-access": false,
+        "arrow-parens": [true, "ban-single-arg-parens"],
+        "max-classes-per-file": false
     },
-    "defaultSeverity": "error"
+    "defaultSeverity": "warning"
 }
