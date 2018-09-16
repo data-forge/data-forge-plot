@@ -1,16 +1,14 @@
-import { DataFrame, Series } from "data-forge";
-import "../index";
+import { DataFrame, Series } from 'data-forge';
+import '../index';
 import * as moment from 'moment';
 
 async function main(): Promise<void> {
 
-    var series = new Series([10, 20, 15, 18, 25, 22, 13 ]);
-    await series.plot().renderImage("./test-series.png");
-
-    
+    const series = new Series([10, 20, 15, 18, 25, 22, 13 ]);
+    await series.plot().renderImage('./test-series.png');
 
     /*
-    var df = new DataFrame([ 
+    var df = new DataFrame([
         {
             A: 10,
         },
@@ -22,7 +20,7 @@ async function main(): Promise<void> {
         },
     ]);
     */
-    //await df.plot().renderImage("./test-dataframe.png");
+    // await df.plot().renderImage("./test-dataframe.png");
 
     /*
     await df
@@ -30,12 +28,12 @@ async function main(): Promise<void> {
         .renderImage("./test-dataframe.png");
     */
 
-    //await df.plot().exportWeb("c:\\temp\\test-output", { openBrowser: true, overwrite: true });
+    // await df.plot().exportWeb("c:\\temp\\test-output", { openBrowser: true, overwrite: true });
 
-    //await df.plot().exportNodejs("c:\\temp\\test-output-2", { overwrite: true });
+    // await df.plot().exportNodejs("c:\\temp\\test-output-2", { overwrite: true });
 
     /*
-    var df = new DataFrame([ 
+    var df = new DataFrame([
         {
             A: 10,
             B: 12,
@@ -50,7 +48,7 @@ async function main(): Promise<void> {
         },
     ]);
     */
-    //await df.plot().renderImage("./test-dataframe-2.png");
+    // await df.plot().renderImage("./test-dataframe-2.png");
     /*
     await df.plot()
         .chartType(ChartType.Bar)
@@ -64,7 +62,7 @@ async function main(): Promise<void> {
 
     /*
 
-   var df = new DataFrame([ 
+   var df = new DataFrame([
         {
             A: "25/04/2018",
             B: 12,
@@ -83,7 +81,7 @@ async function main(): Promise<void> {
         */
 
         /*
-    var df = new DataFrame([ 
+    var df = new DataFrame([
         {
             A: 10,
             B: 120,
@@ -99,9 +97,8 @@ async function main(): Promise<void> {
     ]);
     */
 
-
     /*
-    await df.plot({ 
+    await df.plot({
                 x: {
                     label: {
                         text: "Blah",
@@ -111,21 +108,21 @@ async function main(): Promise<void> {
                 y: {
                     label: "Fooey",
                 },
-            }, 
-            { 
+            },
+            {
                 y2: "B",
                 series: {
                     A:  {
                         label: "A baby"
                     },
                     B: "B yeah"
-                } 
+                }
             }
         )
         .renderImage("./test-dataframe-4.png");
         */
-        //.exportWeb("c:/temp/test-output-3");
-        //.exportNodejs("c:/temp/test-output-4");
+        // .exportWeb("c:/temp/test-output-3");
+        // .exportNodejs("c:/temp/test-output-4");
 
         /*
     await df.plot()
@@ -146,28 +143,26 @@ async function main(): Promise<void> {
         values: [100, 110, 115],
     });
     */
-    const dateFormat = "YYYY/MM/DD";
+    const dateFormat = 'YYYY/MM/DD';
     const s = new Series({
         index: [100.14312232, 110.23232243, 115.2342345234532],
-        //index: [moment("2018/05/13", dateFormat).toDate(), moment("2018/05/14", dateFormat).toDate(), moment("2018/05/15", dateFormat).toDate()],
+        // index: [moment("2018/05/13", dateFormat).toDate(), moment("2018/05/14", dateFormat).toDate(), moment("2018/05/15", dateFormat).toDate()],
         values: [100, 110, 115],
     });
     s.plot(/*{}, { format: { __index__: "0.00" }}*/)
-        //.x()
+        // .x()
         //    .axisType(AxisType.Category)
-        //.renderImage("./test-series2.png", { openImage: true });
-        .x("__index__")
-            //.label("Fooey")
-            //.format("0.00")
-        .exportWeb("c:/temp/test-output-5", { openBrowser: true, overwrite: true });
+        // .renderImage("./test-series2.png", { openImage: true });
+        .x('__index__')
+            // .label("Fooey")
+            // .format("0.00")
+        .exportWeb('c:/temp/test-output-5', { openBrowser: true, overwrite: true });
 }
 
 main()
     .then(() => {
-        console.log("Done");
+        console.log('Done');
     })
     .catch(err => {
         console.error(err && err.stack || err);
     });
-
-
