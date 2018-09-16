@@ -9,7 +9,7 @@ const jetpack = require('fs-jetpack');
  * the root directory is reached.
  * https://gist.github.com/fhellwig/3355047
  */
-export async function findPackageDir (directory: string): Promise<string> {
+export async function findPackageDir(directory: string): Promise<string> {
     const packageFile = path.resolve(directory, 'package.json');
     const type = await jetpack.existsAsync(packageFile);
     if (type === 'file') {
