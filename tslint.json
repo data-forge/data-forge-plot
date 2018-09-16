@@ -6,7 +6,9 @@
             true, "always"
         ],
         "ordered-imports": false,
-        "quotemark": [true, "single", "avoid-template", "avoid-escape"]
+        "quotemark": [true, "single", "avoid-template", "avoid-escape"],
+        "object-literal-sort-keys": false,
+        "one-line": false
     },
     "defaultSeverity": "error"
 }
