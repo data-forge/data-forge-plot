@@ -5,15 +5,15 @@ import {
     AxisType,
     IPlotConfig, IExpandedPlotConfig,
     IAxisMap, IAxisConfig, ISingleAxisMap, ISingleYAxisMap
-} from './chart-def';
-import { assert } from 'chai';
-const opn = require('opn');
-import * as path from 'path';
-import * as Sugar from 'sugar';
-import { findPackageDir } from './find-package-dir';
-import { ISerializedDataFrame } from 'data-forge/build/lib/dataframe';
-import { exportTemplate } from 'inflate-template';
-import { captureImage } from 'capture-template';
+} from "./chart-def";
+import { assert } from "chai";
+const opn = require("opn");
+import * as path from "path";
+import * as Sugar from "sugar";
+import { findPackageDir } from "./find-package-dir";
+import { ISerializedDataFrame } from "data-forge/build/lib/dataframe";
+import { exportTemplate } from "inflate-template";
+import { captureImage } from "capture-template";
 
 //
 // Reusable chart renderer.
@@ -23,7 +23,7 @@ import { captureImage } from 'capture-template';
 
 async function findChartTemplatesPath(): Promise<string> {
     const parentDir = await findPackageDir(__dirname);
-    const chartTemplatesPath = path.join(parentDir, 'templates');
+    const chartTemplatesPath = path.join(parentDir, "templates");
     return chartTemplatesPath;
 }
 
@@ -288,7 +288,7 @@ export abstract class AbstractPlotAPI implements IPlotAPI {
     x(seriesName: string): IXAxisConfigAPI {
         this.globalAxisMap.x.series = seriesName;
         return new XAxisConfigAPI(
-            'x',
+            "x",
             seriesName,
             this.plotConfig.x!,
             this.globalAxisMap.x,
@@ -305,7 +305,7 @@ export abstract class AbstractPlotAPI implements IPlotAPI {
         const singleAxisMap: ISingleYAxisMap = { series: seriesName };
         (this.globalAxisMap.y as ISingleYAxisMap[]).push(singleAxisMap);
         return new YAxisConfigAPI(
-            'y',
+            "y",
             seriesName,
             this.plotConfig.y!,
             singleAxisMap,
@@ -322,7 +322,7 @@ export abstract class AbstractPlotAPI implements IPlotAPI {
         const singleAxisMap: ISingleYAxisMap = { series: seriesName };
         (this.globalAxisMap.y2 as ISingleYAxisMap[]).push(singleAxisMap);
         return new YAxisConfigAPI(
-            'y2',
+            "y2",
             seriesName,
             this.plotConfig.y2!,
             singleAxisMap,
@@ -339,7 +339,7 @@ export abstract class AbstractPlotAPI implements IPlotAPI {
 
         const chartDef = this.serialize();
         const templatesPath = await findChartTemplatesPath();
-        const chartTemplatePath = path.join(templatesPath, chartDef.plotConfig.template, 'web');
+        const chartTemplatePath = path.join(templatesPath, chartDef.plotConfig.template, "web");
         await captureImage({ chartDef }, chartTemplatePath, imageFilePath);
 
         if (renderOptions && renderOptions.openImage) {
@@ -354,12 +354,12 @@ export abstract class AbstractPlotAPI implements IPlotAPI {
         const chartDef = this.serialize();
         const templatesPath = await findChartTemplatesPath();
         // todo: the template could also be an absolute or relative path.
-        const chartTemplatePath = path.join(templatesPath, chartDef.plotConfig.template, 'web');
+        const chartTemplatePath = path.join(templatesPath, chartDef.plotConfig.template, "web");
         const overwrite = exportOptions && !!exportOptions.overwrite || false;
         await exportTemplate({ chartDef }, outputFolderPath, { templatePath: chartTemplatePath, overwrite });
 
         if (exportOptions && exportOptions.openBrowser) {
-            opn('file://' + path.resolve(path.join(outputFolderPath, 'index.html')));
+            opn("file://" + path.resolve(path.join(outputFolderPath, "index.html")));
         }
     }
 
@@ -369,7 +369,7 @@ export abstract class AbstractPlotAPI implements IPlotAPI {
     async exportNodejs(outputFolderPath: string, exportOptions?: INodejsExportOptions): Promise<void> {
        const chartDef = this.serialize();
        const templatesPath = await findChartTemplatesPath();
-       const chartTemplatePath = path.join(templatesPath, chartDef.plotConfig.template, 'nodejs');
+       const chartTemplatePath = path.join(templatesPath, chartDef.plotConfig.template, "nodejs");
        const overwrite = exportOptions && !!exportOptions.overwrite || false;
        await exportTemplate({ chartDef }, outputFolderPath, { templatePath: chartTemplatePath, overwrite });
     }
@@ -398,7 +398,7 @@ export abstract class AbstractPlotAPI implements IPlotAPI {
     }
 
     getTypeCode(): string {
-        return 'plot';
+        return "plot";
     }
 }
 
@@ -426,7 +426,7 @@ export class PlotAPI extends AbstractPlotAPI {
         }
 
         if (!expandedPlotConfig.template) {
-            expandedPlotConfig.template = 'c3';
+            expandedPlotConfig.template = "c3";
         }
 
         if (!expandedPlotConfig.x) {
@@ -479,7 +479,7 @@ export class PlotAPI extends AbstractPlotAPI {
 
         const expandedGlobalAxisMap: IInternalAxisMap = {
             x: {
-                series: '__index__',
+                series: "__index__",
             },
             y: [],
             y2: [],
@@ -609,7 +609,7 @@ class AxisConfigAPI<FluentT, AxisMapT> extends AbstractPlotAPI implements IAxisC
         if (!this.axisConfig.label) {
             this.axisConfig.label = {};
         }
-        else if (typeof(this.axisConfig.label) === 'string') {
+        else if (typeof(this.axisConfig.label) === "string") {
             this.axisConfig.label = {};
         }
 
@@ -651,7 +651,7 @@ class XAxisConfigAPI extends AxisConfigAPI<IXAxisConfigAPI, ISingleAxisMap> impl
         if (!this.axisConfig.label) {
             this.axisConfig.label = {};
         }
-        else if (typeof(this.axisConfig.label) === 'string') {
+        else if (typeof(this.axisConfig.label) === "string") {
             this.axisConfig.label = {
                 text: this.axisConfig.label,
             };
@@ -702,7 +702,7 @@ class YAxisConfigAPI extends AxisConfigAPI<IYAxisConfigAPI, ISingleYAxisMap> imp
         if (!this.axisConfig.label) {
             this.axisConfig.label = {};
         }
-        else if (typeof(this.axisConfig.label) === 'string') {
+        else if (typeof(this.axisConfig.label) === "string") {
             this.axisConfig.label = {
                 text: this.axisConfig.label,
             };
@@ -727,7 +727,7 @@ class YAxisConfigAPI extends AxisConfigAPI<IYAxisConfigAPI, ISingleYAxisMap> imp
         }
 
         return new XAxisConfigAPI(
-            'x',
+            "x",
             seriesName,
             this.plotConfig.x!,
             this.singleAxisMap.x,

@@ -1,23 +1,23 @@
-import { expect } from 'chai';
-import 'mocha';
-import { DataFrame } from 'data-forge';
-import '../index';
+import { expect } from "chai";
+import "mocha";
+import { DataFrame } from "data-forge";
+import "../index";
 
-describe('data-forge-plot - dataframe configuration', () => {
+describe("data-forge-plot - dataframe configuration", () => {
 
-    it('plot dataframe with no configuration', ()  => {
+    it("plot dataframe with no configuration", ()  => {
 
         const series = new DataFrame({ index: [1, 2, 3], values: [{ A: 10 }, { A: 20 }, { A: 30 } ] });
         const plotAPI = series.plot();
         expect(plotAPI.serialize()).to.eql({
             data: {
                 columnOrder: [
-                    'A',
-                    '__index__',
+                    "A",
+                    "__index__",
                 ],
                 columns: {
-                    A: 'number',
-                    __index__: 'number',
+                    A: "number",
+                    __index__: "number",
                 },
                 values: [
                     {
@@ -35,30 +35,30 @@ describe('data-forge-plot - dataframe configuration', () => {
                 ],
             },
             plotConfig: {
-                chartType: 'line',
+                chartType: "line",
                 width: 800,
                 height: 600,
-                template: 'c3',
+                template: "c3",
                 x: {
-                    axisType: 'default',
+                    axisType: "default",
                     label: {},
                 },
                 y: {
-                    axisType: 'default',
+                    axisType: "default",
                     label: {},
                 },
                 y2: {
-                    axisType: 'default',
+                    axisType: "default",
                     label: {},
                 },
             },
             axisMap: {
                 x: {
-                    series: '__index__',
+                    series: "__index__",
                 },
                 y: [
                     {
-                        series: 'A',
+                        series: "A",
                     },
                 ],
                 y2: [],
@@ -66,19 +66,19 @@ describe('data-forge-plot - dataframe configuration', () => {
         });
     });
 
-    it('can select template', ()  => {
+    it("can select template", ()  => {
 
         const series = new DataFrame({ index: [ 1 ], values: [{ A: 10 } ] });
-        const plotAPI = series.plot({ template: 'woo' });
+        const plotAPI = series.plot({ template: "woo" });
         expect(plotAPI.serialize()).to.eql({
             data: {
                 columnOrder: [
-                    'A',
-                    '__index__',
+                    "A",
+                    "__index__",
                 ],
                 columns: {
-                    A: 'number',
-                    __index__: 'number',
+                    A: "number",
+                    __index__: "number",
                 },
                 values: [
                     {
@@ -88,30 +88,30 @@ describe('data-forge-plot - dataframe configuration', () => {
                 ],
             },
             plotConfig: {
-                template: 'woo',
-                chartType: 'line',
+                template: "woo",
+                chartType: "line",
                 width: 800,
                 height: 600,
                 x: {
-                    axisType: 'default',
+                    axisType: "default",
                     label: {},
                 },
                 y: {
-                    axisType: 'default',
+                    axisType: "default",
                     label: {},
                 },
                 y2: {
-                    axisType: 'default',
+                    axisType: "default",
                     label: {},
                 },
             },
             axisMap: {
                 x: {
-                    series: '__index__',
+                    series: "__index__",
                 },
                 y: [
                     {
-                        series: 'A',
+                        series: "A",
                     },
                 ],
                 y2: [],

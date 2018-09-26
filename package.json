@@ -14,7 +14,7 @@
         "test:watch": "mocha --watch --watch-extensions ts --opts ./src/test/mocha.opts",
         "prepublishOnly": "build.bat",
         "lint": "npx tslint -p tsconfig.json -t stylish",
-        "fix-lint": "npx tslint -p tsconfig.json -t stylish"
+        "fix-lint": "npx tslint --fix -p tsconfig.json -t stylish"
     },
     "repository": {
         "type": "git",

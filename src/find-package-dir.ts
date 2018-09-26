@@ -1,5 +1,5 @@
-import * as path from 'path';
-const jetpack = require('fs-jetpack');
+import * as path from "path";
+const jetpack = require("fs-jetpack");
 
 /**
  * Finds the directory of the parent module's package descriptor file. If the
@@ -10,15 +10,15 @@ const jetpack = require('fs-jetpack');
  * https://gist.github.com/fhellwig/3355047
  */
 export async function findPackageDir(directory: string): Promise<string> {
-    const packageFile = path.resolve(directory, 'package.json');
+    const packageFile = path.resolve(directory, "package.json");
     const type = await jetpack.existsAsync(packageFile);
-    if (type === 'file') {
+    if (type === "file") {
         return directory;
     }
 
-    const parent = path.resolve(directory, '..');
+    const parent = path.resolve(directory, "..");
     if (parent === directory) {
-        throw new Error('Parent module package file was not found.');
+        throw new Error("Parent module package file was not found.");
     }
 
     return await findPackageDir(parent);

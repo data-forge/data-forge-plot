@@ -1,4 +1,4 @@
-import { IChartDef, ISingleYAxisMap, ISingleAxisMap, IAxisConfig } from '../../../src/chart-def';
+import { IChartDef, ISingleYAxisMap, ISingleAxisMap, IAxisConfig } from "../../../src/chart-def";
 
 declare var moment: any;
 declare var numeral: any;
@@ -27,8 +27,8 @@ function configureOneAxe(axisName: string, inputChartDef: IChartDef, c3Axes: any
  */
 function configureAxes(inputChartDef: IChartDef): any { // todo: I could type the c3 chart def?
     const c3Axes: any = {};
-    configureOneAxe('y', inputChartDef, c3Axes);
-    configureOneAxe('y2', inputChartDef, c3Axes);
+    configureOneAxe("y", inputChartDef, c3Axes);
+    configureOneAxe("y2", inputChartDef, c3Axes);
     return c3Axes;
 }
 
@@ -37,15 +37,15 @@ function configureAxes(inputChartDef: IChartDef): any { // todo: I could type th
  * TODO: This code could be simplified by removing this function. This should be choosen server-side!
  */
 function determineAxisType(dataType: string): string { // todo: return val could be an enum.
-    if (dataType === 'number') {
-        return 'indexed';
+    if (dataType === "number") {
+        return "indexed";
     }
-    else if (dataType === 'date') {
-        return 'timeseries';
+    else if (dataType === "date") {
+        return "timeseries";
     }
     else {
         console.log(dataType);
-        return 'category';
+        return "category";
     }
 }
 
@@ -58,10 +58,10 @@ function formatValues(
     dataType: string,
     formatString: string
 ): string[] | undefined {
-    if (dataType === 'number') { // Use numeral to format numbers.
+    if (dataType === "number") { // Use numeral to format numbers.
         return inputChartDef.data.values.map(value => numeral(value[seriesName]).format(formatString));
     }
-    else if (dataType === 'date') { // Use moment for date formating.
+    else if (dataType === "date") { // Use moment for date formating.
         return inputChartDef.data.values.map(value => moment(value[seriesName]).format(formatString));
     }
     else {
@@ -81,7 +81,7 @@ function configureOneSeries(
     c3AxisDef.type = determineAxisType(dataType);
 
     if (axisDef) {
-        if (axisDef.axisType && axisDef.axisType !== 'default') {
+        if (axisDef.axisType && axisDef.axisType !== "default") {
             c3AxisDef.type = axisDef.axisType;
         }
 
@@ -136,9 +136,9 @@ function configureOneAxis(axisName: string, inputChartDef: IChartDef, c3Axis: an
 function configureAxis(inputChartDef: IChartDef): any {
     const c3Axis: any = {};
 
-    configureOneAxis('x', inputChartDef, c3Axis);
-    configureOneAxis('y', inputChartDef, c3Axis);
-    configureOneAxis('y2', inputChartDef, c3Axis);
+    configureOneAxis("x", inputChartDef, c3Axis);
+    configureOneAxis("y", inputChartDef, c3Axis);
+    configureOneAxis("y2", inputChartDef, c3Axis);
 
     return c3Axis;
 }
@@ -244,11 +244,11 @@ export function formatChartDef(inputChartDef: IChartDef): any {
 
     if (inputChartDef.data.columns) {
         const columnNames = Object.keys(inputChartDef.data.columns);
-        const hasDates = columnNames.filter(columnName => inputChartDef.data.columns[columnName] === 'date');
+        const hasDates = columnNames.filter(columnName => inputChartDef.data.columns[columnName] === "date");
         if (hasDates) { // todo: this should be done by the plot api somehow!! The template should do minimal work.
             values = values.slice(); // Clone the date so we can inflate the dates.
             for (const columnName of columnNames) {
-                if (inputChartDef.data.columns[columnName] === 'date') { // This column is a date.
+                if (inputChartDef.data.columns[columnName] === "date") { // This column is a date.
                     for (const row of values) {
                         row[columnName] = moment(row[columnName], moment.ISO_8601).toDate();
                     }
@@ -258,16 +258,16 @@ export function formatChartDef(inputChartDef: IChartDef): any {
     }
 
     const xs: any = {};
-    extractXS('y', inputChartDef, xs);
-    extractXS('y2', inputChartDef, xs);
+    extractXS("y", inputChartDef, xs);
+    extractXS("y2", inputChartDef, xs);
 
     const columns: any[] = [];
     const columnsSet: any = {};
-    extractColumns('y', inputChartDef, columns, columnsSet);
-    extractColumns('y2', inputChartDef, columns, columnsSet);
+    extractColumns("y", inputChartDef, columns, columnsSet);
+    extractColumns("y2", inputChartDef, columns, columnsSet);
 
     const c3ChartDef = {
-        bindto: '#chart',
+        bindto: "#chart",
         size: {
             width: inputChartDef.plotConfig && inputChartDef.plotConfig.width || 1200,
             height: inputChartDef.plotConfig && inputChartDef.plotConfig.height || 600,
@@ -275,7 +275,7 @@ export function formatChartDef(inputChartDef: IChartDef): any {
         data: {
             xs,
             columns,
-            type: inputChartDef.plotConfig && inputChartDef.plotConfig.chartType || 'line',
+            type: inputChartDef.plotConfig && inputChartDef.plotConfig.chartType || "line",
             axes: configureAxes(inputChartDef),
             names: configureSeriesNames(inputChartDef),
         },

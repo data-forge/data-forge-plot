@@ -1,10 +1,10 @@
-import { DataFrame, Series } from 'data-forge';
-import '../index';
+import { Series } from "data-forge";
+import "../index";
 
 async function main(): Promise<void> {
 
     const series = new Series([10, 20, 15, 18, 25, 22, 13 ]);
-    await series.plot().renderImage('./test-series.png');
+    await series.plot().renderImage("./test-series.png");
 
     /*
     var df = new DataFrame([
@@ -142,7 +142,8 @@ async function main(): Promise<void> {
         values: [100, 110, 115],
     });
     */
-    const dateFormat = 'YYYY/MM/DD';
+    // currently unused
+    // const dateFormat = "YYYY/MM/DD";
     const s = new Series({
         index: [100.14312232, 110.23232243, 115.2342345234532],
         // index: [moment("2018/05/13", dateFormat).toDate(), moment("2018/05/14", dateFormat).toDate(), moment("2018/05/15", dateFormat).toDate()],
@@ -152,15 +153,15 @@ async function main(): Promise<void> {
         // .x()
         //    .axisType(AxisType.Category)
         // .renderImage("./test-series2.png", { openImage: true });
-        .x('__index__')
+        .x("__index__")
             // .label("Fooey")
             // .format("0.00")
-        .exportWeb('c:/temp/test-output-5', { openBrowser: true, overwrite: true });
+        .exportWeb("c:/temp/test-output-5", { openBrowser: true, overwrite: true });
 }
 
 main()
     .then(() => {
-        console.log('Done');
+        console.log("Done");
     })
     .catch(err => {
         console.error(err && err.stack || err);

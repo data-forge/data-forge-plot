@@ -1,23 +1,23 @@
-import { expect } from 'chai';
-import 'mocha';
-import { Series } from 'data-forge';
-import '../index';
+import { expect } from "chai";
+import "mocha";
+import { Series } from "data-forge";
+import "../index";
 
-describe('data-forge-plot - series', () => {
+describe("data-forge-plot - series", () => {
 
-    it('plot series with no configuration', ()  => {
+    it("plot series with no configuration", ()  => {
 
         const series = new Series({ index: [1, 2, 3], values: [10, 20, 30] });
         const plotAPI = series.plot();
         expect(plotAPI.serialize()).to.eql({
             data: {
                 columnOrder: [
-                    '__value__',
-                    '__index__'
+                    "__value__",
+                    "__index__"
                 ],
                 columns: {
-                    __value__: 'number',
-                    __index__: 'number'
+                    __value__: "number",
+                    __index__: "number"
                 },
                 values: [
                     {
@@ -35,30 +35,30 @@ describe('data-forge-plot - series', () => {
                 ]
             },
             plotConfig: {
-                chartType: 'line',
+                chartType: "line",
                 width: 800,
                 height: 600,
-                template: 'c3',
+                template: "c3",
                 x: {
-                    axisType: 'default',
+                    axisType: "default",
                     label: {}
                 },
                 y: {
-                    axisType: 'default',
+                    axisType: "default",
                     label: {}
                 },
                 y2: {
-                    axisType: 'default',
+                    axisType: "default",
                     label: {}
                 }
             },
             axisMap: {
                 x: {
-                    series: '__index__'
+                    series: "__index__"
                 },
                 y: [
                     {
-                        series: '__value__'
+                        series: "__value__"
                     }
                 ],
                 y2: []
@@ -66,21 +66,21 @@ describe('data-forge-plot - series', () => {
         });
     });
 
-    it('can set template', ()  => {
+    it("can set template", ()  => {
 
         const series = new Series({ index: [ 1 ], values: [ 10 ] });
         const plotAPI = series.plot()
-            .template('smig');
+            .template("smig");
 
         expect(plotAPI.serialize()).to.eql({
             data: {
                 columnOrder: [
-                    '__value__',
-                    '__index__'
+                    "__value__",
+                    "__index__"
                 ],
                 columns: {
-                    __value__: 'number',
-                    __index__: 'number'
+                    __value__: "number",
+                    __index__: "number"
                 },
                 values: [
                     {
@@ -90,30 +90,30 @@ describe('data-forge-plot - series', () => {
                 ]
             },
             plotConfig: {
-                chartType: 'line',
+                chartType: "line",
                 width: 800,
                 height: 600,
-                template: 'smig',
+                template: "smig",
                 x: {
-                    axisType: 'default',
+                    axisType: "default",
                     label: {}
                 },
                 y: {
-                    axisType: 'default',
+                    axisType: "default",
                     label: {}
                 },
                 y2: {
-                    axisType: 'default',
+                    axisType: "default",
                     label: {}
                 }
             },
             axisMap: {
                 x: {
-                    series: '__index__'
+                    series: "__index__"
                 },
                 y: [
                     {
-                        series: '__value__'
+                        series: "__value__"
                     }
                 ],
                 y2: []

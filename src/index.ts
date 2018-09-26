@@ -1,15 +1,14 @@
-import { ISeries, Series } from 'data-forge';
-import { IDataFrame, DataFrame } from 'data-forge';
-import * as Sugar from 'sugar';
-import { IPlotAPI, PlotAPI, /*todo: globalChartRenderer,*/ startPlot, endPlot } from './plot-api';
-import { IPlotConfig, IAxisMap } from './chart-def';
+import { ISeries, Series } from "data-forge";
+import { IDataFrame, DataFrame } from "data-forge";
+import { IPlotAPI, PlotAPI, /*todo: globalChartRenderer,*/ startPlot, endPlot } from "./plot-api";
+import { IPlotConfig, IAxisMap } from "./chart-def";
 
-export { ChartType } from './chart-def';
+export { ChartType } from "./chart-def";
 
 //
 // Augment ISeries and Series with plot function.
 //
-declare module 'data-forge/build/lib/series' {
+declare module "data-forge/build/lib/series" {
     interface ISeries<IndexT, ValueT> {
         startPlot(): void;
         endPlot(): void;
@@ -44,7 +43,7 @@ Series.prototype.plot = plotSeries;
 //
 // Augment IDataFrame and DataFrame with plot function.
 //
-declare module 'data-forge/build/lib/dataframe' {
+declare module "data-forge/build/lib/dataframe" {
     interface IDataFrame<IndexT, ValueT> {
         startPlot(): void;
         endPlot(): void;

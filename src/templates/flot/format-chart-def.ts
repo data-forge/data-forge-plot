@@ -1,4 +1,4 @@
-import { IChartDef, ISingleYAxisMap, ISingleAxisMap } from '../../../src/chart-def';
+import { IChartDef, ISingleYAxisMap, ISingleAxisMap } from "../../../src/chart-def";
 
 function addSeries(
     seriesLabel: string,
@@ -43,8 +43,8 @@ export function formatChartDef(inputChartDef: IChartDef): any {
         options: {},
     };
 
-    extractSeries('y', inputChartDef, flotChartDef);
-    extractSeries('y2', inputChartDef, flotChartDef);
+    extractSeries("y", inputChartDef, flotChartDef);
+    extractSeries("y2", inputChartDef, flotChartDef);
 
     return flotChartDef;
 }
