@@ -96,7 +96,7 @@ describe("format c3 chart", () => {
                 columnOrder: ["__index__", "__value__"],
                 columns: {
                     __index__: "number",
-                        __value__: "number",
+                    __value__: "number",
                 },
                 values: [
                     {
