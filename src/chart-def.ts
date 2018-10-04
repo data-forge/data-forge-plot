@@ -1,5 +1,5 @@
-import { ISerializedDataFrame } from 'data-forge/build/lib/dataframe';
-/** 
+import { ISerializedDataFrame } from "data-forge/build/lib/dataframe";
+/**
  * Defines the type of chart to output.
  */
 export enum ChartType {

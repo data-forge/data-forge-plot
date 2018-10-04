@@ -1,11 +1,9 @@
-import { assert } from 'chai';
-import { ISeries, Series } from 'data-forge';
-import { IDataFrame, DataFrame } from 'data-forge';
-import * as Sugar from 'sugar';
-import { IPlotAPI, PlotAPI, /*todo: globalChartRenderer,*/ startPlot, endPlot } from './plot-api';
-import { IPlotConfig, ChartType, IAxisMap } from './chart-def';
+import { ISeries, Series } from "data-forge";
+import { IDataFrame, DataFrame } from "data-forge";
+import { IPlotAPI, PlotAPI, /*todo: globalChartRenderer,*/ startPlot, endPlot } from "./plot-api";
+import { IPlotConfig, IAxisMap } from "./chart-def";
 
-export { ChartType } from './chart-def';
+export { ChartType } from "./chart-def";
 
 //
 // Augment ISeries and Series with plot function.
@@ -73,6 +71,5 @@ function plotDataFrame(this: IDataFrame<any, any>, plotDef?: IPlotConfig, axisMa
 }
 
 DataFrame.prototype.startPlot = startPlot;
-DataFrame.prototype.endPlot = endPlot;  
+DataFrame.prototype.endPlot = endPlot;
 DataFrame.prototype.plot = plotDataFrame;
-

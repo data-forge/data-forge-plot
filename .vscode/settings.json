@@ -1,0 +1,10 @@
+{
+    "editor.tabSize": 4,
+    "editor.renderWhitespace": "boundary",
+    "editor.insertSpaces": true,
+    "typescript.reportStyleChecksAsWarnings": true,
+    "editor.trimAutoWhitespace": true,
+    "tslint.jsEnable": true,
+    "tslint.run": "onType",
+    "typescript.tsdk": "node_modules/typescript/lib",
+}

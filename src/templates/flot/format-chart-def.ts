@@ -1,11 +1,12 @@
-import { IChartDef, ISingleYAxisMap, ISingleAxisMap, IAxisConfig } from "../../../src/chart-def";
+import { IChartDef, ISingleYAxisMap, ISingleAxisMap } from "../../../src/chart-def";
 
-declare var moment: any;
-declare var numeral: any;
-
-"use strict";
-
-function addSeries (seriesLabel: string, xSeriesName: string, ySeriesName: string, inputChartDef: IChartDef, flotChartDef: any): void {
+function addSeries(
+    seriesLabel: string,
+    xSeriesName: string,
+    ySeriesName: string,
+    inputChartDef: IChartDef,
+    flotChartDef: any
+): void {
     const seriesData = inputChartDef.data.values.map(row => [row[xSeriesName], row[ySeriesName]]);
     flotChartDef.data.push({
         label: seriesLabel,
@@ -13,7 +14,7 @@ function addSeries (seriesLabel: string, xSeriesName: string, ySeriesName: strin
     });
 }
 
-function extractSeries (axisName: string, inputChartDef: IChartDef, flotChartDef: any): void {
+function extractSeries(axisName: string, inputChartDef: IChartDef, flotChartDef: any): void {
     const axisMap = inputChartDef.axisMap as any;
     if (!axisMap) {
         return;
@@ -26,16 +27,16 @@ function extractSeries (axisName: string, inputChartDef: IChartDef, flotChartDef
 
     for (const seriesConfig of series) {
         const label = seriesConfig.label || seriesConfig.series;
-        const xSeriesName = seriesConfig.x && (seriesConfig.x as ISingleAxisMap).series || inputChartDef.axisMap.x.series;
+        const xSeriesName = seriesConfig.x && (seriesConfig.x as ISingleAxisMap).series
+            || inputChartDef.axisMap.x.series;
         addSeries(label,  xSeriesName, seriesConfig.series, inputChartDef, flotChartDef);
     }
 }
 
-
 /**
  * Convert a data-forge-plot chart definition to a flot chart definition.
  */
-export function formatChartDef (inputChartDef: IChartDef): any {
+export function formatChartDef(inputChartDef: IChartDef): any {
 
     const flotChartDef: any = {
         data: [],
@@ -46,4 +47,4 @@ export function formatChartDef (inputChartDef: IChartDef): any {
     extractSeries("y2", inputChartDef, flotChartDef);
 
     return flotChartDef;
-};
+}

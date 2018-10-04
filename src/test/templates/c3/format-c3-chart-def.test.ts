@@ -1,9 +1,9 @@
-import { assert, expect } from 'chai';
-import 'mocha';
-import { IChartDef, AxisType, ChartType, ISingleYAxisMap } from '../../../chart-def';
-import { formatChartDef } from '../../../templates/c3/format-chart-def';
-import { ISerializedDataFrame } from 'data-forge/build/lib/dataframe';
-import * as Sugar from 'sugar';
+import { expect } from "chai";
+import "mocha";
+import { IChartDef, AxisType, ChartType, ISingleYAxisMap } from "../../../chart-def";
+import { formatChartDef } from "../../../templates/c3/format-chart-def";
+import { ISerializedDataFrame } from "data-forge/build/lib/dataframe";
+import * as Sugar from "sugar";
 
 export interface ITestChartDef {
     data: ISerializedDataFrame;
@@ -12,11 +12,11 @@ export interface ITestChartDef {
     y2?: string | string[] | ISingleYAxisMap | ISingleYAxisMap[];
 }
 
-describe('format c3 chart', () => {
+describe("format c3 chart", () => {
 
-    it('throws when configuration is invalid', () => {
+    it("throws when configuration is invalid", () => {
         expect (() => formatChartDef({} as IChartDef)).to.throw();
-    })
+    });
 
     function formatSeries(series?: string | string[] | ISingleYAxisMap | ISingleYAxisMap[]): ISingleYAxisMap[] {
         if (!series) {
@@ -26,7 +26,7 @@ describe('format c3 chart', () => {
         if (Sugar.Object.isString(series)) {
             return [
                 {
-                    series: series,
+                    series,
                 },
             ];
         }
@@ -66,15 +66,15 @@ describe('format c3 chart', () => {
                 chartType: ChartType.Line,
                 width: 800,
                 height: 600,
-                x: { 
+                x: {
                     axisType: AxisType.Default,
                     label: {},
                 },
-                y: { 
+                y: {
                     axisType: AxisType.Default,
                     label: {},
                 },
-                y2: { 
+                y2: {
                     axisType: AxisType.Default,
                     label: {},
                 },
@@ -85,18 +85,18 @@ describe('format c3 chart', () => {
                 y: formatSeries(testChartDef.y),
                 y2: formatSeries(testChartDef.y2),
             },
-        };        
+        };
         return chartDef;
     }
 
-    it('minimal chart def', ()  => {
+    it("minimal chart def", ()  => {
 
         const chartDef = createMinimalChartDef({
             data: {
                 columnOrder: ["__index__", "__value__"],
                 columns: {
-                    "__index__": "number",
-                        "__value__": "number",
+                    __index__: "number",
+                        __value__: "number",
                 },
                 values: [
                     {
@@ -115,68 +115,68 @@ describe('format c3 chart', () => {
 
         const c3ChartDef = formatChartDef(chartDef);
         expect(c3ChartDef).to.eql({
-            "bindto": "#chart",
-            "size": {
-                "width": 800,
-                "height": 600
+            bindto: "#chart",
+            size: {
+                width: 800,
+                height: 600,
             },
-            "data": {
-                "xs": {
-                    "__value__": "__index__"
+            data: {
+                xs: {
+                    __value__: "__index__",
                 },
-                "columns": [
+                columns: [
                     [
                         "__value__",
                         10,
-                        20
+                        20,
                     ],
                     [
                         "__index__",
                         5,
-                        6
-                    ]
+                        6,
+                    ],
                 ],
-                "type": "line",
-                "axes": {
-                    "__value__": "y"
+                type: "line",
+                axes: {
+                    __value__: "y",
                 },
-                "names": {}
+                names: {},
             },
-            "axis": {
-                "x": {
-                    "show": true,
-                    "type": "indexed",
-                    "label": {},
+            axis: {
+                x: {
+                    show: true,
+                    type: "indexed",
+                    label: {},
                 },
-                "y": {
-                    "show": true,
-                    "type": "indexed",
-                    "label": {},
+                y: {
+                    show: true,
+                    type: "indexed",
+                    label: {},
                 },
-                "y2": {
-                    "show": false
-                }
+                y2: {
+                    show: false,
+                },
             },
-            "transition": {
-                "duration": 0
+            transition: {
+                duration: 0,
             },
-            "point": {
-                "show": false
-            }
+            point: {
+                show: false,
+            },
         });
     });
 
-    it('can set x and y axis expicitly', ()  => {
+    it("can set x and y axis expicitly", ()  => {
 
         const chartDef = createMinimalChartDef({
             data: {
                 columnOrder: ["__index__", "a", "b", "c", "d"],
                 columns: {
-                    "__index__": "number",
-                    "a": "number",
-                    "b": "number",
-                    "c": "number",
-                    "d": "number",
+                    __index__: "number",
+                    a: "number",
+                    b: "number",
+                    c: "number",
+                    d: "number",
                 },
                 values: [
                     {
@@ -196,65 +196,65 @@ describe('format c3 chart', () => {
                 ],
             },
             x: "a",
-            y: "b",            
+            y: "b",
         });
-        
+
         const c3ChartDef = formatChartDef(chartDef);
-        expect(c3ChartDef).to.eql({                                 
-            "bindto": "#chart",           
-            "size": {                     
-                "width": 800,            
-                "height": 600             
-            },                            
-            "data": {
-                "xs": {
-                    "b": "a",
+        expect(c3ChartDef).to.eql({
+            bindto: "#chart",
+            size: {
+                width: 800,
+                height: 600,
+            },
+            data: {
+                xs: {
+                    b: "a",
                 },
-                "columns": [
+                columns: [
                     ["b", 100, 200],
                     ["a", 10, 20],
                 ],
-                "type": "line",           
-                "axes": {                 
-                    "b": "y",             
-                },                        
-                "names": {}               
-            },                            
-            "axis": {                     
-                "x": {                    
-                    "show": true,         
-                    "type": "indexed",
-                    "label": {},
-                },                        
-                "y": {                    
-                    "show": true,         
-                    "type": "indexed",
-                    "label": {},
-                },                        
-                "y2": {                   
-                    "show": false,
-                }                         
-            },                            
-            "transition": {               
-                "duration": 0             
-            },                            
-            "point": {                    
-                "show": false             
-            }                             
+                type: "line",
+                axes: {
+                    b: "y",
+                },
+                names: {},
+            },
+            axis: {
+                x: {
+                    show: true,
+                    type: "indexed",
+                    label: {},
+                },
+                y: {
+                    show: true,
+                    type: "indexed",
+                    label: {},
+                },
+                y2: {
+                    show: false,
+                },
+            },
+            transition: {
+                duration: 0,
+            },
+            point: {
+                show: false,
+            },
         });
     });
 
-    it('can set second y axis', ()  => {
+    it("can set second y axis", ()  => {
 
         const chartDef = createMinimalChartDef({
             data: {
                 columnOrder: ["__index__", "a", "b", "c", "d"],
                 columns: {
-                    "__index__": "number",
-                    "a": "number",
-                    "b": "number",
-                    "c": "number",
-                    "d": "number",
+                    __index__: "number",
+                    a: "number",
+                    b: "number",
+                    c: "number",
+                    d: "number",
                 },
                 values: [
                     {
@@ -280,78 +280,78 @@ describe('format c3 chart', () => {
 
         const c3ChartDef = formatChartDef(chartDef);
         expect(c3ChartDef).to.eql({
-            "bindto": "#chart",
-            "size": {
-                "width": 800,
-                "height": 600
+            bindto: "#chart",
+            size: {
+                width: 800,
+                height: 600,
             },
-            "data": {
-                "xs": {
-                    "b": "a",
-                    "c": "a"
+            data: {
+                xs: {
+                    b: "a",
+                    c: "a",
                 },
-                "columns": [
+                columns: [
                     [
                         "b",
                         100,
-                        200
+                        200,
                     ],
                     [
                         "a",
                         10,
-                        20
+                        20,
                     ],
                     [
                         "c",
                         1000,
-                        2000
-                    ]
+                        2000,
+                    ],
                 ],
-                "type": "line",
-                "axes": {
-                    "b": "y",
-                    "c": "y2"
+                type: "line",
+                axes: {
+                    b: "y",
+                    c: "y2",
                 },
-                "names": {}
+                names: {},
             },
-            "axis": {
-                "x": {
-                    "show": true,
-                    "type": "indexed",
-                    "label": {},
+            axis: {
+                x: {
+                    show: true,
+                    type: "indexed",
+                    label: {},
                 },
-                "y": {
-                    "show": true,
-                    "type": "indexed",
-                    "label": {},
+                y: {
+                    show: true,
+                    type: "indexed",
+                    label: {},
                 },
-                "y2": {
-                    "show": true,
-                    "type": "indexed",
-                    "label": {},
-                }
+                y2: {
+                    show: true,
+                    type: "indexed",
+                    label: {},
+                },
             },
-            "transition": {
-                "duration": 0
+            transition: {
+                duration: 0,
             },
-            "point": {
-                "show": false
-            }
+            point: {
+                show: false,
+            },
         });
     });
-    
-    it('can set multiple y axis', ()  => {
+
+    it("can set multiple y axis", ()  => {
 
         const chartDef = createMinimalChartDef({
             data: {
                 columnOrder: ["__index__", "a", "b", "c", "d", "e"],
                 columns: {
-                    "__index__": "number",
-                        "a": "number",
-                        "b": "number",
-                        "c": "number",
-                        "d": "number",
-                        "e": "number",
+                    __index__: "number",
+                        a: "number",
+                        b: "number",
+                        c: "number",
+                        d: "number",
+                        e: "number",
                 },
                 values: [
                     {
@@ -378,94 +378,94 @@ describe('format c3 chart', () => {
         });
 
         const c3ChartDef = formatChartDef(chartDef);
-        
+
         expect(c3ChartDef).to.eql({
-            "bindto": "#chart",
-            "size": {
-                "width": 800,
-                "height": 600
+            bindto: "#chart",
+            size: {
+                width: 800,
+                height: 600,
             },
-            "data": {
-                "xs": {
-                    "b": "a",
-                    "c": "a",
-                    "d": "a",
-                    "e": "a"
+            data: {
+                xs: {
+                    b: "a",
+                    c: "a",
+                    d: "a",
+                    e: "a",
                 },
-                "columns": [
+                columns: [
                     [
                         "b",
                         100,
-                        200
+                        200,
                     ],
                     [
                         "a",
                         10,
-                        20
+                        20,
                     ],
                     [
                         "c",
                         1000,
-                        2000
+                        2000,
                     ],
                     [
                         "d",
                         10000,
-                        20000
+                        20000,
                     ],
                     [
                         "e",
                         100000,
-                        200000
-                    ]
+                        200000,
+                    ],
                 ],
-                "type": "line",
-                "axes": {
-                    "b": "y",
-                    "c": "y",
-                    "d": "y2",
-                    "e": "y2"
+                type: "line",
+                axes: {
+                    b: "y",
+                    c: "y",
+                    d: "y2",
+                    e: "y2",
                 },
-                "names": {}
+                names: {},
             },
-            "axis": {
-                "x": {
-                    "show": true,
-                    "type": "indexed",
-                    "label": {},
+            axis: {
+                x: {
+                    show: true,
+                    type: "indexed",
+                    label: {},
                 },
-                "y": {
-                    "show": true,
-                    "type": "indexed",
-                    "label": {},
+                y: {
+                    show: true,
+                    type: "indexed",
+                    label: {},
                 },
-                "y2": {
-                    "show": true,
-                    "type": "indexed",
-                    "label": {},
-                }
+                y2: {
+                    show: true,
+                    type: "indexed",
+                    label: {},
+                },
             },
-            "transition": {
-                "duration": 0
+            transition: {
+                duration: 0,
             },
-            "point": {
-                "show": false
-            }
+            point: {
+                show: false,
+            },
         });
     });
-    
-    it('can set x axis for y axis', ()  => {
+
+    it("can set x axis for y axis", ()  => {
 
         const chartDef = createMinimalChartDef({
             data: {
                 columnOrder: ["__index__", "a", "b", "c", "d", "e"],
                 columns: {
-                    "__index__": "number",
-                    "a": "number",
-                    "b": "number",
-                    "c": "number",
-                    "d": "number",
-                    "e": "number",
+                    __index__: "number",
+                    a: "number",
+                    b: "number",
+                    c: "number",
+                    d: "number",
+                    e: "number",
                 },
                 values: [
                     {
@@ -502,80 +502,80 @@ describe('format c3 chart', () => {
                     series: "e",
                     x: "a",
                 },
-            ]
+            ],
         });
 
         const c3ChartDef = formatChartDef(chartDef);
         expect(c3ChartDef).to.eql({
-            "bindto": "#chart",
-            "size": {
-                "width": 800,
-                "height": 600
+            bindto: "#chart",
+            size: {
+                width: 800,
+                height: 600,
             },
-            "data": {
-                "xs": {       
-                    "b": "a", 
-                    "c": "d", 
-                    "e": "a"  
+            data: {
+                xs: {
+                    b: "a",
+                    c: "d",
+                    e: "a",
                 },
-                "columns": [
+                columns: [
                     [
                         "b",
                         100,
-                        200
+                        200,
                     ],
                     [
                         "a",
                         10,
-                        20
+                        20,
                     ],
                     [
                         "c",
                         1000,
-                        2000
+                        2000,
                     ],
                     [
                         "d",
                         10000,
-                        20000
+                        20000,
                     ],
                     [
                         "e",
                         100000,
-                        200000
-                    ]
+                        200000,
+                    ],
                 ],
-                "type": "line",
-                "axes": {
-                    "b": "y",
-                    "c": "y",
-                    "e": "y2"
+                type: "line",
+                axes: {
+                    b: "y",
+                    c: "y",
+                    e: "y2",
                 },
-                "names": {}
+                names: {},
             },
-            "axis": {
-                "x": {
-                    "show": true,
-                    "type": "indexed",
-                    "label": {},
+            axis: {
+                x: {
+                    show: true,
+                    type: "indexed",
+                    label: {},
                 },
-                "y": {
-                    "show": true,
-                    "type": "indexed",
-                    "label": {},
+                y: {
+                    show: true,
+                    type: "indexed",
+                    label: {},
                 },
-                "y2": {
-                    "show": true,
-                    "type": "indexed",
-                    "label": {},
-                }
+                y2: {
+                    show: true,
+                    type: "indexed",
+                    label: {},
+                },
             },
-            "transition": {
-                "duration": 0
+            transition: {
+                duration: 0,
             },
-            "point": {
-                "show": false
-            }
+            point: {
+                show: false,
+            },
         });
     });
 
