@@ -1,5 +1,6 @@
 rm -rf build/*
 call npx tsc
+call npx link
 
 call npx browserify ./templates/c3/format-chart-def-src.js -o ./templates/c3/web/assets/format-chart-def.js
 cp ./templates/c3/web/assets/format-chart-def.js ./templates/c3/nodejs/assets/public
