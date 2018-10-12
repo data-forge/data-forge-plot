@@ -44,7 +44,6 @@ function determineAxisType(dataType: string): string { // todo: return val could
         return "timeseries";
     }
     else {
-        console.log(dataType);
         return "category";
     }
 }
@@ -240,15 +239,36 @@ function extractColumns(axisName: string, inputChartDef: IChartDef, columns: any
  */
 export function formatChartDef(inputChartDef: IChartDef): any {
 
-    let values = inputChartDef.data.values;
+    //
+    // WORKAROUND: Merge the index in as a column.
+    // This needs to be changed later and it shouldn't be part of the C3 template it should be
+    // code that is shared to all templates.
+    //
+    let workingChartDef = inputChartDef;
 
-    if (inputChartDef.data.columns) {
-        const columnNames = Object.keys(inputChartDef.data.columns);
-        const hasDates = columnNames.filter(columnName => inputChartDef.data.columns[columnName] === "date");
+    if (inputChartDef.data.index && inputChartDef.data.index.values && inputChartDef.data.index.values.length > 0) {
+        workingChartDef = Object.assign({}, inputChartDef);
+        workingChartDef.data = Object.assign({}, inputChartDef.data);
+        workingChartDef.data.columnOrder = inputChartDef.data.columnOrder.slice(); // Clone array.
+        workingChartDef.data.columnOrder.push("__index__");
+        workingChartDef.data.columns = Object.assign({}, inputChartDef.data.columns);
+        workingChartDef.data.columns["__index__"] = inputChartDef.data.index.type;
+        workingChartDef.data.values = inputChartDef.data.values.slice(); // Clone array.
+        for (let i = 0; i < workingChartDef.data.values.length; ++i) {
+            const row = workingChartDef.data.values[i];
+            row["__index__"] = inputChartDef.data.index.values[i];
+        }
+    }
+
+    let values = workingChartDef.data.values;
+
+    if (workingChartDef.data.columns) {
+        const columnNames = Object.keys(workingChartDef.data.columns);
+        const hasDates = columnNames.filter(columnName => workingChartDef.data.columns[columnName] === "date");
         if (hasDates) { // todo: this should be done by the plot api somehow!! The template should do minimal work.
             values = values.slice(); // Clone the date so we can inflate the dates.
             for (const columnName of columnNames) {
-                if (inputChartDef.data.columns[columnName] === "date") { // This column is a date.
+                if (workingChartDef.data.columns[columnName] === "date") { // This column is a date.
                     for (const row of values) {
                         row[columnName] = moment(row[columnName], moment.ISO_8601).toDate();
                     }
@@ -258,28 +278,28 @@ export function formatChartDef(inputChartDef: IChartDef): any {
     }
 
     const xs: any = {};
-    extractXS("y", inputChartDef, xs);
-    extractXS("y2", inputChartDef, xs);
+    extractXS("y", workingChartDef, xs);
+    extractXS("y2", workingChartDef, xs);
 
     const columns: any[] = [];
     const columnsSet: any = {};
-    extractColumns("y", inputChartDef, columns, columnsSet);
-    extractColumns("y2", inputChartDef, columns, columnsSet);
+    extractColumns("y", workingChartDef, columns, columnsSet);
+    extractColumns("y2", workingChartDef, columns, columnsSet);
 
     const c3ChartDef = {
         bindto: "#chart",
         size: {
-            width: inputChartDef.plotConfig && inputChartDef.plotConfig.width || 1200,
-            height: inputChartDef.plotConfig && inputChartDef.plotConfig.height || 600,
+            width: workingChartDef.plotConfig && workingChartDef.plotConfig.width || 1200,
+            height: workingChartDef.plotConfig && workingChartDef.plotConfig.height || 600,
         },
         data: {
             xs,
             columns,
-            type: inputChartDef.plotConfig && inputChartDef.plotConfig.chartType || "line",
-            axes: configureAxes(inputChartDef),
-            names: configureSeriesNames(inputChartDef),
+            type: workingChartDef.plotConfig && workingChartDef.plotConfig.chartType || "line",
+            axes: configureAxes(workingChartDef),
+            names: configureSeriesNames(workingChartDef),
         },
-        axis: configureAxis(inputChartDef),
+        axis: configureAxis(workingChartDef),
         transition: {
             duration: 0 // Disable animated transitions when we are capturing a static image.
         },

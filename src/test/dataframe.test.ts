@@ -19,6 +19,10 @@ describe("data-forge-plot - dataframe configuration", () => {
                     A: "number",
                     __index__: "number",
                 },
+                index: {
+                    type: "number",
+                    values: [ 1, 2, 3 ],
+                },
                 values: [
                     {
                         A: 10,
@@ -79,6 +83,10 @@ describe("data-forge-plot - dataframe configuration", () => {
                 columns: {
                     A: "number",
                     __index__: "number",
+                },
+                index: {
+                    type: "number",
+                    values: [ 1 ],
                 },
                 values: [
                     {

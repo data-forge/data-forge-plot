@@ -19,6 +19,10 @@ describe("data-forge-plot - series", () => {
                     __value__: "number",
                     __index__: "number"
                 },
+                index: {
+                    type: "number",
+                    values: [ 1, 2, 3 ],
+                },
                 values: [
                     {
                         __value__: 10,
@@ -81,6 +85,10 @@ describe("data-forge-plot - series", () => {
                 columns: {
                     __value__: "number",
                     __index__: "number"
+                },
+                index: {
+                    type: "number",
+                    values: [ 1 ],
                 },
                 values: [
                     {

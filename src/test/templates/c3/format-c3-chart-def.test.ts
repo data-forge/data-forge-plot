@@ -4,6 +4,7 @@ import { IChartDef, AxisType, ChartType, ISingleYAxisMap } from "../../../chart-
 import { formatChartDef } from "../../../templates/c3/format-chart-def";
 import { ISerializedDataFrame } from "data-forge/build/lib/dataframe";
 import * as Sugar from "sugar";
+import { DataFrame } from "data-forge";
 
 export interface ITestChartDef {
     data: ISerializedDataFrame;
@@ -93,18 +94,19 @@ describe("format c3 chart", () => {
 
         const chartDef = createMinimalChartDef({
             data: {
-                columnOrder: ["__index__", "__value__"],
+                columnOrder: ["__value__"],
                 columns: {
-                    __index__: "number",
                     __value__: "number",
+                },
+                index: {
+                    type: "number",
+                    values: [5, 6]
                 },
                 values: [
                     {
-                        __index__: 5,
                         __value__: 10,
                     },
                     {
-                        __index__: 6,
                         __value__: 20,
                     },
                 ],
@@ -170,24 +172,25 @@ describe("format c3 chart", () => {
 
         const chartDef = createMinimalChartDef({
             data: {
-                columnOrder: ["__index__", "a", "b", "c", "d"],
+                columnOrder: ["a", "b", "c", "d"],
                 columns: {
-                    __index__: "number",
                     a: "number",
                     b: "number",
                     c: "number",
                     d: "number",
                 },
+                index: {
+                    type: "number",
+                    values: [ 5, 6 ],
+                },
                 values: [
                     {
-                        __index__: 5,
                         a: 10,
                         b: 100,
                         c: 1000,
                         d: 10000,
                     },
                     {
-                        __index__: 6,
                         a: 20,
                         b: 200,
                         c: 2000,
@@ -248,24 +251,25 @@ describe("format c3 chart", () => {
 
         const chartDef = createMinimalChartDef({
             data: {
-                columnOrder: ["__index__", "a", "b", "c", "d"],
+                columnOrder: ["a", "b", "c", "d"],
                 columns: {
-                    __index__: "number",
                     a: "number",
                     b: "number",
                     c: "number",
                     d: "number",
                 },
+                index: {
+                    type: "number",
+                    values: [ 5, 6 ],
+                },
                 values: [
                     {
-                        __index__: 5,
                         a: 10,
                         b: 100,
                         c: 1000,
                         d: 10000,
                     },
                     {
-                        __index__: 6,
                         a: 20,
                         b: 200,
                         c: 2000,
@@ -344,18 +348,20 @@ describe("format c3 chart", () => {
 
         const chartDef = createMinimalChartDef({
             data: {
-                columnOrder: ["__index__", "a", "b", "c", "d", "e"],
+                columnOrder: ["a", "b", "c", "d", "e"],
                 columns: {
-                    __index__: "number",
-                        a: "number",
-                        b: "number",
-                        c: "number",
-                        d: "number",
-                        e: "number",
+                    a: "number",
+                    b: "number",
+                    c: "number",
+                    d: "number",
+                    e: "number",
+                },
+                index: {
+                    type: "number",
+                    values: [ 5, 6 ],
                 },
                 values: [
                     {
-                        __index__: 5,
                         a: 10,
                         b: 100,
                         c: 1000,
@@ -363,7 +369,6 @@ describe("format c3 chart", () => {
                         e: 100000,
                     },
                     {
-                        __index__: 6,
                         a: 20,
                         b: 200,
                         c: 2000,
@@ -458,18 +463,20 @@ describe("format c3 chart", () => {
 
         const chartDef = createMinimalChartDef({
             data: {
-                columnOrder: ["__index__", "a", "b", "c", "d", "e"],
+                columnOrder: ["a", "b", "c", "d", "e"],
                 columns: {
-                    __index__: "number",
                     a: "number",
                     b: "number",
                     c: "number",
                     d: "number",
                     e: "number",
                 },
+                index: {
+                    type: "number",
+                    values: [ 5, 6 ],
+                },
                 values: [
                     {
-                        __index__: 5,
                         a: 10,
                         b: 100,
                         c: 1000,
@@ -477,7 +484,6 @@ describe("format c3 chart", () => {
                         e: 100000,
                     },
                     {
-                        __index__: 6,
                         a: 20,
                         b: 200,
                         c: 2000,
