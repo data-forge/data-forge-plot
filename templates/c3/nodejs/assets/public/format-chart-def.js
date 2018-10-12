@@ -1,7 +1,6 @@
 (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-"use strict";
 /**
  * Configure a single axe.
  */
@@ -28,7 +27,6 @@ function configureAxes(inputChartDef) {
     configureOneAxe("y2", inputChartDef, c3Axes);
     return c3Axes;
 }
-;
 /**
  * Determine the default axis type based on data type.
  * TODO: This code could be simplified by removing this function. This should be choosen server-side!
@@ -41,7 +39,6 @@ function determineAxisType(dataType) {
         return "timeseries";
     }
     else {
-        console.log(dataType);
         return "category";
     }
 }
@@ -104,7 +101,6 @@ function configureOneAxis(axisName, inputChartDef, c3Axis) {
         configureOneSeries(series, inputChartDef, axisDef, c3AxisDef);
     }
 }
-;
 /**
  * Configure C3 axis'.
  */
@@ -139,7 +135,6 @@ function configureSeriesNames(inputChartDef) {
     }
     return seriesNames;
 }
-;
 /**
  * Extract x axis series for y axis series.
  */
@@ -189,7 +184,8 @@ function extractColumns(axisName, inputChartDef, columns, columnsSet) {
     for (var _i = 0, series_3 = series; _i < series_3.length; _i++) {
         var seriesConfig = series_3[_i];
         addColumn(seriesConfig.series, inputChartDef, columns, columnsSet);
-        var xSeriesName = seriesConfig.x && seriesConfig.x.series || inputChartDef.axisMap && inputChartDef.axisMap.x && inputChartDef.axisMap.x.series || null;
+        var xSeriesName = seriesConfig.x && seriesConfig.x.series
+            || inputChartDef.axisMap && inputChartDef.axisMap.x && inputChartDef.axisMap.x.series || null;
         if (xSeriesName) {
             addColumn(xSeriesName, inputChartDef, columns, columnsSet);
         }
@@ -199,17 +195,36 @@ function extractColumns(axisName, inputChartDef, columns, columnsSet) {
  * Convert a data-forge-plot chart definition to a C3 chart definition.
  */
 function formatChartDef(inputChartDef) {
-    var values = inputChartDef.data.values;
-    if (inputChartDef.data.columns) {
-        var columnNames = Object.keys(inputChartDef.data.columns);
-        var hasDates = columnNames.filter(function (columnName) { return inputChartDef.data.columns[columnName] === "date"; });
+    //
+    // WORKAROUND: Merge the index in as a column.
+    // This needs to be changed later and it shouldn't be part of the C3 template it should be
+    // code that is shared to all templates.
+    //
+    var workingChartDef = inputChartDef;
+    if (inputChartDef.data.index && inputChartDef.data.index.values && inputChartDef.data.index.values.length > 0) {
+        workingChartDef = Object.assign({}, inputChartDef);
+        workingChartDef.data = Object.assign({}, inputChartDef.data);
+        workingChartDef.data.columnOrder = inputChartDef.data.columnOrder.slice(); // Clone array.
+        workingChartDef.data.columnOrder.push("__index__");
+        workingChartDef.data.columns = Object.assign({}, inputChartDef.data.columns);
+        workingChartDef.data.columns["__index__"] = inputChartDef.data.index.type;
+        workingChartDef.data.values = inputChartDef.data.values.slice(); // Clone array.
+        for (var i = 0; i < workingChartDef.data.values.length; ++i) {
+            var row = workingChartDef.data.values[i];
+            row["__index__"] = inputChartDef.data.index.values[i];
+        }
+    }
+    var values = workingChartDef.data.values;
+    if (workingChartDef.data.columns) {
+        var columnNames = Object.keys(workingChartDef.data.columns);
+        var hasDates = columnNames.filter(function (columnName) { return workingChartDef.data.columns[columnName] === "date"; });
         if (hasDates) {
             values = values.slice(); // Clone the date so we can inflate the dates.
-            for (var columnIndex = 0; columnIndex < columnNames.length; ++columnIndex) {
-                var columnName = columnNames[columnIndex];
-                if (inputChartDef.data.columns[columnName] === "date") {
-                    for (var valueIndex = 0; valueIndex < values.length; ++valueIndex) {
-                        var row = values[valueIndex];
+            for (var _i = 0, columnNames_1 = columnNames; _i < columnNames_1.length; _i++) {
+                var columnName = columnNames_1[_i];
+                if (workingChartDef.data.columns[columnName] === "date") {
+                    for (var _a = 0, values_1 = values; _a < values_1.length; _a++) {
+                        var row = values_1[_a];
                         row[columnName] = moment(row[columnName], moment.ISO_8601).toDate();
                     }
                 }
@@ -217,26 +232,26 @@ function formatChartDef(inputChartDef) {
         }
     }
     var xs = {};
-    extractXS("y", inputChartDef, xs);
-    extractXS("y2", inputChartDef, xs);
+    extractXS("y", workingChartDef, xs);
+    extractXS("y2", workingChartDef, xs);
     var columns = [];
     var columnsSet = {};
-    extractColumns("y", inputChartDef, columns, columnsSet);
-    extractColumns("y2", inputChartDef, columns, columnsSet);
+    extractColumns("y", workingChartDef, columns, columnsSet);
+    extractColumns("y2", workingChartDef, columns, columnsSet);
     var c3ChartDef = {
         bindto: "#chart",
         size: {
-            width: inputChartDef.plotConfig && inputChartDef.plotConfig.width || 1200,
-            height: inputChartDef.plotConfig && inputChartDef.plotConfig.height || 600,
+            width: workingChartDef.plotConfig && workingChartDef.plotConfig.width || 1200,
+            height: workingChartDef.plotConfig && workingChartDef.plotConfig.height || 600,
         },
         data: {
             xs: xs,
             columns: columns,
-            type: inputChartDef.plotConfig && inputChartDef.plotConfig.chartType || "line",
-            axes: configureAxes(inputChartDef),
-            names: configureSeriesNames(inputChartDef),
+            type: workingChartDef.plotConfig && workingChartDef.plotConfig.chartType || "line",
+            axes: configureAxes(workingChartDef),
+            names: configureSeriesNames(workingChartDef),
         },
-        axis: configureAxis(inputChartDef),
+        axis: configureAxis(workingChartDef),
         transition: {
             duration: 0 // Disable animated transitions when we are capturing a static image.
         },
@@ -247,7 +262,6 @@ function formatChartDef(inputChartDef) {
     return c3ChartDef;
 }
 exports.formatChartDef = formatChartDef;
-;
 
 },{}],2:[function(require,module,exports){
 
