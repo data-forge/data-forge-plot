@@ -13,7 +13,7 @@ import * as Sugar from "sugar";
 import { findPackageDir } from "./find-package-dir";
 import { ISerializedDataFrame } from "data-forge/build/lib/dataframe";
 import { exportTemplate } from "inflate-template";
-import { captureImage } from "capture-template";
+import { captureImage, ICaptureOptions } from "capture-template";
 
 //
 // Reusable chart renderer.
@@ -51,6 +51,14 @@ export interface IRenderOptions {
      * Open the image in your default image viewer.
      */
     openImage: boolean;
+
+    /**
+     * Path to electron, so that electron can be installed separately to a different location and shared
+     * between the various packages that need it.
+     * 
+     * Electron is used to render charts and capture them to images.
+     */
+    electronPath?: string;
 }
 
 /**
@@ -340,7 +348,10 @@ export abstract class AbstractPlotAPI implements IPlotAPI {
         const chartDef = this.serialize();
         const templatesPath = await findChartTemplatesPath();
         const chartTemplatePath = path.join(templatesPath, chartDef.plotConfig.template, "web");
-        await captureImage({ chartDef }, chartTemplatePath, imageFilePath);
+        const captureOptions: ICaptureOptions = {
+            electronPath: renderOptions && renderOptions.electronPath,
+        };
+        await captureImage({ chartDef }, chartTemplatePath, imageFilePath, captureOptions);
 
         if (renderOptions && renderOptions.openImage) {
             opn(path.resolve(imageFilePath));
