@@ -201,6 +201,7 @@ function formatChartDef(inputChartDef) {
     // code that is shared to all templates.
     //
     var workingChartDef = inputChartDef;
+    //TODO: This transformation should not be in the template!
     if (inputChartDef.data.index && inputChartDef.data.index.values && inputChartDef.data.index.values.length > 0) {
         workingChartDef = Object.assign({}, inputChartDef);
         workingChartDef.data = Object.assign({}, inputChartDef.data);
@@ -215,6 +216,7 @@ function formatChartDef(inputChartDef) {
         }
     }
     var values = workingChartDef.data.values;
+    //TODO: Dates need to be deserialized by the api.
     if (workingChartDef.data.columns) {
         var columnNames = Object.keys(workingChartDef.data.columns);
         var hasDates = columnNames.filter(function (columnName) { return workingChartDef.data.columns[columnName] === "date"; });

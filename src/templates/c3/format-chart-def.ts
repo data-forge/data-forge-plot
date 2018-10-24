@@ -246,6 +246,7 @@ export function formatChartDef(inputChartDef: IChartDef): any {
     //
     let workingChartDef = inputChartDef;
 
+    //TODO: This transformation should not be in the template!
     if (inputChartDef.data.index && inputChartDef.data.index.values && inputChartDef.data.index.values.length > 0) {
         workingChartDef = Object.assign({}, inputChartDef);
         workingChartDef.data = Object.assign({}, inputChartDef.data);
@@ -262,6 +263,7 @@ export function formatChartDef(inputChartDef: IChartDef): any {
 
     let values = workingChartDef.data.values;
 
+    //TODO: Dates need to be deserialized by the api.
     if (workingChartDef.data.columns) {
         const columnNames = Object.keys(workingChartDef.data.columns);
         const hasDates = columnNames.filter(columnName => workingChartDef.data.columns[columnName] === "date");

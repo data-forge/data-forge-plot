@@ -388,6 +388,8 @@ export abstract class AbstractPlotAPI implements IPlotAPI {
     /**
      * Serialize the plot definition so that it can be converted to JSON.
      * The JSON definition of the chart can be used to instantiate the chart in a browser.
+     * 
+     * TODO: This function doesn't really belong in the abstract class, it would be better to live the concrete PlotAPI class.
      */
     serialize(): IChartDef {
         const expandedPlotConfig = Object.assign({}, this.plotConfig);
@@ -407,10 +409,12 @@ export abstract class AbstractPlotAPI implements IPlotAPI {
             axisMap: defaultedGlobalAxis,
         };
     }
-
+    
+    // TODO: This function doesn't really belong in the abstract class, it would be better to live the concrete PlotAPI class.
     getTypeCode(): string {
         return "plot";
     }
+    
 }
 
 /**
@@ -568,6 +572,16 @@ export class PlotAPI extends AbstractPlotAPI {
 
         super(data, expandedPlotConfig, expandedGlobalAxisMap);
     }
+
+    /**
+     * Deserialize an instance of PlotAPI from a previously serialize chart def.
+     * 
+     * @param chartDef The chart definition to deserialize from.
+     */
+    static deserialize(chartDef: IChartDef): IPlotAPI {
+        return new PlotAPI(chartDef.data, chartDef.plotConfig, chartDef.axisMap);
+    }
+
 }
 
 /**
