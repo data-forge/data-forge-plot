@@ -50,7 +50,7 @@ export interface IRenderOptions {
     /**
      * Open the image in your default image viewer.
      */
-    openImage: boolean;
+    openImage?: boolean;
 
     /**
      * Path to electron, so that electron can be installed separately to a different location and shared
