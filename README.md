@@ -39,7 +39,7 @@ Some instructions for using Data-Forge Plot. These instructions are for JavaScri
 
 ```javascript
     const dataForge = require('data-forge');
-    require('data-forge-plot'); // Extends Data-Forge wit the 'plot' function.
+    require('data-forge-plot'); // Extends Data-Forge with the 'plot' function.
 ```
 
 ### Rendering a chart from a CSV file
