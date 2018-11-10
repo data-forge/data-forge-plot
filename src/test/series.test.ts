@@ -54,7 +54,10 @@ describe("data-forge-plot - series", () => {
                 y2: {
                     axisType: "default",
                     label: {}
-                }
+                },
+                legend: {
+                    show: true,
+                },
             },
             axisMap: {
                 x: {
@@ -113,7 +116,10 @@ describe("data-forge-plot - series", () => {
                 y2: {
                     axisType: "default",
                     label: {}
-                }
+                },
+                legend: {
+                    show: true,
+                },
             },
             axisMap: {
                 x: {

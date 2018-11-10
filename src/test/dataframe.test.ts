@@ -55,6 +55,9 @@ describe("data-forge-plot - dataframe configuration", () => {
                     axisType: "default",
                     label: {},
                 },
+                legend: {
+                    show: true,
+                },
             },
             axisMap: {
                 x: {
@@ -111,6 +114,9 @@ describe("data-forge-plot - dataframe configuration", () => {
                 y2: {
                     axisType: "default",
                     label: {},
+                },
+                legend: {
+                    show: true,
                 },
             },
             axisMap: {

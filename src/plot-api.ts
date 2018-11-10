@@ -403,6 +403,22 @@ export abstract class AbstractPlotAPI implements IPlotAPI {
                 }));
         }
 
+        //
+        //TODO: I'm sure if the expansion should happen here in the serialization?
+        // I feel there should be another function that does this expansion and that made it should happen
+        // separately when the chart is rendered.
+        //
+        if (!expandedPlotConfig.legend) {
+            expandedPlotConfig.legend = {
+                show: true,
+            };
+        }
+        else if (expandedPlotConfig.legend.show === undefined) {
+            expandedPlotConfig.legend = Object.assign({}, expandedPlotConfig.legend, {
+                show: true,
+            });
+        }
+
         return {
             data: this.data,
             plotConfig: expandedPlotConfig,

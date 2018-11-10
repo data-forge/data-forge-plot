@@ -74,6 +74,18 @@ export interface IAxisConfig {
 }
 
 /**
+ * Configures the legend of the chart.
+ */
+export interface ILegendConfig {
+
+    /**
+     * Set to true (default) to show the legend for the chart   .
+     */
+    show?: boolean;
+}
+
+
+/**
  * Defines the chart.
  */
 export interface IPlotConfig {
@@ -116,6 +128,11 @@ export interface IPlotConfig {
      * Configuration for the second y axis.
      */
     y2?: IAxisConfig;
+
+    /**
+     * Configures the chart's legend.
+     */
+    legend?: ILegendConfig;
 }
 
 /**
@@ -192,6 +209,17 @@ export interface IExpandedAxisConfig {
 }
 
 /**
+ * Configures the legend of the chart.
+ */
+export interface IExpandedLegendConfig {
+
+    /**
+     * Set to true (default) to show the legend for the chart   .
+     */
+    show: boolean;
+}
+
+/**
  * Defines the chart.
  */
 export interface IExpandedPlotConfig {
@@ -230,6 +258,11 @@ export interface IExpandedPlotConfig {
      * Configuration for the second y axis.
      */
     y2: IExpandedAxisConfig;
+
+    /**
+     * Configure the chart's legend.
+     */
+    legend: IExpandedLegendConfig;
 }
 
 /**

@@ -1,6 +1,6 @@
 import { expect } from "chai";
 import "mocha";
-import { IChartDef, AxisType, ChartType, ISingleYAxisMap } from "../../../chart-def";
+import { IChartDef, AxisType, ChartType, ISingleYAxisMap, ILegendConfig } from "../../../chart-def";
 import { formatChartDef } from "../../../templates/c3/format-chart-def";
 import { ISerializedDataFrame } from "data-forge/build/lib/dataframe";
 import * as Sugar from "sugar";
@@ -11,6 +11,7 @@ export interface ITestChartDef {
     x: string;
     y: string | string[] | ISingleYAxisMap | ISingleYAxisMap[];
     y2?: string | string[] | ISingleYAxisMap | ISingleYAxisMap[];
+    legend?: ILegendConfig;
 }
 
 describe("format c3 chart", () => {
@@ -71,13 +72,22 @@ describe("format c3 chart", () => {
                     axisType: AxisType.Default,
                     label: {},
                 },
+
                 y: {
                     axisType: AxisType.Default,
                     label: {},
                 },
+
                 y2: {
                     axisType: AxisType.Default,
                     label: {},
+                },
+
+                legend: {
+                    show: testChartDef.legend 
+                        && testChartDef.legend.show !== undefined 
+                        && testChartDef.legend.show 
+                        || true,
                 },
             },
 
@@ -165,6 +175,9 @@ describe("format c3 chart", () => {
             point: {
                 show: false,
             },
+            legend: {
+                show: true,
+            },
         });
     });
 
@@ -243,6 +256,9 @@ describe("format c3 chart", () => {
             },
             point: {
                 show: false,
+            },
+            legend: {
+                show: true,
             },
         });
     });
@@ -340,6 +356,9 @@ describe("format c3 chart", () => {
             },
             point: {
                 show: false,
+            },
+            legend: {
+                show: true,
             },
         });
     });
@@ -455,6 +474,9 @@ describe("format c3 chart", () => {
             },
             point: {
                 show: false,
+            },
+            legend: {
+                show: true,
             },
         });
     });
@@ -582,7 +604,141 @@ describe("format c3 chart", () => {
             point: {
                 show: false,
             },
+            legend: {
+                show: true,
+            },
         });
     });
 
+    it("can configure legend", ()  => {
+
+        const chartDef = createMinimalChartDef({
+            data: {
+                columnOrder: ["a", "b", "c", "d", "e"],
+                columns: {
+                    a: "number",
+                    b: "number",
+                    c: "number",
+                    d: "number",
+                    e: "number",
+                },
+                index: {
+                    type: "number",
+                    values: [ 5, 6 ],
+                },
+                values: [
+                    {
+                        a: 10,
+                        b: 100,
+                        c: 1000,
+                        d: 10000,
+                        e: 100000,
+                    },
+                    {
+                        a: 20,
+                        b: 200,
+                        c: 2000,
+                        d: 20000,
+                        e: 200000,
+                    },
+                ],
+            },
+            x: "__index__",
+            y: [
+                {
+                    series: "b",
+                    x: "a",
+                },
+                {
+                    series: "c",
+                    x: "d",
+                },
+            ],
+            y2: [
+                {
+                    series: "e",
+                    x: "a",
+                },
+            ],
+            legend: {
+                show: true,
+            },
+        });
+
+        const c3ChartDef = formatChartDef(chartDef);
+        expect(c3ChartDef).to.eql({
+            bindto: "#chart",
+            size: {
+                width: 800,
+                height: 600,
+            },
+            data: {
+                xs: {
+                    b: "a",
+                    c: "d",
+                    e: "a",
+                },
+                columns: [
+                    [
+                        "b",
+                        100,
+                        200,
+                    ],
+                    [
+                        "a",
+                        10,
+                        20,
+                    ],
+                    [
+                        "c",
+                        1000,
+                        2000,
+                    ],
+                    [
+                        "d",
+                        10000,
+                        20000,
+                    ],
+                    [
+                        "e",
+                        100000,
+                        200000,
+                    ],
+                ],
+                type: "line",
+                axes: {
+                    b: "y",
+                    c: "y",
+                    e: "y2",
+                },
+                names: {},
+            },
+            axis: {
+                x: {
+                    show: true,
+                    type: "indexed",
+                    label: {},
+                },
+                y: {
+                    show: true,
+                    type: "indexed",
+                    label: {},
+                },
+                y2: {
+                    show: true,
+                    type: "indexed",
+                    label: {},
+                },
+            },
+            transition: {
+                duration: 0,
+            },
+            point: {
+                show: false,
+            },
+            legend: {
+                show: true,
+            },
+        });
+    });
 });

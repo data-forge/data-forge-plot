@@ -307,7 +307,10 @@ export function formatChartDef(inputChartDef: IChartDef): any {
         },
         point: {
             show: false
-        }
+        },
+        legend: {
+            show: workingChartDef.plotConfig.legend.show,
+        },
     };
 
     return c3ChartDef;

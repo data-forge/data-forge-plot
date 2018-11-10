@@ -7,37 +7,39 @@ import { IChartDef, ChartType, AxisType } from "../chart-def";
 
 describe("serialization", () => {
 
+    const exampleData = {
+        columnOrder: [
+            "A",
+            "__index__",
+        ],
+        columns: {
+            A: "number",
+            __index__: "number",
+        },
+        index: {
+            type: "number",
+            values: [ 1, 2, 3 ],
+        },
+        values: [
+            {
+                A: 10,
+                __index__: 1,
+            },
+            {
+                A: 20,
+                __index__: 2,
+            },
+            {
+                A: 30,
+                __index__: 3,
+            },
+        ],
+    };
+
     it("can deserialize and then serialize a chart def", ()  => {
 
         const chartDef: IChartDef = {
-            data: {
-                columnOrder: [
-                    "A",
-                    "__index__",
-                ],
-                columns: {
-                    A: "number",
-                    __index__: "number",
-                },
-                index: {
-                    type: "number",
-                    values: [ 1, 2, 3 ],
-                },
-                values: [
-                    {
-                        A: 10,
-                        __index__: 1,
-                    },
-                    {
-                        A: 20,
-                        __index__: 2,
-                    },
-                    {
-                        A: 30,
-                        __index__: 3,
-                    },
-                ],
-            },
+            data: exampleData,
             plotConfig: {
                 chartType: ChartType.Line,
                 width: 800,
@@ -54,6 +56,9 @@ describe("serialization", () => {
                 y2: {
                     axisType: AxisType.Default,
                     label: {},
+                },
+                legend: {
+                    show: true,
                 },
             },
             axisMap: {
@@ -73,5 +78,24 @@ describe("serialization", () => {
         const serialized = plot.serialize();
         expect(serialized).to.eql(chartDef);
     });
+
+    it("serialization defaults legend show 1", () => {
+        const plot = new PlotAPI(exampleData, {}, {});
+        const serialized = plot.serialize();
+        expect(serialized.plotConfig.legend.show).to.eql(true);
+    });
+
+    it("serialization defaults legend show 2", () => {
+        const plot = new PlotAPI(exampleData, { legend: {} }, {});
+        const serialized = plot.serialize();
+        expect(serialized.plotConfig.legend.show).to.eql(true);
+    });
+
+    it("serialization preserves legend show", () => {
+        const plot = new PlotAPI(exampleData, { legend: { show: false }}, {});
+        const serialized = plot.serialize();
+        expect(serialized.plotConfig.legend.show).to.eql(false);
+    });
+
     
 });
