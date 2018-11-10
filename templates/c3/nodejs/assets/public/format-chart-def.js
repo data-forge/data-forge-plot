@@ -259,7 +259,10 @@ function formatChartDef(inputChartDef) {
         },
         point: {
             show: false
-        }
+        },
+        legend: {
+            show: workingChartDef.plotConfig.legend.show,
+        },
     };
     return c3ChartDef;
 }

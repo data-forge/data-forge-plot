@@ -80,19 +80,19 @@ describe("serialization", () => {
     });
 
     it("serialization defaults legend show 1", () => {
-        const plot = new PlotAPI(exampleData, {}, {});
+        const plot = new PlotAPI(exampleData, {}, true, {});
         const serialized = plot.serialize();
         expect(serialized.plotConfig.legend.show).to.eql(true);
     });
 
     it("serialization defaults legend show 2", () => {
-        const plot = new PlotAPI(exampleData, { legend: {} }, {});
+        const plot = new PlotAPI(exampleData, { legend: {} }, false, {});
         const serialized = plot.serialize();
-        expect(serialized.plotConfig.legend.show).to.eql(true);
+        expect(serialized.plotConfig.legend.show).to.eql(false);
     });
 
     it("serialization preserves legend show", () => {
-        const plot = new PlotAPI(exampleData, { legend: { show: false }}, {});
+        const plot = new PlotAPI(exampleData, { legend: { show: false }}, true, {});
         const serialized = plot.serialize();
         expect(serialized.plotConfig.legend.show).to.eql(false);
     });

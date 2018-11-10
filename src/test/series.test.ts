@@ -56,7 +56,7 @@ describe("data-forge-plot - series", () => {
                     label: {}
                 },
                 legend: {
-                    show: true,
+                    show: false,
                 },
             },
             axisMap: {
@@ -79,60 +79,13 @@ describe("data-forge-plot - series", () => {
         const plotAPI = series.plot()
             .template("smig");
 
-        expect(plotAPI.serialize()).to.eql({
-            data: {
-                columnOrder: [
-                    "__value__",
-                    "__index__"
-                ],
-                columns: {
-                    __value__: "number",
-                    __index__: "number"
-                },
-                index: {
-                    type: "number",
-                    values: [ 1 ],
-                },
-                values: [
-                    {
-                        __value__: 10,
-                        __index__: 1
-                    }
-                ]
-            },
-            plotConfig: {
-                chartType: "line",
-                width: 800,
-                height: 600,
-                template: "smig",
-                x: {
-                    axisType: "default",
-                    label: {}
-                },
-                y: {
-                    axisType: "default",
-                    label: {}
-                },
-                y2: {
-                    axisType: "default",
-                    label: {}
-                },
-                legend: {
-                    show: true,
-                },
-            },
-            axisMap: {
-                x: {
-                    series: "__index__"
-                },
-                y: [
-                    {
-                        series: "__value__"
-                    }
-                ],
-                y2: []
-            }
-        });
+        expect(plotAPI.serialize().plotConfig.template).to.eql("smig");
     });
 
+    it("by default legend is disabled for series", ()  => {
+
+        const series = new Series({ index: [ 1 ], values: [ 10 ] });
+        const plotAPI = series.plot();
+        expect(plotAPI.serialize().plotConfig.legend.show).to.eql(false);
+    });
 });

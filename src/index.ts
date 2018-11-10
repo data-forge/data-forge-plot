@@ -13,18 +13,18 @@ declare module "data-forge/build/lib/series" {
         startPlot(): void;
         endPlot(): void;
 
-        plot(plotDef?: IPlotConfig, axisMap?: IAxisMap): IPlotAPI;
+        plot(plotConfig?: IPlotConfig, axisMap?: IAxisMap): IPlotAPI;
     }
 
     interface Series<IndexT, ValueT> {
         startPlot(): void;
         endPlot(): void;
 
-        plot(plotDef?: IPlotConfig, axisMap?: IAxisMap): IPlotAPI;
+        plot(plotConfig?: IPlotConfig, axisMap?: IAxisMap): IPlotAPI;
     }
 }
 
-function plotSeries(this: ISeries<any, any>, plotDef?: IPlotConfig, axisMap?: IAxisMap): IPlotAPI {
+function plotSeries(this: ISeries<any, any>, plotConfig?: IPlotConfig, axisMap?: IAxisMap): IPlotAPI {
 
     const amt = this.count();
     const serializedData = this.inflate((value: any) => ({ __value__: value }))
@@ -33,7 +33,7 @@ function plotSeries(this: ISeries<any, any>, plotDef?: IPlotConfig, axisMap?: IA
             return row;
         })
         .serialize();
-    return new PlotAPI(serializedData, plotDef || {}, axisMap!);
+    return new PlotAPI(serializedData, plotConfig || {}, false, axisMap!);
 }
 
 Series.prototype.startPlot = startPlot;
@@ -67,7 +67,7 @@ function plotDataFrame(this: IDataFrame<any, any>, plotDef?: IPlotConfig, axisMa
         });
 
     const serializedData = df.serialize();
-    return new PlotAPI(serializedData, plotDef || {}, axisMap);
+    return new PlotAPI(serializedData, plotDef || {}, true, axisMap);
 }
 
 DataFrame.prototype.startPlot = startPlot;

@@ -403,22 +403,6 @@ export abstract class AbstractPlotAPI implements IPlotAPI {
                 }));
         }
 
-        //
-        //TODO: I'm sure if the expansion should happen here in the serialization?
-        // I feel there should be another function that does this expansion and that made it should happen
-        // separately when the chart is rendered.
-        //
-        if (!expandedPlotConfig.legend) {
-            expandedPlotConfig.legend = {
-                show: true,
-            };
-        }
-        else if (expandedPlotConfig.legend.show === undefined) {
-            expandedPlotConfig.legend = Object.assign({}, expandedPlotConfig.legend, {
-                show: true,
-            });
-        }
-
         return {
             data: this.data,
             plotConfig: expandedPlotConfig,
@@ -438,7 +422,7 @@ export abstract class AbstractPlotAPI implements IPlotAPI {
  */
 export class PlotAPI extends AbstractPlotAPI {
 
-    constructor(data: ISerializedDataFrame, plotConfig: IPlotConfig, globalAxisMap?: IAxisMap) {
+    constructor(data: ISerializedDataFrame, plotConfig: IPlotConfig, showLegendDefault: boolean, globalAxisMap?: IAxisMap) {
         assert.isObject(data, "Expected 'data' parameter to PlotAPI constructor to be a serialized dataframe.");
 
         // Clone the def and plot map so they can be updated by the fluent API.
@@ -506,6 +490,22 @@ export class PlotAPI extends AbstractPlotAPI {
             if (!expandedPlotConfig.y2.label) {
                 expandedPlotConfig.y2.label = {};
             }
+        }
+
+        //
+        //TODO: I'm sure if the expansion should happen here in the serialization?
+        // I feel there should be another function that does this expansion and that made it should happen
+        // separately when the chart is rendered.
+        //
+        if (!expandedPlotConfig.legend) {
+            expandedPlotConfig.legend = {
+                show: showLegendDefault,
+            };
+        }
+        else if (expandedPlotConfig.legend.show === undefined) {
+            expandedPlotConfig.legend = Object.assign({}, expandedPlotConfig.legend, {
+                show: showLegendDefault,
+            });
         }
 
         const expandedGlobalAxisMap: IInternalAxisMap = {
@@ -595,7 +595,7 @@ export class PlotAPI extends AbstractPlotAPI {
      * @param chartDef The chart definition to deserialize from.
      */
     static deserialize(chartDef: IChartDef): IPlotAPI {
-        return new PlotAPI(chartDef.data, chartDef.plotConfig, chartDef.axisMap);
+        return new PlotAPI(chartDef.data, chartDef.plotConfig, true, chartDef.axisMap);
     }
 
 }

@@ -77,59 +77,13 @@ describe("data-forge-plot - dataframe configuration", () => {
 
         const series = new DataFrame({ index: [ 1 ], values: [{ A: 10 } ] });
         const plotAPI = series.plot({ template: "woo" });
-        expect(plotAPI.serialize()).to.eql({
-            data: {
-                columnOrder: [
-                    "A",
-                    "__index__",
-                ],
-                columns: {
-                    A: "number",
-                    __index__: "number",
-                },
-                index: {
-                    type: "number",
-                    values: [ 1 ],
-                },
-                values: [
-                    {
-                        A: 10,
-                        __index__: 1,
-                    },
-                ],
-            },
-            plotConfig: {
-                template: "woo",
-                chartType: "line",
-                width: 800,
-                height: 600,
-                x: {
-                    axisType: "default",
-                    label: {},
-                },
-                y: {
-                    axisType: "default",
-                    label: {},
-                },
-                y2: {
-                    axisType: "default",
-                    label: {},
-                },
-                legend: {
-                    show: true,
-                },
-            },
-            axisMap: {
-                x: {
-                    series: "__index__",
-                },
-                y: [
-                    {
-                        series: "A",
-                    },
-                ],
-                y2: [],
-            },
-        });
+        expect(plotAPI.serialize().plotConfig.template).to.eql("woo");
+    });
+
+    it("by default legend is enabled for dataframe", ()  => {
+
+        const series = new DataFrame({ index: [ 1 ], values: [{ A: 10 } ] });
+        const plotAPI = series.plot();
+        expect(plotAPI.serialize().plotConfig.legend.show).to.eql(true);
     });
 });
