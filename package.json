@@ -35,7 +35,7 @@
         "sugar": "^2.0.4"
     },
     "peerDependencies": {
-        "data-forge": "^1.2.6"
+        "data-forge": "^1.3.0"
     },
     "devDependencies": {
         "fs-extra": "^6.0.1",
