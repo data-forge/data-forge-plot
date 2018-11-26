@@ -75,6 +75,21 @@ export interface IAxisConfig {
 }
 
 /**
+ * Configures a Y axis of the chart.
+ */
+export interface IYAxisConfig extends IAxisConfig {
+    /**
+     * The minimum value to render on the axis.
+     */
+    min?: number;
+
+    /**
+     * The maximum value to render on the axis.
+     */
+    max?: number;
+}
+
+/**
  * Configures the legend of the chart.
  */
 export interface ILegendConfig {
@@ -123,12 +138,12 @@ export interface IPlotConfig {
     /**
      * Configuration for the y axis.
      */
-    y?: IAxisConfig;
+    y?: IYAxisConfig;
 
     /**
      * Configuration for the second y axis.
      */
-    y2?: IAxisConfig;
+    y2?: IYAxisConfig;
 
     /**
      * Configures the chart's legend.
@@ -210,6 +225,21 @@ export interface IExpandedAxisConfig {
 }
 
 /**
+ * Configures a Y axis of the chart.
+ */
+export interface IExpandedYAxisConfig extends IExpandedAxisConfig {
+    /**
+     * The minimum value to render on the axis.
+     */
+    min?: number;
+
+    /**
+     * The maximum value to render on the axis.
+     */
+    max?: number;
+}
+
+/**
  * Configures the legend of the chart.
  */
 export interface IExpandedLegendConfig {
@@ -253,12 +283,12 @@ export interface IExpandedPlotConfig {
     /**
      * Configuration for the y axis.
      */
-    y: IExpandedAxisConfig;
+    y: IExpandedYAxisConfig;
 
     /**
      * Configuration for the second y axis.
      */
-    y2: IExpandedAxisConfig;
+    y2: IExpandedYAxisConfig;
 
     /**
      * Configure the chart's legend.

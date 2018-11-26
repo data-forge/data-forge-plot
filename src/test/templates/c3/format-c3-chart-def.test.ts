@@ -5,6 +5,7 @@ import { formatChartDef } from "../../../templates/c3/format-chart-def";
 import { ISerializedDataFrame } from "data-forge/build/lib/dataframe";
 import * as Sugar from "sugar";
 import { DataFrame } from "data-forge";
+import { create } from "handlebars";
 
 export interface ITestChartDef {
     data: ISerializedDataFrame;
@@ -740,5 +741,73 @@ describe("format c3 chart", () => {
                 show: true,
             },
         });
+    });
+    
+    it("can set min and max values for Y axis", () => {
+
+        const chartDef = createMinimalChartDef({
+            data: {
+                columnOrder: ["a", "b", "c", "d", "e"],
+                columns: {
+                    a: "number",
+                    b: "number",
+                    c: "number",
+                    d: "number",
+                    e: "number",
+                },
+                index: {
+                    type: "number",
+                    values: [ 5, 6 ],
+                },
+                values: [
+                    {
+                        a: 10,
+                        b: 100,
+                        c: 1000,
+                        d: 10000,
+                        e: 100000,
+                    },
+                    {
+                        a: 20,
+                        b: 200,
+                        c: 2000,
+                        d: 20000,
+                        e: 200000,
+                    },
+                ],
+            },
+            x: "__index__",
+            y: [
+                {
+                    series: "b",
+                    x: "a",
+                },
+                {
+                    series: "c",
+                    x: "d",
+                },
+            ],
+            y2: [
+                {
+                    series: "e",
+                    x: "a",
+                },
+            ],
+            legend: {
+                show: true,
+            },
+        });
+    
+        chartDef.plotConfig.y.min = 10;
+        chartDef.plotConfig.y.max = 100;
+
+        chartDef.plotConfig.y2.min = 2;
+        chartDef.plotConfig.y2.max = 3;
+
+        const c3ChartDef = formatChartDef(chartDef);
+        expect(c3ChartDef.axis.y.min).to.eql(10);
+        expect(c3ChartDef.axis.y.max).to.eql(100);
+        expect(c3ChartDef.axis.y2.min).to.eql(2);
+        expect(c3ChartDef.axis.y2.max).to.eql(3);
     });
 });

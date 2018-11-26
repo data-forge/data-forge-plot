@@ -206,6 +206,18 @@ export interface IYAxisConfigAPI extends IAxisConfigAPI<IYAxisConfigAPI> {
      * Configure an explicit x axis for the y axis.
      */
     x(seriesName: string): IXAxisConfigAPI;
+
+    /**
+     * Sets the minimum value to render on the axis.
+     * @param value The minimum value to render.
+     */
+    min(value: number): IYAxisConfigAPI;
+
+    /**
+     * Sets the maximum value to render on the axis.
+     * @param value The maximum value to render.
+     */
+    max(value: number): IYAxisConfigAPI;
 }
 
 //
@@ -777,4 +789,23 @@ class YAxisConfigAPI extends AxisConfigAPI<IYAxisConfigAPI, ISingleYAxisMap> imp
             this.globalAxisMap
         );
     }
+
+    /**
+     * Sets the minimum value to render on the axis.
+     * @param value The minimum value to render.
+     */
+    min(value: number): IYAxisConfigAPI {
+        //todo:
+        return this;
+    }
+
+    /**
+     * Sets the maximum value to render on the axis.
+     * @param value The maximum value to render.
+     */
+    max(value: number): IYAxisConfigAPI {
+        //todo:
+        return this;
+    }
+    
 }

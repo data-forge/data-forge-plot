@@ -1,4 +1,4 @@
-import { IChartDef, ISingleYAxisMap, ISingleAxisMap, IAxisConfig } from "../../../src/chart-def";
+import { IChartDef, ISingleYAxisMap, ISingleAxisMap, IAxisConfig, IExpandedAxisConfig, IExpandedYAxisConfig } from "../../../src/chart-def";
 
 declare var moment: any;
 declare var numeral: any;
@@ -71,7 +71,7 @@ function formatValues(
 function configureOneSeries(
     seriesConfig: ISingleAxisMap,
     inputChartDef: IChartDef,
-    axisDef: IAxisConfig,
+    axisConfig: IExpandedAxisConfig,
     c3AxisDef: any
 ): void {
     // Default axis type based on data type.
@@ -79,13 +79,13 @@ function configureOneSeries(
     const dataType = inputChartDef.data.columns[seriesName];
     c3AxisDef.type = determineAxisType(dataType);
 
-    if (axisDef) {
-        if (axisDef.axisType && axisDef.axisType !== "default") {
-            c3AxisDef.type = axisDef.axisType;
+    if (axisConfig) {
+        if (axisConfig.axisType && axisConfig.axisType !== "default") {
+            c3AxisDef.type = axisConfig.axisType;
         }
 
-        if (axisDef.label) {
-            c3AxisDef.label = axisDef.label;
+        if (axisConfig.label) {
+            c3AxisDef.label = axisConfig.label;
         }
     }
 
@@ -103,7 +103,7 @@ function configureOneSeries(
 /**
  * Configure a single axis.
  */
-function configureOneAxis(axisName: string, inputChartDef: IChartDef, c3Axis: any): void {
+function configureOneAxis(axisName: string, inputChartDef: IChartDef, axisConfig: IExpandedAxisConfig, c3Axis: any): void {
     const axisMap = inputChartDef.axisMap as any;
     if (!axisMap) {
         return;
@@ -111,7 +111,7 @@ function configureOneAxis(axisName: string, inputChartDef: IChartDef, c3Axis: an
 
     c3Axis[axisName] = { show: false };
 
-    const axisDef: IAxisConfig = (inputChartDef.plotConfig as any)[axisName];
+    //fio:const axisDef: IAxisConfig = (inputChartDef.plotConfig as any)[axisName];
     const c3AxisDef = c3Axis[axisName];
 
     const series: ISingleAxisMap = axisMap[axisName];
@@ -121,11 +121,32 @@ function configureOneAxis(axisName: string, inputChartDef: IChartDef, c3Axis: an
 
     if (Array.isArray(series)) {
         series.forEach(seriesConfig => {
-            configureOneSeries(seriesConfig, inputChartDef, axisDef, c3AxisDef);
+            configureOneSeries(seriesConfig, inputChartDef, axisConfig, c3AxisDef);
         });
     }
     else {
-        configureOneSeries(series, inputChartDef, axisDef, c3AxisDef);
+        configureOneSeries(series, inputChartDef, axisConfig, c3AxisDef);
+    }
+}
+
+/**
+ * Configure a single Y axis.
+ */
+function configureOneYAxis(axisName: string, inputChartDef: IChartDef, axisConfig: IExpandedYAxisConfig, c3Axis: any): void {
+    const axisMap = inputChartDef.axisMap as any;
+    if (!axisMap) {
+        return;
+    }
+
+    configureOneAxis(axisName, inputChartDef, axisConfig, c3Axis);
+
+    const c3AxisDef = c3Axis[axisName];
+    if (axisConfig.min !== undefined) {
+        c3AxisDef.min = axisConfig.min;
+    }
+
+    if (axisConfig.max !== undefined) {
+        c3AxisDef.max = axisConfig.max;
     }
 }
 
@@ -135,9 +156,9 @@ function configureOneAxis(axisName: string, inputChartDef: IChartDef, c3Axis: an
 function configureAxis(inputChartDef: IChartDef): any {
     const c3Axis: any = {};
 
-    configureOneAxis("x", inputChartDef, c3Axis);
-    configureOneAxis("y", inputChartDef, c3Axis);
-    configureOneAxis("y2", inputChartDef, c3Axis);
+    configureOneAxis("x", inputChartDef, inputChartDef.plotConfig.x, c3Axis);
+    configureOneYAxis("y", inputChartDef, inputChartDef.plotConfig.y, c3Axis);
+    configureOneYAxis("y2", inputChartDef, inputChartDef.plotConfig.y2, c3Axis);
 
     return c3Axis;
 }
