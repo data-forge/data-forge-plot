@@ -56,17 +56,17 @@ function formatValues(inputChartDef, seriesName, dataType, formatString) {
         return undefined;
     }
 }
-function configureOneSeries(seriesConfig, inputChartDef, axisDef, c3AxisDef) {
+function configureOneSeries(seriesConfig, inputChartDef, axisConfig, c3AxisDef) {
     // Default axis type based on data type.
     var seriesName = seriesConfig.series;
     var dataType = inputChartDef.data.columns[seriesName];
     c3AxisDef.type = determineAxisType(dataType);
-    if (axisDef) {
-        if (axisDef.axisType && axisDef.axisType !== "default") {
-            c3AxisDef.type = axisDef.axisType;
+    if (axisConfig) {
+        if (axisConfig.axisType && axisConfig.axisType !== "default") {
+            c3AxisDef.type = axisConfig.axisType;
         }
-        if (axisDef.label) {
-            c3AxisDef.label = axisDef.label;
+        if (axisConfig.label) {
+            c3AxisDef.label = axisConfig.label;
         }
     }
     c3AxisDef.show = true;
@@ -80,13 +80,13 @@ function configureOneSeries(seriesConfig, inputChartDef, axisDef, c3AxisDef) {
 /**
  * Configure a single axis.
  */
-function configureOneAxis(axisName, inputChartDef, c3Axis) {
+function configureOneAxis(axisName, inputChartDef, axisConfig, c3Axis) {
     var axisMap = inputChartDef.axisMap;
     if (!axisMap) {
         return;
     }
     c3Axis[axisName] = { show: false };
-    var axisDef = inputChartDef.plotConfig[axisName];
+    //fio:const axisDef: IAxisConfig = (inputChartDef.plotConfig as any)[axisName];
     var c3AxisDef = c3Axis[axisName];
     var series = axisMap[axisName];
     if (!series) {
@@ -94,11 +94,28 @@ function configureOneAxis(axisName, inputChartDef, c3Axis) {
     }
     if (Array.isArray(series)) {
         series.forEach(function (seriesConfig) {
-            configureOneSeries(seriesConfig, inputChartDef, axisDef, c3AxisDef);
+            configureOneSeries(seriesConfig, inputChartDef, axisConfig, c3AxisDef);
         });
     }
     else {
-        configureOneSeries(series, inputChartDef, axisDef, c3AxisDef);
+        configureOneSeries(series, inputChartDef, axisConfig, c3AxisDef);
+    }
+}
+/**
+ * Configure a single Y axis.
+ */
+function configureOneYAxis(axisName, inputChartDef, axisConfig, c3Axis) {
+    var axisMap = inputChartDef.axisMap;
+    if (!axisMap) {
+        return;
+    }
+    configureOneAxis(axisName, inputChartDef, axisConfig, c3Axis);
+    var c3AxisDef = c3Axis[axisName];
+    if (axisConfig.min !== undefined) {
+        c3AxisDef.min = axisConfig.min;
+    }
+    if (axisConfig.max !== undefined) {
+        c3AxisDef.max = axisConfig.max;
     }
 }
 /**
@@ -106,9 +123,9 @@ function configureOneAxis(axisName, inputChartDef, c3Axis) {
  */
 function configureAxis(inputChartDef) {
     var c3Axis = {};
-    configureOneAxis("x", inputChartDef, c3Axis);
-    configureOneAxis("y", inputChartDef, c3Axis);
-    configureOneAxis("y2", inputChartDef, c3Axis);
+    configureOneAxis("x", inputChartDef, inputChartDef.plotConfig.x, c3Axis);
+    configureOneYAxis("y", inputChartDef, inputChartDef.plotConfig.y, c3Axis);
+    configureOneYAxis("y2", inputChartDef, inputChartDef.plotConfig.y2, c3Axis);
     return c3Axis;
 }
 /**
