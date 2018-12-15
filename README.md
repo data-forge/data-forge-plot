@@ -39,6 +39,7 @@ Some instructions for using Data-Forge Plot. These instructions are for JavaScri
 
 ```javascript
     const dataForge = require('data-forge');
+    require('data-forge-fs'); // Extends Data-Forge with 'readFile' function.
     require('data-forge-plot'); // Extends Data-Forge with the 'plot' function.
 ```
 
