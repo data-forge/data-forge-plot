@@ -73,13 +73,6 @@ describe("data-forge-plot - dataframe configuration", () => {
         });
     });
 
-    it("can select template", ()  => {
-
-        const series = new DataFrame({ index: [ 1 ], values: [{ A: 10 } ] });
-        const plotAPI = series.plot({ template: "woo" });
-        expect(plotAPI.serialize().plotConfig.template).to.eql("woo");
-    });
-
     it("by default legend is enabled for dataframe", ()  => {
 
         const series = new DataFrame({ index: [ 1 ], values: [{ A: 10 } ] });

@@ -73,15 +73,6 @@ describe("data-forge-plot - series", () => {
         });
     });
 
-    it("can set template", ()  => {
-
-        const series = new Series({ index: [ 1 ], values: [ 10 ] });
-        const plotAPI = series.plot()
-            .template("smig");
-
-        expect(plotAPI.serialize().plotConfig.template).to.eql("smig");
-    });
-
     it("by default legend is disabled for series", ()  => {
 
         const series = new Series({ index: [ 1 ], values: [ 10 ] });

@@ -106,13 +106,7 @@ export interface ILegendConfig {
  */
 export interface IPlotConfig {
 
-    /**
-     * The template to use for the chart.
-     * Defaults to "c3".
-     */
-    template?: string;
-
-    /**
+   /**
      * The type of chart to render.
      * Default to "line".
      */
@@ -254,11 +248,6 @@ export interface IExpandedLegendConfig {
  * Defines the chart.
  */
 export interface IExpandedPlotConfig {
-
-    /**
-     * The template to use for the chart.
-     */
-    template: string;
 
     /**
      * The type of chart to render.

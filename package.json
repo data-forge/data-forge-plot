@@ -1,17 +1,21 @@
 {
     "name": "data-forge-plot",
-    "version": "0.1.11",
+    "version": "0.2.0",
     "description": "Plotting API for use with Data-Forge.",
     "main": "build/index.js",
     "types": "build/index.d.ts",
     "scripts": {
+        "c": "rm -rf build/*",
         "clean": "rm -rf build/*",
-        "build": "build.bat",
+        "b": "tsc",
+        "build": "tsc",
         "clean-build": "rm -rf build/* && tsc",
         "build:watch": "tsc --watch",
         "clean-build:watch": "rm -rf build/* && tsc --watch",
+        "t": "nyc mocha --opts ./src/test/mocha.opts",
         "test": "nyc mocha --opts ./src/test/mocha.opts",
         "test:watch": "mocha --watch --watch-extensions ts --opts ./src/test/mocha.opts",
+        "tw": "mocha --watch --watch-extensions ts --opts ./src/test/mocha.opts",
         "prepublishOnly": "build.bat",
         "lint": "tslint -p tsconfig.json -t stylish",
         "fix-lint": "tslint --fix -p tsconfig.json -t stylish"
@@ -28,31 +32,32 @@
     },
     "homepage": "https://github.com/data-forge/data-forge-plot#readme",
     "dependencies": {
-        "capture-template": "^1.0.13",
-        "fs-jetpack": "^1.3.0",
-        "inflate-template": "^1.0.4",
-        "opn": "^5.3.0",
-        "sugar": "^2.0.4"
+        "@data-forge-plot/c3": "0.0.3",
+        "capture-template": "^1.1.10",
+        "fs-jetpack": "^1.3.1",
+        "inflate-template": "^1.1.6",
+        "opn": "^5.5.0",
+        "sugar": "^2.0.6"
     },
     "peerDependencies": {
-        "data-forge": "^1.3.0"
+        "data-forge": "^1.6.1"
     },
     "devDependencies": {
-        "fs-extra": "^6.0.1",
         "@types/chai": "4.0.4",
-        "@types/express": "^4.11.1",
-        "@types/fs-extra": "^5.0.2",
+        "@types/express": "^4.16.1",
+        "@types/fs-extra": "^5.0.5",
         "@types/globby": "^8.0.0",
-        "@types/handlebars": "^4.0.38",
+        "@types/handlebars": "^4.1.0",
         "@types/mocha": "2.2.43",
         "@types/node": "8.0.28",
-        "browserify": "^16.2.2",
+        "browserify": "^16.2.3",
         "chai": "4.1.2",
+        "fs-extra": "^6.0.1",
         "mocha": "3.5.3",
         "nyc": "11.8.0",
         "source-map-support": "0.5.6",
         "ts-node": "3.3.0",
-        "tslint": "^5.11.0",
+        "tslint": "^5.14.0",
         "typescript": "2.5.2"
     },
     "nyc": {

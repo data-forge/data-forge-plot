@@ -44,7 +44,6 @@ describe("serialization", () => {
                 chartType: ChartType.Line,
                 width: 800,
                 height: 600,
-                template: "c3",
                 x: {
                     axisType: AxisType.Default,
                     label: {},

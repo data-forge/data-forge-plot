@@ -12,7 +12,7 @@ import * as path from "path";
 import * as Sugar from "sugar";
 import { findPackageDir } from "./find-package-dir";
 import { ISerializedDataFrame } from "data-forge/build/lib/dataframe";
-import { exportTemplate } from "inflate-template";
+import { exportTemplate, IExportOptions } from "inflate-template";
 import { captureImage, ICaptureOptions } from "capture-template";
 
 //
@@ -21,9 +21,9 @@ import { captureImage, ICaptureOptions } from "capture-template";
 //
 // TODO :export let globalChartRenderer: IChartRenderer | null = null;
 
-async function findChartTemplatesPath(): Promise<string> {
+async function findChartTemplatePath(): Promise<string> {
     const parentDir = await findPackageDir(__dirname);
-    const chartTemplatesPath = path.join(parentDir, "templates");
+    const chartTemplatesPath = path.join(parentDir, "node_modules", "@data-forge-plot", "c3", "build", "template");
     return chartTemplatesPath;
 }
 
@@ -59,6 +59,11 @@ export interface IRenderOptions {
      * Electron is used to render charts and capture them to images.
      */
     electronPath?: string;
+
+    /**
+     * Name of the template used to render the image.
+     */
+    template?: string;
 }
 
 /**
@@ -76,6 +81,11 @@ export interface IWebExportOptions {
      * Default: false
      */
     overwrite?: boolean;
+
+    /**
+     * Name of the template used to render the image.
+     */
+    template?: string;
 }
 
 /**
@@ -94,12 +104,6 @@ export interface INodejsExportOptions {
  * Fluent API for configuring the plot.
  */
 export interface IPlotAPI {
-
-    /***
-     * Set the chart template to use.
-     * This defaults to "c3".
-     */
-    template(templateName: string): IPlotAPI;
 
     /**
      * Set the type of the chart to be plotted.
@@ -136,17 +140,12 @@ export interface IPlotAPI {
     /**
      * Render the plot to an image file.
      */
-    /*async*/ renderImage(imageFilePath: string, renderOptions?: IRenderOptions): Promise<void>;
+    renderImage(imageFilePath: string, renderOptions?: IRenderOptions): Promise<void>;
 
     /**
      * Export an interactive web visualization of the chart.
      */
-    /*async*/ exportWeb(outputFolderPath: string, exportOptions?: IWebExportOptions): Promise<void>;
-
-    /**
-     * Export a Node.js project to host a web visualization of the char.
-     */
-    /*async*/ exportNodejs(outputFolderPath: string, exportOptions?: INodejsExportOptions): Promise<void>;
+    exportWeb(outputFolderPath: string, exportOptions?: IWebExportOptions): Promise<void>;
 
     /**
      * Serialize the plot definition so that it can be converted to JSON.
@@ -267,15 +266,6 @@ export abstract class AbstractPlotAPI implements IPlotAPI {
         this.globalAxisMap = globalAxisMap;
     }
 
-    /***
-     * Set the chart template to use.
-     * This defaults to "c3".
-     */
-    template(templateName: string): IPlotAPI {
-        this.plotConfig.template = templateName; // TODO: could call toLower, would have to also toLower the config.
-        return this;
-    }
-
     /**
      * Set the type of the chart to be plotted.
      *
@@ -358,12 +348,19 @@ export abstract class AbstractPlotAPI implements IPlotAPI {
     async renderImage(imageFilePath: string, renderOptions?: IRenderOptions): Promise<void> {
 
         const chartDef = this.serialize();
-        const templatesPath = await findChartTemplatesPath();
-        const chartTemplatePath = path.join(templatesPath, chartDef.plotConfig.template, "web");
+        const templatePath = renderOptions && renderOptions.template || await findChartTemplatePath();
         const captureOptions: ICaptureOptions = {
             electronPath: renderOptions && renderOptions.electronPath,
+            inflateOptions: {
+                inMemoryFiles: [
+                    { 
+                        file: "chart-def.json", 
+                        content: JSON.stringify(chartDef, null, 4),
+                    },
+                ],
+            },
         };
-        await captureImage({ chartDef }, chartTemplatePath, imageFilePath, captureOptions);
+        await captureImage(templatePath, { chartDef }, imageFilePath, captureOptions);
 
         if (renderOptions && renderOptions.openImage) {
             opn(path.resolve(imageFilePath));
@@ -374,27 +371,26 @@ export abstract class AbstractPlotAPI implements IPlotAPI {
      * Export an interactive web visualization of the chart.
      */
     async exportWeb(outputFolderPath: string, exportOptions?: IWebExportOptions): Promise<void> {
+
         const chartDef = this.serialize();
-        const templatesPath = await findChartTemplatesPath();
-        // todo: the template could also be an absolute or relative path.
-        const chartTemplatePath = path.join(templatesPath, chartDef.plotConfig.template, "web");
+        const templatePath = exportOptions && exportOptions.template || await findChartTemplatePath();
         const overwrite = exportOptions && !!exportOptions.overwrite || false;
-        await exportTemplate({ chartDef }, outputFolderPath, { templatePath: chartTemplatePath, overwrite });
+
+        const exportTemplateOptions: IExportOptions = {
+            overwrite,
+            inMemoryFiles: [
+                { 
+                    file: "chart-def.json", 
+                    content: JSON.stringify(chartDef, null, 4),
+                },
+            ],
+        };
+        
+        await exportTemplate(templatePath, { chartDef }, outputFolderPath, exportTemplateOptions);
 
         if (exportOptions && exportOptions.openBrowser) {
             opn("file://" + path.resolve(path.join(outputFolderPath, "index.html")));
         }
-    }
-
-    /**
-     * Export a Node.js project to host a web visualization of the char.
-     */
-    async exportNodejs(outputFolderPath: string, exportOptions?: INodejsExportOptions): Promise<void> {
-       const chartDef = this.serialize();
-       const templatesPath = await findChartTemplatesPath();
-       const chartTemplatePath = path.join(templatesPath, chartDef.plotConfig.template, "nodejs");
-       const overwrite = exportOptions && !!exportOptions.overwrite || false;
-       await exportTemplate({ chartDef }, outputFolderPath, { templatePath: chartTemplatePath, overwrite });
     }
 
     /**
@@ -450,10 +446,6 @@ export class PlotAPI extends AbstractPlotAPI {
 
         if (!expandedPlotConfig.height) {
             expandedPlotConfig.height = 600;
-        }
-
-        if (!expandedPlotConfig.template) {
-            expandedPlotConfig.template = "c3";
         }
 
         if (!expandedPlotConfig.x) {
