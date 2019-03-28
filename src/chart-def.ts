@@ -1,4 +1,4 @@
-import { ISerializedDataFrame } from "data-forge/build/lib/dataframe";
+import { ISerializedDataFrame } from "@data-forge/serialization";
 
 /**
  * Defines the type of chart to output.

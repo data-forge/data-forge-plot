@@ -10,7 +10,7 @@ import { assert } from "chai";
 const opn = require("opn");
 import * as path from "path";
 import * as Sugar from "sugar";
-import { ISerializedDataFrame } from "data-forge/build/lib/dataframe";
+import { ISerializedDataFrame } from "@data-forge/serialization";
 import { exportTemplate, IExportOptions } from "inflate-template";
 import { captureImage, ICaptureOptions } from "capture-template";
 
