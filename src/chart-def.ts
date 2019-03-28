@@ -1,4 +1,5 @@
 import { ISerializedDataFrame } from "data-forge/build/lib/dataframe";
+
 /**
  * Defines the type of chart to output.
  */
@@ -100,16 +101,15 @@ export interface ILegendConfig {
     show?: boolean;
 }
 
-
 /**
  * Defines the chart.
  */
 export interface IPlotConfig {
 
    /**
-     * The type of chart to render.
-     * Default to "line".
-     */
+    * The type of chart to render.
+    * Default to "line".
+    */
     chartType?: ChartType;
 
     /**

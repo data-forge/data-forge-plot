@@ -23,7 +23,10 @@
         ],
         "member-access": false,
         "arrow-parens": [true, "ban-single-arg-parens"],
-        "max-classes-per-file": false
+        "max-classes-per-file": false,
+        "interface-name": false,
+        "max-line-length": false,
+        "no-trailing-whitespace": false
     },
     "defaultSeverity": "warning"
 }

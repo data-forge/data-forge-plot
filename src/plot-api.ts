@@ -55,7 +55,7 @@ export interface IRenderOptions {
     /**
      * Path to electron, so that electron can be installed separately to a different location and shared
      * between the various packages that need it.
-     * 
+     *
      * Electron is used to render charts and capture them to images.
      */
     electronPath?: string;
@@ -353,8 +353,8 @@ export abstract class AbstractPlotAPI implements IPlotAPI {
             electronPath: renderOptions && renderOptions.electronPath,
             inflateOptions: {
                 inMemoryFiles: [
-                    { 
-                        file: "chart-def.json", 
+                    {
+                        file: "chart-def.json",
                         content: JSON.stringify(chartDef, null, 4),
                     },
                 ],
@@ -379,13 +379,13 @@ export abstract class AbstractPlotAPI implements IPlotAPI {
         const exportTemplateOptions: IExportOptions = {
             overwrite,
             inMemoryFiles: [
-                { 
-                    file: "chart-def.json", 
+                {
+                    file: "chart-def.json",
                     content: JSON.stringify(chartDef, null, 4),
                 },
             ],
         };
-        
+
         await exportTemplate(templatePath, { chartDef }, outputFolderPath, exportTemplateOptions);
 
         if (exportOptions && exportOptions.openBrowser) {
@@ -396,7 +396,7 @@ export abstract class AbstractPlotAPI implements IPlotAPI {
     /**
      * Serialize the plot definition so that it can be converted to JSON.
      * The JSON definition of the chart can be used to instantiate the chart in a browser.
-     * 
+     *
      * TODO: This function doesn't really belong in the abstract class, it would be better to live the concrete PlotAPI class.
      */
     serialize(): IChartDef {
@@ -430,6 +430,15 @@ export abstract class AbstractPlotAPI implements IPlotAPI {
  */
 export class PlotAPI extends AbstractPlotAPI {
 
+    /**
+     * Deserialize an instance of PlotAPI from a previously serialize chart def.
+     * 
+     * @param chartDef The chart definition to deserialize from.
+     */
+    static deserialize(chartDef: IChartDef): IPlotAPI {
+        return new PlotAPI(chartDef.data, chartDef.plotConfig, true, chartDef.axisMap);
+    }
+    
     constructor(data: ISerializedDataFrame, plotConfig: IPlotConfig, showLegendDefault: boolean, globalAxisMap?: IAxisMap) {
         assert.isObject(data, "Expected 'data' parameter to PlotAPI constructor to be a serialized dataframe.");
 
@@ -497,7 +506,7 @@ export class PlotAPI extends AbstractPlotAPI {
         }
 
         //
-        //TODO: I'm sure if the expansion should happen here in the serialization?
+        // TODO: I'm sure if the expansion should happen here in the serialization?
         // I feel there should be another function that does this expansion and that made it should happen
         // separately when the chart is rendered.
         //
@@ -592,16 +601,6 @@ export class PlotAPI extends AbstractPlotAPI {
 
         super(data, expandedPlotConfig, expandedGlobalAxisMap);
     }
-
-    /**
-     * Deserialize an instance of PlotAPI from a previously serialize chart def.
-     * 
-     * @param chartDef The chart definition to deserialize from.
-     */
-    static deserialize(chartDef: IChartDef): IPlotAPI {
-        return new PlotAPI(chartDef.data, chartDef.plotConfig, true, chartDef.axisMap);
-    }
-
 }
 
 /**
@@ -787,7 +786,7 @@ class YAxisConfigAPI extends AxisConfigAPI<IYAxisConfigAPI, ISingleYAxisMap> imp
      * @param value The minimum value to render.
      */
     min(value: number): IYAxisConfigAPI {
-        //todo:
+        // todo:
         return this;
     }
 
@@ -796,7 +795,7 @@ class YAxisConfigAPI extends AxisConfigAPI<IYAxisConfigAPI, ISingleYAxisMap> imp
      * @param value The maximum value to render.
      */
     max(value: number): IYAxisConfigAPI {
-        //todo:
+        // todo:
         return this;
     }
     

@@ -1,6 +1,5 @@
 import { expect } from "chai";
 import "mocha";
-import { DataFrame } from "data-forge";
 import "../index";
 import { PlotAPI } from "../plot-api";
 import { IChartDef, ChartType, AxisType } from "../chart-def";
@@ -95,6 +94,4 @@ describe("serialization", () => {
         const serialized = plot.serialize();
         expect(serialized.plotConfig.legend.show).to.eql(false);
     });
-
-    
 });
