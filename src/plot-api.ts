@@ -10,7 +10,6 @@ import { assert } from "chai";
 const opn = require("opn");
 import * as path from "path";
 import * as Sugar from "sugar";
-import { findPackageDir } from "./find-package-dir";
 import { ISerializedDataFrame } from "data-forge/build/lib/dataframe";
 import { exportTemplate, IExportOptions } from "inflate-template";
 import { captureImage, ICaptureOptions } from "capture-template";
@@ -22,8 +21,8 @@ import { captureImage, ICaptureOptions } from "capture-template";
 // TODO :export let globalChartRenderer: IChartRenderer | null = null;
 
 async function findChartTemplatePath(): Promise<string> {
-    const parentDir = await findPackageDir(__dirname);
-    const chartTemplatesPath = path.join(parentDir, "node_modules", "@data-forge-plot", "c3", "build", "template");
+    const defaultTemplatePath = require.resolve("@data-forge-plot/c3/build/template/template.json");
+    const chartTemplatesPath = path.dirname(defaultTemplatePath);
     return chartTemplatesPath;
 }
 
