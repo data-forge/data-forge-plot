@@ -2,7 +2,7 @@ import { expect } from "chai";
 import "mocha";
 import "../index";
 import { PlotAPI } from "../plot-api";
-import { IChartDef, ChartType, AxisType } from "../chart-def";
+import { IChartDef, ChartType, AxisType } from "@data-forge-plot/chart-def";
 
 describe("serialization", () => {
 

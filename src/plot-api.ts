@@ -5,7 +5,7 @@ import {
     AxisType,
     IPlotConfig, IExpandedPlotConfig,
     IAxisMap, IAxisConfig, ISingleAxisMap, ISingleYAxisMap
-} from "./chart-def";
+} from "@data-forge-plot/chart-def";
 import { assert } from "chai";
 const opn = require("opn");
 import * as path from "path";
