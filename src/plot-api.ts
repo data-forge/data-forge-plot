@@ -1,11 +1,3 @@
-import {
-    ChartType,
-    IChartDef,
-    VerticalLabelPosition, HorizontalLabelPosition,
-    AxisType,
-    IPlotConfig, IExpandedPlotConfig,
-    IAxisMap, IAxisConfig, ISingleAxisMap, ISingleYAxisMap
-} from "@data-forge-plot/chart-def";
 import { assert } from "chai";
 const opn = require("opn");
 import * as path from "path";
@@ -13,6 +5,10 @@ import * as Sugar from "sugar";
 import { ISerializedDataFrame } from "@data-forge/serialization";
 import { exportTemplate, IExportOptions } from "inflate-template";
 import { captureImage, ICaptureOptions } from "capture-template";
+import { ChartType, IChartDef, AxisType, HorizontalLabelPosition, VerticalLabelPosition, IPlotConfig as IExpandedPlotConfig, IAxisMap as IExpandedAxisMap, ISingleYAxisMap as IExpandedSingleYAxisMap } from "@data-forge-plot/chart-def";
+import { ISingleAxisMap, ISingleYAxisMap, IPlotConfig, IAxisMap, IAxisConfig } from "./chart-def";
+
+const DEFAULT_CHART_PACKAGE = "@data-forge-plot/apex";
 
 //
 // Reusable chart renderer.
@@ -21,12 +17,12 @@ import { captureImage, ICaptureOptions } from "capture-template";
 // TODO :export let globalChartRenderer: IChartRenderer | null = null;
 
 async function findChartTemplatePath(): Promise<string> {
-    const defaultTemplatePath = require.resolve("@data-forge-plot/c3/build/template/template.json");
+    const defaultTemplatePath = require.resolve(`${DEFAULT_CHART_PACKAGE}/build/template/template.json`);
     const chartTemplatesPath = path.dirname(defaultTemplatePath);
     return chartTemplatesPath;
 }
 
-export async function startPlot(): Promise<void> {
+    export async function startPlot(): Promise<void> {
     /*TODO:
     globalChartRenderer = new ChartRenderer();
 
@@ -218,27 +214,6 @@ export interface IYAxisConfigAPI extends IAxisConfigAPI<IYAxisConfigAPI> {
     max(value: number): IYAxisConfigAPI;
 }
 
-//
-// Maps the columns in a dataframe to axis in the chart.
-//
-export interface IInternalAxisMap {
-
-    /**
-     * The x axis for the chart.
-     */
-    x: ISingleAxisMap;
-
-    /**
-     * The y axis for the chart.
-     */
-    y: ISingleYAxisMap[];
-
-    /**
-     * The optional  second y axis for the chart.
-     */
-    y2: ISingleYAxisMap[];
-}
-
 /**
  * Fluent API for configuring the plot.
  */
@@ -257,9 +232,9 @@ export abstract class AbstractPlotAPI implements IPlotAPI {
     /**
      * Defines how the data is mapped to the axis' in the chart.
      */
-    protected globalAxisMap: IInternalAxisMap;
+    protected globalAxisMap: IExpandedAxisMap;
 
-    constructor(data: ISerializedDataFrame, plotConfig: IExpandedPlotConfig, globalAxisMap: IInternalAxisMap) {
+    constructor(data: ISerializedDataFrame, plotConfig: IExpandedPlotConfig, globalAxisMap: IExpandedAxisMap) {
         this.data = data;
         this.plotConfig = plotConfig;
         this.globalAxisMap = globalAxisMap;
@@ -520,7 +495,7 @@ export class PlotAPI extends AbstractPlotAPI {
             });
         }
 
-        const expandedGlobalAxisMap: IInternalAxisMap = {
+        const expandedGlobalAxisMap: IExpandedAxisMap = {
             x: {
                 series: "__index__",
             },
@@ -562,7 +537,7 @@ export class PlotAPI extends AbstractPlotAPI {
                 }
                 else {
                     expandedGlobalAxisMap.y = [
-                        globalAxisMap.y,
+                        globalAxisMap.y as IExpandedSingleYAxisMap,
                     ];
                 }
             }
@@ -592,7 +567,7 @@ export class PlotAPI extends AbstractPlotAPI {
                 }
                 else {
                     expandedGlobalAxisMap.y2 = [
-                        globalAxisMap.y2,
+                        globalAxisMap.y2 as IExpandedSingleYAxisMap,
                     ];
                 }
             }
@@ -634,7 +609,7 @@ class AxisConfigAPI<FluentT, AxisMapT> extends AbstractPlotAPI implements IAxisC
         singleAxisMap: AxisMapT,
         data: ISerializedDataFrame,
         plotConfig: IExpandedPlotConfig,
-        globalAxisMap: IInternalAxisMap
+        globalAxisMap: IExpandedAxisMap
     ) {
         super(data, plotConfig, globalAxisMap);
 
@@ -682,7 +657,7 @@ class XAxisConfigAPI extends AxisConfigAPI<IXAxisConfigAPI, ISingleAxisMap> impl
         singleAxisMap: ISingleAxisMap,
         data: ISerializedDataFrame,
         plotConfig: IExpandedPlotConfig,
-        globalAxisMap: IInternalAxisMap
+        globalAxisMap: IExpandedAxisMap
     ) {
         super(axisName, seriesName, axisConfig, singleAxisMap, data, plotConfig, globalAxisMap);
     }
@@ -717,7 +692,7 @@ class YAxisConfigAPI extends AxisConfigAPI<IYAxisConfigAPI, ISingleYAxisMap> imp
         singleAxisMap: ISingleAxisMap,
         data: ISerializedDataFrame,
         plotConfig: IExpandedPlotConfig,
-        globalAxisMap: IInternalAxisMap
+        globalAxisMap: IExpandedAxisMap
     ) {
         super(axisName, seriesName, axisConfig, singleAxisMap, data, plotConfig, globalAxisMap);
     }

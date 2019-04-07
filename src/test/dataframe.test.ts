@@ -13,11 +13,9 @@ describe("data-forge-plot - dataframe configuration", () => {
             data: {
                 columnOrder: [
                     "A",
-                    "__index__",
-                ],
+                ],  
                 columns: {
                     A: "number",
-                    __index__: "number",
                 },
                 index: {
                     type: "number",
@@ -26,15 +24,12 @@ describe("data-forge-plot - dataframe configuration", () => {
                 values: [
                     {
                         A: 10,
-                        __index__: 1,
                     },
                     {
                         A: 20,
-                        __index__: 2,
                     },
                     {
                         A: 30,
-                        __index__: 3,
                     },
                 ],
             },

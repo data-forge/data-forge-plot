@@ -1,7 +1,7 @@
 import { ISeries, Series } from "data-forge";
 import { IDataFrame, DataFrame } from "data-forge";
 import { IPlotAPI, PlotAPI, /*todo: globalChartRenderer,*/ startPlot, endPlot } from "./plot-api";
-import { IPlotConfig, IAxisMap } from "@data-forge-plot/chart-def";
+import { IPlotConfig, IAxisMap } from "./chart-def";
 
 //
 // Augment ISeries and Series with plot function.
@@ -25,11 +25,8 @@ declare module "data-forge/build/lib/series" {
 function plotSeries(this: ISeries<any, any>, plotConfig?: IPlotConfig, axisMap?: IAxisMap): IPlotAPI {
 
     const amt = this.count();
-    const serializedData = this.inflate((value: any) => ({ __value__: value }))
-        .zip(this.getIndex().head(amt), (row: any, index: any) => {
-            row.__index__ = index;
-            return row;
-        })
+    const serializedData = this
+        .inflate((value: any) => ({ __value__: value }))
         .serialize();
     return new PlotAPI(serializedData, plotConfig || {}, false, axisMap!);
 }
@@ -59,12 +56,7 @@ declare module "data-forge/build/lib/dataframe" {
 
 function plotDataFrame(this: IDataFrame<any, any>, plotDef?: IPlotConfig, axisMap?: IAxisMap): IPlotAPI {
     const amt = this.count();
-    const df = this.zip(this.getIndex().head(amt), (row: any, index: any) => {
-            row.__index__ = index;
-            return row;
-        });
-
-    const serializedData = df.serialize();
+    const serializedData = this.serialize();
     return new PlotAPI(serializedData, plotDef || {}, true, axisMap);
 }
 

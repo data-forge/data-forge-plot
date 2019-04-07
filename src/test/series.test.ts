@@ -13,11 +13,9 @@ describe("data-forge-plot - series", () => {
             data: {
                 columnOrder: [
                     "__value__",
-                    "__index__"
                 ],
                 columns: {
                     __value__: "number",
-                    __index__: "number"
                 },
                 index: {
                     type: "number",
@@ -26,15 +24,12 @@ describe("data-forge-plot - series", () => {
                 values: [
                     {
                         __value__: 10,
-                        __index__: 1
                     },
                     {
                         __value__: 20,
-                        __index__: 2
                     },
                     {
                         __value__: 30,
-                        __index__: 3
                     }
                 ]
             },

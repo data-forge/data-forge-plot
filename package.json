@@ -33,8 +33,8 @@
     },
     "homepage": "https://github.com/data-forge/data-forge-plot#readme",
     "dependencies": {
-        "@data-forge-plot/c3": "^0.0.8",
-        "@data-forge-plot/chart-def": "^1.0.1",
+        "@data-forge-plot/apex": "0.0.4",
+        "@data-forge-plot/chart-def": "^1.0.4",
         "@data-forge/serialization": "^1.0.0",
         "capture-template": "^1.1.10",
         "fs-jetpack": "^1.3.1",
@@ -60,7 +60,7 @@
         "nyc": "^11.9.0",
         "source-map-support": "^0.5.11",
         "ts-node": "^3.3.0",
-        "tslint": "^5.14.0",
+        "tslint": "^5.15.0",
         "typescript": "2.5.2"
     },
     "nyc": {
