@@ -1,5 +1,4 @@
-import { expect } from "chai";
-import "mocha";
+import "jest";
 import { DataFrame } from "data-forge";
 import "../index";
 
@@ -11,7 +10,7 @@ describe("data-forge-plot - dataframe fluent", () => {
         const plotAPI = series.plot()
             .y("A");
 
-        expect(plotAPI.serialize()).to.eql({
+        expect(plotAPI.serialize()).toEqual({
             data: {
                 columnOrder: [
                     "A",

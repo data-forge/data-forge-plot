@@ -6,7 +6,6 @@
         "quotemark": [true, "double", "avoid-template", "avoid-escape"],
         "object-literal-sort-keys": false,
         "one-line": false,
-        "no-unused-variable": true,
         "trailing-comma": [
             true,
             {
@@ -26,7 +25,9 @@
         "max-classes-per-file": false,
         "interface-name": false,
         "max-line-length": false,
-        "no-trailing-whitespace": false
+        "no-trailing-whitespace": false,
+        "ban-types": false,
+        "array-type": false
     },
     "defaultSeverity": "warning"
 }

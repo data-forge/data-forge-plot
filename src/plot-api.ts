@@ -1,12 +1,11 @@
-import { assert } from "chai";
 const opn = require("opn");
 import * as path from "path";
-import * as Sugar from "sugar";
 import { ISerializedDataFrame } from "@data-forge/serialization";
 import { exportTemplate, IExportOptions } from "inflate-template";
 import { captureImage, ICaptureOptions } from "capture-template";
 import { ChartType, IChartDef, AxisType, HorizontalLabelPosition, VerticalLabelPosition, IPlotConfig as IExpandedPlotConfig, IAxisMap as IExpandedAxisMap, ISingleYAxisMap as IExpandedSingleYAxisMap } from "@data-forge-plot/chart-def";
 import { ISingleAxisMap, ISingleYAxisMap, IPlotConfig, IAxisMap, IAxisConfig } from "./chart-def";
+import { isObject, isString, isArray } from "./utils";
 
 const DEFAULT_CHART_PACKAGE = "@data-forge-plot/apex";
 
@@ -22,7 +21,7 @@ async function findChartTemplatePath(): Promise<string> {
     return chartTemplatesPath;
 }
 
-    export async function startPlot(): Promise<void> {
+export async function startPlot(): Promise<void> {
     /*TODO:
     globalChartRenderer = new ChartRenderer();
 
@@ -270,7 +269,15 @@ export abstract class AbstractPlotAPI implements IPlotAPI {
      * Configure the default x axis.
      */
     x(seriesName: string): IXAxisConfigAPI {
-        this.globalAxisMap.x.series = seriesName;
+        if (!this.globalAxisMap.x) {
+            this.globalAxisMap.x = {
+                series: seriesName,
+            };
+        }
+        else {
+            this.globalAxisMap.x.series = seriesName;
+        }
+
         return new XAxisConfigAPI(
             "x",
             seriesName,
@@ -379,7 +386,7 @@ export abstract class AbstractPlotAPI implements IPlotAPI {
         if (defaultedGlobalAxis.y.length === 0) {
             // Default the primary Y axis.
             defaultedGlobalAxis.y = this.data.columnOrder
-                .filter(columnName => columnName !== defaultedGlobalAxis.x.series)
+                .filter(columnName => defaultedGlobalAxis.x === undefined || columnName !== defaultedGlobalAxis.x.series)
                 .map(columnName => ({
                     series: columnName,
                 }));
@@ -414,7 +421,9 @@ export class PlotAPI extends AbstractPlotAPI {
     }
     
     constructor(data: ISerializedDataFrame, plotConfig: IPlotConfig, showLegendDefault: boolean, globalAxisMap?: IAxisMap) {
-        assert.isObject(data, "Expected 'data' parameter to PlotAPI constructor to be a serialized dataframe.");
+        if (!isObject(data)) {
+            throw new Error("Expected 'data' parameter to PlotAPI constructor to be a serialized dataframe.");
+        }
 
         // Clone the def and plot map so they can be updated by the fluent API.
         const expandedPlotConfig: IExpandedPlotConfig = Object.assign({}, plotConfig) as IExpandedPlotConfig;
@@ -505,7 +514,7 @@ export class PlotAPI extends AbstractPlotAPI {
 
         if (globalAxisMap) {
             if (globalAxisMap.x) {
-                if (Sugar.Object.isString(globalAxisMap.x)) {
+                if (isString(globalAxisMap.x)) {
                     expandedGlobalAxisMap.x = {
                         series: globalAxisMap.x,
                     };
@@ -516,16 +525,16 @@ export class PlotAPI extends AbstractPlotAPI {
             }
 
             if (globalAxisMap.y) {
-                if (Sugar.Object.isString(globalAxisMap.y)) {
+                if (isString(globalAxisMap.y)) {
                     expandedGlobalAxisMap.y = [
                         {
                             series: globalAxisMap.y,
                         },
                     ];
                 }
-                else if (Sugar.Object.isArray(globalAxisMap.y)) {
+                else if (isArray(globalAxisMap.y)) {
                     expandedGlobalAxisMap.y = (globalAxisMap.y as any[]).map(series => {
-                        if (Sugar.Object.isString(series)) {
+                        if (isString(series)) {
                             return {
                                 series,
                             };
@@ -546,16 +555,16 @@ export class PlotAPI extends AbstractPlotAPI {
             }
 
             if (globalAxisMap.y2) {
-                if (Sugar.Object.isString(globalAxisMap.y2)) {
+                if (isString(globalAxisMap.y2)) {
                     expandedGlobalAxisMap.y2 = [
                         {
                             series: globalAxisMap.y2,
                         },
                     ];
                 }
-                else if (Sugar.Object.isArray(globalAxisMap.y2)) {
+                else if (isArray(globalAxisMap.y2)) {
                     expandedGlobalAxisMap.y2 = (globalAxisMap.y2 as any[]).map(series => {
-                        if (Sugar.Object.isString(series)) {
+                        if (isString(series)) {
                             return {
                                 series,
                             };
@@ -737,7 +746,7 @@ class YAxisConfigAPI extends AxisConfigAPI<IYAxisConfigAPI, ISingleYAxisMap> imp
         if (!this.singleAxisMap.x) {
             this.singleAxisMap.x = { series: seriesName };
         }
-        else if (Sugar.Object.isString(this.singleAxisMap.x)) {
+        else if (isString(this.singleAxisMap.x)) {
             this.singleAxisMap.x = { series: seriesName };
         }
         else {

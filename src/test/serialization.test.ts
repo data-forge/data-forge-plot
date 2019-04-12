@@ -1,5 +1,4 @@
-import { expect } from "chai";
-import "mocha";
+import "jest";
 import "../index";
 import { PlotAPI } from "../plot-api";
 import { IChartDef, ChartType, AxisType } from "@data-forge-plot/chart-def";
@@ -74,24 +73,24 @@ describe("serialization", () => {
 
         const plot = PlotAPI.deserialize(chartDef);
         const serialized = plot.serialize();
-        expect(serialized).to.eql(chartDef);
+        expect(serialized).toEqual(chartDef);
     });
 
     it("serialization defaults legend show 1", () => {
         const plot = new PlotAPI(exampleData, {}, true, {});
         const serialized = plot.serialize();
-        expect(serialized.plotConfig.legend.show).to.eql(true);
+        expect(serialized.plotConfig.legend.show).toEqual(true);
     });
 
     it("serialization defaults legend show 2", () => {
         const plot = new PlotAPI(exampleData, { legend: {} }, false, {});
         const serialized = plot.serialize();
-        expect(serialized.plotConfig.legend.show).to.eql(false);
+        expect(serialized.plotConfig.legend.show).toEqual(false);
     });
 
     it("serialization preserves legend show", () => {
         const plot = new PlotAPI(exampleData, { legend: { show: false }}, true, {});
         const serialized = plot.serialize();
-        expect(serialized.plotConfig.legend.show).to.eql(false);
+        expect(serialized.plotConfig.legend.show).toEqual(false);
     });
 });

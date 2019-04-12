@@ -1,5 +1,4 @@
-import { expect } from "chai";
-import "mocha";
+import "jest";
 import { Series } from "data-forge";
 import "../index";
 
@@ -9,7 +8,7 @@ describe("data-forge-plot - series", () => {
 
         const series = new Series({ index: [1, 2, 3], values: [10, 20, 30] });
         const plotAPI = series.plot();
-        expect(plotAPI.serialize()).to.eql({
+        expect(plotAPI.serialize()).toEqual({
             data: {
                 columnOrder: [
                     "__value__",
@@ -71,6 +70,6 @@ describe("data-forge-plot - series", () => {
 
         const series = new Series({ index: [ 1 ], values: [ 10 ] });
         const plotAPI = series.plot();
-        expect(plotAPI.serialize().plotConfig.legend.show).to.eql(false);
+        expect(plotAPI.serialize().plotConfig.legend.show).toEqual(false);
     });
 });
