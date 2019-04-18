@@ -27,7 +27,8 @@
         "max-line-length": false,
         "no-trailing-whitespace": false,
         "ban-types": false,
-        "array-type": false
+        "array-type": false,
+        "no-empty-interface": false
     },
     "defaultSeverity": "warning"
 }

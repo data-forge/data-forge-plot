@@ -23,12 +23,10 @@ declare module "data-forge/build/lib/series" {
 }
 
 function plotSeries(this: ISeries<any, any>, plotConfig?: IPlotConfig, axisMap?: IAxisMap): IPlotAPI {
-
-    const amt = this.count();
     const serializedData = this
         .inflate((value: any) => ({ __value__: value }))
         .serialize();
-    return new PlotAPI(serializedData, plotConfig || {}, false, axisMap!);
+    return new PlotAPI(serializedData, plotConfig || {}, axisMap || {});
 }
 
 Series.prototype.startPlot = startPlot;
@@ -55,9 +53,8 @@ declare module "data-forge/build/lib/dataframe" {
 }
 
 function plotDataFrame(this: IDataFrame<any, any>, plotDef?: IPlotConfig, axisMap?: IAxisMap): IPlotAPI {
-    const amt = this.count();
     const serializedData = this.serialize();
-    return new PlotAPI(serializedData, plotDef || {}, true, axisMap);
+    return new PlotAPI(serializedData, plotDef || {}, axisMap || {});
 }
 
 DataFrame.prototype.startPlot = startPlot;

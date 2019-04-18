@@ -6,6 +6,7 @@ import { HorizontalLabelPosition, VerticalLabelPosition, AxisType, ChartType } f
  * Defines the configuration of an axis label.
  */
 export interface IAxisLabelConfig {
+
     /**
      * The text for the label.
      */
@@ -21,6 +22,7 @@ export interface IAxisLabelConfig {
  * Configures an axis of the chart.
  */
 export interface IAxisConfig {
+
     /**
      * Sets the type of the axis' data.
      * Default: AxisType.Indexed ("indexed")
@@ -37,6 +39,7 @@ export interface IAxisConfig {
  * Configures a Y axis of the chart.
  */
 export interface IYAxisConfig extends IAxisConfig {
+    
     /**
      * The minimum value to render on the axis.
      */
@@ -106,7 +109,7 @@ export interface IPlotConfig {
 /**
  * Relates a single axis to data series.
  */
-export interface ISingleAxisMap {
+export interface IAxisSeriesConfig {
 
     /**
      * The name of the series to render on the axis.
@@ -132,11 +135,11 @@ export interface ISingleAxisMap {
 /**
  * Relates a single Y axis to data series.
  */
-export interface ISingleYAxisMap extends ISingleAxisMap {
+export interface IYAxisSeriesConfig extends IAxisSeriesConfig {
     /**
      * Configure a separate X axis for the y axis.
      */
-    x?: string | ISingleAxisMap;
+    x?: string | IAxisSeriesConfig;
 }
 
 /**
@@ -147,15 +150,15 @@ export interface IAxisMap {
     /**
      * The x axis for the chart.
      */
-    x?: string | ISingleAxisMap;
+    x?: string | IAxisSeriesConfig;
 
     /**
      * The y axis for the chart.
      */
-    y?: string | string[] | ISingleYAxisMap | ISingleYAxisMap[];
+    y?: string | string[] | IYAxisSeriesConfig | IYAxisSeriesConfig[];
 
     /**
      * The optional  second y axis for the chart.
      */
-    y2?: string | string[] | ISingleYAxisMap | ISingleYAxisMap[];
+    y2?: string | string[] | IYAxisSeriesConfig | IYAxisSeriesConfig[];
 }

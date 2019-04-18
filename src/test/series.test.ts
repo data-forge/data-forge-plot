@@ -34,28 +34,8 @@ describe("data-forge-plot - series", () => {
             },
             plotConfig: {
                 chartType: "line",
-                width: 800,
-                height: 600,
-                x: {
-                    axisType: "default",
-                    label: {}
-                },
-                y: {
-                    axisType: "default",
-                    label: {}
-                },
-                y2: {
-                    axisType: "default",
-                    label: {}
-                },
-                legend: {
-                    show: false,
-                },
             },
             axisMap: {
-                x: {
-                    series: "__index__"
-                },
                 y: [
                     {
                         series: "__value__"
@@ -66,10 +46,4 @@ describe("data-forge-plot - series", () => {
         });
     });
 
-    it("by default legend is disabled for series", ()  => {
-
-        const series = new Series({ index: [ 1 ], values: [ 10 ] });
-        const plotAPI = series.plot();
-        expect(plotAPI.serialize().plotConfig.legend.show).toEqual(false);
-    });
 });
