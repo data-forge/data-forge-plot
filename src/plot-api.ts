@@ -4,11 +4,9 @@ import { ISerializedDataFrame } from "@data-forge/serialization";
 import { exportTemplate, IExportOptions } from "inflate-template";
 import { captureImage, ICaptureOptions } from "capture-template";
 import { IPlotConfig, IAxisMap } from "./chart-def";
-import { isObject, isString, isArray } from "./utils";
+import { isObject } from "./utils";
 import { ChartType, IChartDef, AxisType, HorizontalLabelPosition, VerticalLabelPosition, IAxisConfig, IYAxisSeriesConfig, IAxisSeriesConfig } from "@data-forge-plot/chart-def";
-import { expandChartDef, expandYSeriesConfigArray } from "./expand-chart-def";
-import { ISeriesConfig } from "data-forge/build/lib/series";
-import { appendFile } from "fs";
+import { expandChartDef } from "./expand-chart-def";
 import { applyDefaults } from "./apply-defaults";
 
 const DEFAULT_CHART_PACKAGE = "@data-forge-plot/apex";
@@ -251,13 +249,19 @@ export interface IYAxisConfigAPI extends IAxisConfigAPI<IYAxisConfigAPI> {
  */
 export abstract class AbstractPlotAPI implements IPlotAPI {
 
-    /**
-     * The expanded chart def.
-     */
+    //
+    // The expanded chart def.
+    //
     protected chartDef: IChartDef;
 
-    constructor(chartDef: IChartDef) {
+    //
+    // Defaults for the chart configuration.
+    //
+    private plotDefaults?: IPlotConfig;
+
+    constructor(chartDef: IChartDef, plotDefaults?: IPlotConfig) {
         this.chartDef = chartDef;
+        this.plotDefaults = plotDefaults;
     }
 
     /**
@@ -414,7 +418,7 @@ export abstract class AbstractPlotAPI implements IPlotAPI {
      * The JSON definition of the chart can be used to instantiate the chart in a browser.
      */
     serialize(): IChartDef {
-        return applyDefaults(this.chartDef); // Set missing default values after configuration by the fluent.
+        return applyDefaults(this.chartDef, this.plotDefaults); // Set missing default values after configuration by the fluent.
     }
 
     /**
@@ -439,12 +443,12 @@ export class PlotAPI extends AbstractPlotAPI {
         return new PlotAPI(chartDef.data, chartDef.plotConfig, chartDef.axisMap);
     }
     
-    constructor(data: ISerializedDataFrame, plotConfig: IPlotConfig, axisMap: IAxisMap) {
+    constructor(data: ISerializedDataFrame, plotConfig: IPlotConfig, axisMap: IAxisMap, plotDefaults?: IPlotConfig) {
         if (!isObject(data)) {
             throw new Error("Expected 'data' parameter to PlotAPI constructor to be a serialized dataframe.");
         }
 
-        super(expandChartDef(data, plotConfig, axisMap));
+        super(expandChartDef(data, plotConfig, axisMap), plotDefaults);
     }
 }
 

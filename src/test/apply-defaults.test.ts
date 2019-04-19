@@ -69,4 +69,16 @@ describe("apply defaults", () => {
         ]);
         expect(expanded.axisMap.y2).toEqual([]);
     });
+
+    it("can set plot defaults 1", () => {
+        const inputChartDef: any = { data: { columnOrder: [], } };
+        const expanded = applyDefaults(inputChartDef, { chartType: ChartType.Bubble });
+        expect(expanded.plotConfig!.chartType!).toEqual(ChartType.Bubble);
+    });
+
+    it("can set plot defaults 2", () => {
+        const inputChartDef: any = { data: { columnOrder: [], }, plotConfig: {} };
+        const expanded = applyDefaults(inputChartDef, { chartType: ChartType.Bubble });
+        expect(expanded.plotConfig!.chartType!).toEqual(ChartType.Bubble);
+    });
 });

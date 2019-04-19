@@ -1,18 +1,29 @@
 import { IChartDef, ChartType } from "@data-forge-plot/chart-def";
-import { expandYSeriesConfigArray } from "./expand-chart-def";
+import { expandYSeriesConfigArray, expandPlotConfig } from "./expand-chart-def";
+import { IPlotConfig } from "./chart-def";
 
 //
 // Apply defaults to a chart definition and patch misssing values.
 //
-export function applyDefaults(inputChartDef: IChartDef): IChartDef {
+export function applyDefaults(inputChartDef: IChartDef, plotDefaults?: IPlotConfig): IChartDef {
 
     const chartDef = Object.assign({}, inputChartDef);
 
     if (!chartDef.plotConfig) {
-        chartDef.plotConfig = {};
+        if (plotDefaults) {
+            chartDef.plotConfig = Object.assign({}, expandPlotConfig(plotDefaults));
+        }
+        else {
+            chartDef.plotConfig = {};
+        }
     }
     else {
-        chartDef.plotConfig = Object.assign({}, chartDef.plotConfig);
+        if (plotDefaults) {
+            chartDef.plotConfig = Object.assign({}, expandPlotConfig(plotDefaults), chartDef.plotConfig);
+        }
+        else {
+            chartDef.plotConfig = Object.assign({}, chartDef.plotConfig);
+        }
     }
 
     if (chartDef.plotConfig.chartType === undefined) {

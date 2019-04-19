@@ -79,11 +79,8 @@ export function expandAxisMap(axisMap: IAxisMap, columns: string[]): IExpandedAx
     return expandedAxisMap;
 }
 
-export function expandChartDef(data: ISerializedDataFrame, plotConfig: IPlotConfig, axisMap: IAxisMap): IChartDef {
-
-    const expandedPlotConfig = Object.assign({}, plotConfig);
-    const expandedAxisMap = expandAxisMap(axisMap, data.columnOrder);
-
+export function expandPlotConfig(plotConfig: IPlotConfig): IExpandedPlotConfig {
+    const expandedPlotConfig = Object.assign({}, plotConfig) as IExpandedPlotConfig;
     if (plotConfig.x) {
         expandedPlotConfig.x = expandAxisConfig(plotConfig.x);
     }
@@ -96,9 +93,13 @@ export function expandChartDef(data: ISerializedDataFrame, plotConfig: IPlotConf
         expandedPlotConfig.y2 = expandYAxisConfig(plotConfig.y2);
     }
 
+    return expandedPlotConfig;
+}
+
+export function expandChartDef(data: ISerializedDataFrame, plotConfig: IPlotConfig, axisMap: IAxisMap): IChartDef {
     return {
         data,
-        plotConfig: expandedPlotConfig as IExpandedPlotConfig,
-        axisMap: expandedAxisMap as IExpandedAxisMap,
+        plotConfig: expandPlotConfig(plotConfig),
+        axisMap: expandAxisMap(axisMap, data.columnOrder),
     };
 }

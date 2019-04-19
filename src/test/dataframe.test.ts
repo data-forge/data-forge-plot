@@ -1,6 +1,7 @@
 import "jest";
 import { DataFrame } from "data-forge";
 import "../index";
+import { ChartType } from "@data-forge-plot/chart-def";
 
 describe("data-forge-plot - dataframe configuration", () => {
 
@@ -36,6 +37,9 @@ describe("data-forge-plot - dataframe configuration", () => {
                 chartType: "line",
                 width: 800,
                 height: 600,
+                legend: {
+                    show: true,
+                },
             },
             axisMap: {
                 y: [
@@ -46,5 +50,13 @@ describe("data-forge-plot - dataframe configuration", () => {
                 y2: [],
             },
         });
+    });
+
+    it("legend is enabled by default for dataframe", ()  => {
+
+        const df = new DataFrame();
+        const plotAPI = df.plot();
+        const serialized = plotAPI.serialize();
+        expect(serialized.plotConfig.legend!.show).toEqual(true);
     });
 });

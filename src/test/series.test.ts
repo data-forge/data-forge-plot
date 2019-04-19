@@ -36,6 +36,9 @@ describe("data-forge-plot - series", () => {
                 chartType: "line",
                 width: 800,
                 height: 600,
+                legend: {
+                    show: false,
+                },
             },
             axisMap: {
                 y: [
@@ -48,4 +51,11 @@ describe("data-forge-plot - series", () => {
         });
     });
 
+    it("legend is disabled by default for series", ()  => {
+
+        const series = new Series();
+        const plotAPI = series.plot();
+        const serialized = plotAPI.serialize();
+        expect(serialized.plotConfig.legend!.show).toEqual(false);
+    });
 });
