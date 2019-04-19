@@ -96,10 +96,6 @@ export function expandChartDef(data: ISerializedDataFrame, plotConfig: IPlotConf
         expandedPlotConfig.y2 = expandYAxisConfig(plotConfig.y2);
     }
 
-    if (expandedPlotConfig.chartType === undefined) {
-        expandedPlotConfig.chartType = ChartType.Line;  
-    }
-
     return {
         data,
         plotConfig: expandedPlotConfig as IExpandedPlotConfig,

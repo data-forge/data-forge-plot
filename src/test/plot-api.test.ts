@@ -9,6 +9,14 @@ import { IAxisMap, IPlotConfig } from "../chart-def";
 
 describe("plot-api", () => {
 
+    it("chart type defaults to line when not specified", ()  => {
+        const data: any = {};
+        const plotConfig: IPlotConfig = {};
+        const axisMap: IAxisMap = {};
+        const plot = new PlotAPI(data, plotConfig, axisMap);
+        expect(plot.serialize().plotConfig.chartType).toBe(ChartType.Line);
+    });
+
     it("can set chart type from def", () => {
         const data: any = {};
         const plotConfig: IPlotConfig = { chartType: ChartType.Bubble };
@@ -88,7 +96,7 @@ describe("plot-api", () => {
             .x()
                 .label("my label")
             .serialize();
-        expect(serialized.plotConfig.x.label!.text).toBe("my label");
+        expect(serialized.plotConfig.x!.label!.text).toBe("my label");
     });
 
     it("can configure y axis", () => {
@@ -100,7 +108,7 @@ describe("plot-api", () => {
             .y()
                 .label("my label")
             .serialize();
-        expect(serialized.plotConfig.y.label!.text).toBe("my label");
+        expect(serialized.plotConfig.y!.label!.text).toBe("my label");
     });
 
     it("can configure y2 axis", () => {
@@ -112,7 +120,7 @@ describe("plot-api", () => {
             .y2()
                 .label("my label")
             .serialize();
-        expect(serialized.plotConfig.y2.label!.text).toBe("my label");
+        expect(serialized.plotConfig.y2!.label!.text).toBe("my label");
     });
 
     it("can set x axis series", () => {
@@ -450,27 +458,6 @@ describe("plot-api", () => {
         const outputPath = "./output/test";
         await plot.exportWeb(outputPath);
         expect(exportTemplate).toHaveBeenCalled();
-    });
-
-    it("y axis defaults to all columns when no y axis series is specified", () => {
-
-        const data: any = { columnOrder: ["a", "b", "c"] };
-        const plotConfig: any = {};
-        const axisMap: any = {};
-        const plot = new PlotAPI(data, plotConfig, axisMap);
-        const chartDef = plot.serialize();
-        expect(chartDef.axisMap.y).toEqual([
-            {
-                series: "a",
-            },
-            {
-                series: "b",
-            },
-            {
-                series: "c",
-            },
-        ]);
-        expect(chartDef.axisMap.y2).toEqual([]);
     });
 
 

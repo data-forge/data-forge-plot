@@ -142,15 +142,6 @@ describe("expand chart def", () => {
         ]);
     });
 
-    it("chart type defaults to line if not specified", () => {
-        
-        const data: any = {};
-        const plotConfig: any = {};
-        const axisMap: any = {};
-        const chartDef = expandChartDef(data, plotConfig, axisMap);
-        expect(chartDef.plotConfig.chartType).toBe(ChartType.Line);
-    });
-
     it("can set chart type", () => {
         const data: any = {};
         const plotConfig: any = { chartType: ChartType.Donut };

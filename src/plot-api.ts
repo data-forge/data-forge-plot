@@ -8,6 +8,8 @@ import { isObject, isString, isArray } from "./utils";
 import { ChartType, IChartDef, AxisType, HorizontalLabelPosition, VerticalLabelPosition, IAxisConfig, IYAxisSeriesConfig, IAxisSeriesConfig } from "@data-forge-plot/chart-def";
 import { expandChartDef, expandYSeriesConfigArray } from "./expand-chart-def";
 import { ISeriesConfig } from "data-forge/build/lib/series";
+import { appendFile } from "fs";
+import { applyDefaults } from "./apply-defaults";
 
 const DEFAULT_CHART_PACKAGE = "@data-forge-plot/apex";
 
@@ -111,12 +113,12 @@ export interface IPlotAPI {
     /**
      * Set the width of the chart.
      */
-    width(width: number): IPlotAPI;
+    width(width: number | string): IPlotAPI;
 
     /**
      * Set the height of the chart.
      */
-    height(height: number): IPlotAPI;
+    height(height: number | string): IPlotAPI;
 
     /**
      * Configure the x axis.
@@ -271,7 +273,7 @@ export abstract class AbstractPlotAPI implements IPlotAPI {
     /**
      * Set the width of the chart.
      */
-     width(width: number): IPlotAPI {
+     width(width: number | string): IPlotAPI {
         this.chartDef.plotConfig.width = width;
         return this;
     }
@@ -279,7 +281,7 @@ export abstract class AbstractPlotAPI implements IPlotAPI {
     /**
      * Set the height of the chart.
      */
-    height(height: number): IPlotAPI {
+    height(height: number | string): IPlotAPI {
         this.chartDef.plotConfig.height = height;
         return this;
     }
@@ -412,19 +414,7 @@ export abstract class AbstractPlotAPI implements IPlotAPI {
      * The JSON definition of the chart can be used to instantiate the chart in a browser.
      */
     serialize(): IChartDef {
-
-        // Set defaults after configuration by fluent API.
-        // TODO: This could be better in it's own function.
-
-        const chartDef = Object.assign({}, this.chartDef);
-        chartDef.axisMap = Object.assign({}, this.chartDef.axisMap);
-
-        if (chartDef.axisMap.y.length === 0 &&
-            chartDef.axisMap.y2.length === 0) {
-            chartDef.axisMap.y = expandYSeriesConfigArray(chartDef.data.columnOrder);
-        }
-
-        return chartDef;
+        return applyDefaults(this.chartDef); // Set missing default values after configuration by the fluent.
     }
 
     /**

@@ -34,8 +34,8 @@
     },
     "homepage": "https://github.com/data-forge/data-forge-plot#readme",
     "dependencies": {
-        "@data-forge-plot/apex": "0.0.18",
-        "@data-forge-plot/chart-def": "^1.0.7",
+        "@data-forge-plot/apex": "0.0.20",
+        "@data-forge-plot/chart-def": "^1.0.9",
         "@data-forge/serialization": "^1.0.0",
         "capture-template": "^1.1.10",
         "inflate-template": "^1.1.6",
