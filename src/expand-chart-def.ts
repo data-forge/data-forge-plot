@@ -73,15 +73,8 @@ export function expandAxisMap(axisMap: IAxisMap, columns: string[]): IExpandedAx
         expandedAxisMap.x = expandSeriesConfig(axisMap.x);
     }
 
-    if ((!axisMap.y ||  (isArray(axisMap.y)  && axisMap.y.length === 0)) &&
-        (!axisMap.y2 || (isArray(axisMap.y2) && axisMap.y2.length === 0))) {
-        expandedAxisMap.y = expandYSeriesConfigArray(columns);
-        expandedAxisMap.y2 = [];        
-    }
-    else {
-        expandedAxisMap.y = expandYSeriesConfigArray(axisMap.y);
-        expandedAxisMap.y2 = expandYSeriesConfigArray(axisMap.y2);
-    }
+    expandedAxisMap.y = expandYSeriesConfigArray(axisMap.y);
+    expandedAxisMap.y2 = expandYSeriesConfigArray(axisMap.y2);
 
     return expandedAxisMap;
 }

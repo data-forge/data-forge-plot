@@ -451,4 +451,27 @@ describe("plot-api", () => {
         await plot.exportWeb(outputPath);
         expect(exportTemplate).toHaveBeenCalled();
     });
+
+    it("y axis defaults to all columns when no y axis series is specified", () => {
+
+        const data: any = { columnOrder: ["a", "b", "c"] };
+        const plotConfig: any = {};
+        const axisMap: any = {};
+        const plot = new PlotAPI(data, plotConfig, axisMap);
+        const chartDef = plot.serialize();
+        expect(chartDef.axisMap.y).toEqual([
+            {
+                series: "a",
+            },
+            {
+                series: "b",
+            },
+            {
+                series: "c",
+            },
+        ]);
+        expect(chartDef.axisMap.y2).toEqual([]);
+    });
+
+
 });

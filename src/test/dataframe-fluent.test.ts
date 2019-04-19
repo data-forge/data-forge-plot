@@ -1,6 +1,3 @@
-TODO: Want to get this test working again.
-Should also get this type of test working for series.
-
 import "jest";
 import { DataFrame } from "data-forge";
 import "../index";
@@ -9,7 +6,7 @@ describe("data-forge-plot - dataframe fluent", () => {
 
     it("can explicity set y axis", ()  => {
 
-        const df = new DataFrame({ index: [1, 2, 3], values: [{ A: 10 }, { A: 20 }, { A: 30 } ] });
+        const df = new DataFrame({ index: [1, 2, 3], values: [{ A: 10, }, { A: 20 }, { A: 30 } ] });
         const plotAPI = df.plot()
             .y()
                 .addSeries("A");
@@ -40,14 +37,7 @@ describe("data-forge-plot - dataframe fluent", () => {
             },
             plotConfig: {
                 chartType: "line",
-                x: {
-                },
                 y: {
-                },
-                y2: {
-                },
-                legend: {
-                    show: true,
                 },
             },
             axisMap: {

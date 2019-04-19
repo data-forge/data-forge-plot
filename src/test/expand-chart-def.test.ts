@@ -114,26 +114,6 @@ describe("expand chart def", () => {
         });
     });
 
-    it("y axis defaults to all columns when no y axis series is specified", () => {
-
-        const data: any = { columnOrder: ["a", "b", "c"] };
-        const plotConfig: any = {};
-        const axisMap: any = {};
-        const chartDef = expandChartDef(data, plotConfig, axisMap);
-        expect(chartDef.axisMap.y).toEqual([
-            {
-                series: "a",
-            },
-            {
-                series: "b",
-            },
-            {
-                series: "c",
-            },
-        ]);
-        expect(chartDef.axisMap.y2).toEqual([]);
-    });
-
     it("y does not default when y is specified", () => {
 
         const data: any = { columnOrder: ["a", "b", "c"] };
