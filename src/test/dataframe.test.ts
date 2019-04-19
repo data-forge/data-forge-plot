@@ -34,6 +34,8 @@ describe("data-forge-plot - dataframe configuration", () => {
             },
             plotConfig: {
                 chartType: "line",
+                width: 800,
+                height: 600,
             },
             axisMap: {
                 y: [

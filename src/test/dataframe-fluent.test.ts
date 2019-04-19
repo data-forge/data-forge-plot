@@ -37,6 +37,8 @@ describe("data-forge-plot - dataframe fluent", () => {
             },
             plotConfig: {
                 chartType: "line",
+                width: 800,
+                height: 600,
                 y: {
                 },
             },
