@@ -81,4 +81,249 @@ describe("apply defaults", () => {
         const expanded = applyDefaults(inputChartDef, { chartType: ChartType.Bubble });
         expect(expanded.plotConfig!.chartType!).toEqual(ChartType.Bubble);
     });
+
+    const testData = {
+        columnOrder: ["a", "b"],
+        columns: {
+            a: "number",
+            b: "number",
+        },
+        index: {
+            type: "number",
+            values: [2, 3, 4],
+        },
+        values: [
+            {
+                a: 10,
+                b: 100,
+            },
+            {
+                a: 20,
+                b: 200,
+            },
+            {
+                a: 30,
+                b: 300,
+            },
+        ],
+    };
+
+    it("y min can be passed through", () => {
+
+        const inputChartDef: any = {
+            data: testData,
+            plotConfig: {
+                y: {
+                    min: 15,
+                },
+            },
+        };
+
+        const chartDef = applyDefaults(inputChartDef);
+        expect(chartDef.plotConfig.y!.min).toBe(15);
+    });
+
+    it("y min defaults to y series min", () => {
+
+        const inputChartDef: any = {
+            data: testData,
+            plotConfig: {
+                y: {
+                },
+                y2: {
+                },
+            },
+            axisMap: {
+                y: [
+                    {
+                        series: "a",
+                    },
+                    {
+                        series: "b",
+                    },
+                ],
+            },
+        };
+
+        const chartDef = applyDefaults(inputChartDef);
+        expect(chartDef.plotConfig.y!.min).toBe(10);
+    });
+
+    it("y max can be passed through", () => {
+
+        const inputChartDef: any = {
+            data: testData,
+            plotConfig: {
+                y: {
+                    max: 25,
+                },
+            },
+        };
+
+        const chartDef = applyDefaults(inputChartDef);
+        expect(chartDef.plotConfig.y!.max).toBe(25);
+    });
+
+    it("y max defaults to y series max", () => {
+
+        const inputChartDef: any = {
+            data: testData,
+            plotConfig: {
+                y: {
+                },
+                y2: {
+                },
+            },
+            axisMap: {
+                y: [
+                    {
+                        series: "a",
+                    },
+                    {
+                        series: "b",
+                    },
+                ],
+            },
+        };
+
+        const chartDef = applyDefaults(inputChartDef);
+        expect(chartDef.plotConfig.y!.max).toBe(300);
+    });
+
+    it("y2 min can be passed through", () => {
+
+        const inputChartDef: any = {
+            data: testData,
+            plotConfig: {
+                y2: {
+                    min: 0,
+                },
+            },
+        };
+
+        const chartDef = applyDefaults(inputChartDef);
+        expect(chartDef.plotConfig.y2!.min).toBe(0);
+    });
+
+    it("y2 min defaults to y2 series min", () => {
+
+        const inputChartDef: any = {
+            data: testData,
+            plotConfig: {
+                y: {
+                },
+                y2: {
+                },
+            },
+            axisMap: {
+                y2: [
+                    {   
+                        series: "a",
+                    },
+                    {
+                        series: "b",
+                    },
+                ],
+            },
+        };
+
+        const chartDef = applyDefaults(inputChartDef);
+        expect(chartDef.plotConfig.y2!.min).toBe(10);
+    });
+
+    it("y2 max can be passed through", () => {
+
+        const inputChartDef: any = {
+            data: testData,
+            plotConfig: {
+                y2: {
+                    max: 400,
+                },
+            },
+        };
+
+        const chartDef = applyDefaults(inputChartDef);
+        expect(chartDef.plotConfig.y2!.max).toBe(400);
+    });
+
+    it("y2 max defaults to y2 series max", () => {
+
+        const inputChartDef: any = {
+            data: testData,
+            plotConfig: {
+                y: {
+                },
+                y2: {
+                },
+            },
+            axisMap: {
+                y2: [
+                    {
+                        series: "a",
+                    },
+                    {
+                        series: "b",
+                    },
+                ],
+            },
+        };
+
+        const chartDef = applyDefaults(inputChartDef);
+        expect(chartDef.plotConfig.y2!.max).toBe(300);
+    });
+
+    it("min/max not computed for non number data", () => {
+
+        const data = {
+            columnOrder: ["a", "b"],
+            columns: {
+                a: "string",
+                b: "string",
+            },
+            index: {
+                type: "number",
+                values: [2, 3, 4],
+            },
+            values: [
+                {
+                    a: "10",
+                    b: "100",
+                },
+                {
+                    a: "20",
+                    b: "200",
+                },
+                {
+                    a: "30",
+                    b: "300",
+                },
+            ],
+        };
+    
+        const inputChartDef: any = {
+            data,
+            plotConfig: {
+                y: {
+                },
+                y2: {
+                },
+            },
+            axisMap: {
+                y: [
+                    {
+                        series: "a",
+                    },
+                    {
+                        series: "b",
+                    },
+                ],
+            },
+        };
+
+        const chartDef = applyDefaults(inputChartDef);
+        expect(chartDef.plotConfig.y!.min).toBeUndefined();
+        expect(chartDef.plotConfig.y!.max).toBeUndefined();
+        expect(chartDef.plotConfig.y2!.min).toBeUndefined();
+        expect(chartDef.plotConfig.y2!.max).toBeUndefined();
+    });    
 });

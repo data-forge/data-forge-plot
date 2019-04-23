@@ -37,6 +37,12 @@ describe("data-forge-plot - dataframe configuration", () => {
                 chartType: "line",
                 width: 800,
                 height: 600,
+                y: {
+                    min: 10,
+                    max: 30,
+                },
+                y2: {
+                },
                 legend: {
                     show: true,
                 },

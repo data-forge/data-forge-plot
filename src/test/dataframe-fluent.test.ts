@@ -40,6 +40,10 @@ describe("data-forge-plot - dataframe fluent", () => {
                 width: 800,
                 height: 600,
                 y: {
+                    min: 10,
+                    max: 30,
+                },
+                y2: {
                 },
             },
             axisMap: {
