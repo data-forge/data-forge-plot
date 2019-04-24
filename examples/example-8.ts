@@ -11,7 +11,7 @@ import { DataFrame } from 'data-forge';
 import '../src/index';
 import * as fs from 'fs-extra';
 import * as path from 'path';
-import { ChartType } from '../src/chart-def';
+import { ChartType } from '../src/index';
 
 const outputName = path.basename(__filename, ".ts");
 const outputPath = path.join("./output", outputName);
@@ -30,8 +30,10 @@ async function main(): Promise<void> {
     
     const plot = df.plot()
         .chartType(ChartType.Scatter)
-        .x("versicolor_x")
-        .y("versicolor_y");
+        .x()
+            .setSeries("versicolor_x")
+        .y()
+            .addSeries("versicolor_y");
     await plot.renderImage(path.join(outputPath, "image.png"), { openImage: false });
     await plot.exportWeb(path.join(outputPath, "web"), { overwrite: true, openBrowser: false });
 }

@@ -31,9 +31,12 @@ async function main(): Promise<void> {
     //console.log(df.toString());
     
     const plot = df.plot()
-        .x("date")
-        .y("data1")
-        .y("data2");
+        .x()
+            .setSeries("date")
+        .y()
+            .addSeries("data1")
+        .y()
+            .addSeries("data2");
     await plot.renderImage(path.join(outputPath, "image.png"), { openImage: false });
     await plot.exportWeb(path.join(outputPath, "web"), { overwrite: true, openBrowser: false });
 }

@@ -13,7 +13,7 @@ import { DataFrame } from 'data-forge';
 import '../src/index';
 import * as fs from 'fs-extra';
 import * as path from 'path';
-import { ChartType, IAxisMap } from '../src/chart-def';
+import { ChartType } from '../src/index';
 
 const outputName = path.basename(__filename, ".ts");
 const outputPath = path.join("./output", outputName);
@@ -34,14 +34,16 @@ async function main(): Promise<void> {
     
     const plot = df.plot()
         .chartType(ChartType.Scatter)
-        .y("versicolor_y")
-            .seriesLabel("Versicolor")
-            //todo: .color("blue")
-            .x("versicolor_x")
-        .y("setosa_y")
-            .seriesLabel("Setosa")
-            //todo: .color("green")
-            .x("setosa_x");
+        .y()
+            .addSeries("versicolor_y")
+                .label("Versicolor")
+                //todo: .color("blue")
+                .setX("versicolor_x")
+        .y()
+            .addSeries("setosa_y")
+                .label("Setosa")
+                //todo: .color("green")
+                .setX("setosa_x");
 
     await plot.renderImage(path.join(outputPath, "image.png"), { openImage: false });
     await plot.exportWeb(path.join(outputPath, "web"), { overwrite: true, openBrowser: false });

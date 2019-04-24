@@ -60,6 +60,11 @@ export interface IRenderOptions {
      * Name of the template used to render the image.
      */
     template?: string;
+
+    /**
+     * Set to true to show the chart definition after expansion and also after formatting.
+     */
+    showChartDef?: boolean;
 }
 
 /**
@@ -82,6 +87,11 @@ export interface IWebExportOptions {
      * Name of the template used to render the image.
      */
     template?: string;
+
+    /**
+     * Set to true to show the chart definition after expansion and also after formatting.
+     */
+    showChartDef?: boolean;
 }
 
 /**
@@ -368,6 +378,11 @@ export abstract class AbstractPlotAPI implements IPlotAPI {
     async renderImage(imageFilePath: string, renderOptions?: IRenderOptions): Promise<void> {
 
         const chartDef = this.serialize();
+        if (renderOptions && renderOptions.showChartDef) {
+            console.log("Expanded chart definition:");
+            console.log(JSON.stringify(chartDef, null, 4));
+        }
+
         const templatePath = renderOptions && renderOptions.template || await findChartTemplatePath();
         const captureOptions: ICaptureOptions = {
             electronPath: renderOptions && renderOptions.electronPath,
@@ -375,7 +390,17 @@ export abstract class AbstractPlotAPI implements IPlotAPI {
                 inMemoryFiles: [
                     {
                         file: "chart-def.json",
-                        content: JSON.stringify(chartDef, null, 4),
+                        content: JSON.stringify(
+                            { 
+                                chartDef, 
+                                options: {
+                                    makeStatic: true,
+                                    showChartDef: renderOptions && renderOptions.showChartDef || false,
+                                },
+                            }, 
+                            null, 
+                            4
+                        ),
                     },
                 ],
             },
@@ -393,6 +418,11 @@ export abstract class AbstractPlotAPI implements IPlotAPI {
     async exportWeb(outputFolderPath: string, exportOptions?: IWebExportOptions): Promise<void> {
 
         const chartDef = this.serialize();
+        if (exportOptions && exportOptions.showChartDef) {
+            console.log("Expanded chart definition:");
+            console.log(JSON.stringify(chartDef, null, 4));
+        }
+
         const templatePath = exportOptions && exportOptions.template || await findChartTemplatePath();
         const overwrite = exportOptions && !!exportOptions.overwrite || false;
 
@@ -401,8 +431,18 @@ export abstract class AbstractPlotAPI implements IPlotAPI {
             inMemoryFiles: [
                 {
                     file: "chart-def.json",
-                    content: JSON.stringify(chartDef, null, 4),
-                },
+                    content: JSON.stringify(
+                        { 
+                            chartDef, 
+                            options: {
+                                makeStatic: false,
+                                showChartDef: exportOptions && exportOptions.showChartDef || false,
+                            },
+                        }, 
+                        null, 
+                        4
+                    ),
+            },
             ],
         };
 

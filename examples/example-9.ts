@@ -13,7 +13,7 @@ import { DataFrame } from 'data-forge';
 import '../src/index';
 import * as fs from 'fs-extra';
 import * as path from 'path';
-import { ChartType, IAxisMap } from '../src/chart-def';
+import { ChartType } from '../src/index';
 
 const outputName = path.basename(__filename, ".ts");
 const outputPath = path.join("./output", outputName);

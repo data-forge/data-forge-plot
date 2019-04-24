@@ -459,6 +459,4 @@ describe("plot-api", () => {
         await plot.exportWeb(outputPath);
         expect(exportTemplate).toHaveBeenCalled();
     });
-
-
 });

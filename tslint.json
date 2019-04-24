@@ -28,7 +28,8 @@
         "no-trailing-whitespace": false,
         "ban-types": false,
         "array-type": false,
-        "no-empty-interface": false
+        "no-empty-interface": false,
+        "no-console": false
     },
     "defaultSeverity": "warning"
 }
