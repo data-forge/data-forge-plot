@@ -108,6 +108,40 @@ describe("apply defaults", () => {
         ],
     };
 
+    const testDataWithBadValues = {
+        columnOrder: ["a", "b"],
+        columns: {
+            a: "number",
+            b: "number",
+        },
+        index: {
+            type: "number",
+            values: [2, 3, 4, 5, 6],
+        },
+        values: [
+            {
+                a: 10,
+                b: 100,
+            },
+            {
+                a: null,
+                b: undefined,
+            },
+            {
+                a: 20,
+                b: 200,
+            },
+            {
+                a: 5 / 0,
+                b: Math.sqrt(-2),
+            },
+            {
+                a: 30,
+                b: 300,
+            },
+        ],
+    };
+
     it("y min can be passed through", () => {
 
         const inputChartDef: any = {
@@ -127,6 +161,32 @@ describe("apply defaults", () => {
 
         const inputChartDef: any = {
             data: testData,
+            plotConfig: {
+                y: {
+                },
+                y2: {
+                },
+            },
+            axisMap: {
+                y: [
+                    {
+                        series: "a",
+                    },
+                    {
+                        series: "b",
+                    },
+                ],
+            },
+        };
+
+        const chartDef = applyDefaults(inputChartDef);
+        expect(chartDef.plotConfig.y!.min).toBe(10);
+    });
+
+    it("y min defaults to y series min with bad values", () => {
+
+        const inputChartDef: any = {
+            data: testDataWithBadValues,
             plotConfig: {
                 y: {
                 },
@@ -190,6 +250,33 @@ describe("apply defaults", () => {
         expect(chartDef.plotConfig.y!.max).toBe(300);
     });
 
+    it("y max defaults to y series max with bad values", () => {
+
+        const inputChartDef: any = {
+            data: testDataWithBadValues,
+            plotConfig: {
+                y: {
+                },
+                y2: {
+                },
+            },
+            axisMap: {
+                y: [
+                    {
+                        series: "a",
+                    },
+                    {
+                        series: "b",
+                    },
+                ],
+            },
+        };
+
+        const chartDef = applyDefaults(inputChartDef);
+        expect(chartDef.plotConfig.y!.max).toBe(300);
+    });
+
+
     it("y2 min can be passed through", () => {
 
         const inputChartDef: any = {
@@ -231,6 +318,32 @@ describe("apply defaults", () => {
         expect(chartDef.plotConfig.y2!.min).toBe(10);
     });
 
+    it("y2 min defaults to y2 series min with bad values", () => {
+
+        const inputChartDef: any = {
+            data: testDataWithBadValues,
+            plotConfig: {
+                y: {
+                },
+                y2: {
+                },
+            },
+            axisMap: {
+                y2: [
+                    {   
+                        series: "a",
+                    },
+                    {
+                        series: "b",
+                    },
+                ],
+            },
+        };
+
+        const chartDef = applyDefaults(inputChartDef);
+        expect(chartDef.plotConfig.y2!.min).toBe(10);
+    });
+
     it("y2 max can be passed through", () => {
 
         const inputChartDef: any = {
@@ -250,6 +363,32 @@ describe("apply defaults", () => {
 
         const inputChartDef: any = {
             data: testData,
+            plotConfig: {
+                y: {
+                },
+                y2: {
+                },
+            },
+            axisMap: {
+                y2: [
+                    {
+                        series: "a",
+                    },
+                    {
+                        series: "b",
+                    },
+                ],
+            },
+        };
+
+        const chartDef = applyDefaults(inputChartDef);
+        expect(chartDef.plotConfig.y2!.max).toBe(300);
+    });
+
+    it("y2 max defaults to y2 series max with bad values", () => {
+
+        const inputChartDef: any = {
+            data: testDataWithBadValues,
             plotConfig: {
                 y: {
                 },

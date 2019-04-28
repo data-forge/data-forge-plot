@@ -14,6 +14,14 @@ function extractValues(data: ISerializedDataFrame, seriesConfigs: IYAxisSeriesCo
     return flattened;
 }
 
+function findMin(values: number[]): number {
+    return Math.min(...values.filter(v => v !== undefined && v !== null && !Number.isNaN(v)));
+}
+
+function findMax(values: number[]): number {
+    return Math.max(...values.filter(v => v !== undefined && v !== null && !Number.isNaN(v) && Number.isFinite(v)));
+}
+
 //
 // Apply defaults to a chart definition and patch misssing values.
 //
@@ -79,7 +87,7 @@ export function applyDefaults(inputChartDef: IChartDef, plotDefaults?: IPlotConf
         y1Values = extractValues(chartDef.data, chartDef.axisMap.y);
 
         if (y1Values.length > 0) {        
-            chartDef.plotConfig.y.min = Math.min(...y1Values);
+            chartDef.plotConfig.y.min = findMin(y1Values);
         }
     }
 
@@ -89,7 +97,7 @@ export function applyDefaults(inputChartDef: IChartDef, plotDefaults?: IPlotConf
         }
 
         if (y1Values.length > 0) {        
-            chartDef.plotConfig.y.max = Math.max(...y1Values);
+            chartDef.plotConfig.y.max = findMax(y1Values);
         }
     }
 
@@ -102,7 +110,7 @@ export function applyDefaults(inputChartDef: IChartDef, plotDefaults?: IPlotConf
     if (chartDef.plotConfig.y2.min === undefined) {
         y2Values = extractValues(chartDef.data, chartDef.axisMap.y2);
         if (y2Values.length > 0) {
-            chartDef.plotConfig.y2.min = Math.min(...y2Values);
+            chartDef.plotConfig.y2.min = findMin(y2Values);
         }
     }
 
@@ -112,7 +120,7 @@ export function applyDefaults(inputChartDef: IChartDef, plotDefaults?: IPlotConf
         }
 
         if (y2Values.length > 0) {
-            chartDef.plotConfig.y2.max = Math.max(...y2Values);
+            chartDef.plotConfig.y2.max = findMax(y2Values);
         }
     }
 
