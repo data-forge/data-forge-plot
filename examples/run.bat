@@ -8,3 +8,4 @@ call ts-node example-7.ts
 call ts-node example-8.ts
 call ts-node example-9.ts
 call ts-node example-10.ts
+call ts-node example-11.ts

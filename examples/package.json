@@ -10,6 +10,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "data-forge-fs": "0.0.6",
+    "data-forge-indicators": "^0.2.4",
     "fs-extra": "^7.0.1"
   },
   "devDependencies": {
