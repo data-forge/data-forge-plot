@@ -276,7 +276,6 @@ describe("apply defaults", () => {
         expect(chartDef.plotConfig.y!.max).toBe(300);
     });
 
-
     it("y2 min can be passed through", () => {
 
         const inputChartDef: any = {
