@@ -1,4 +1,4 @@
-import { IChartDef, IPlotConfig as IExpandedPlotConfig, IAxisMap as IExpandedAxisMap, ChartType, IAxisConfig as IExpandedAxisConfig, IYAxisConfig as IExpandedYAxisConfig, IAxisSeriesConfig as IExpandedAxisSeriesConfig, IYAxisSeriesConfig as IExpandedYAxisSeriesConfig } from "@data-forge-plot/chart-def";
+import { IChartDef, IPlotConfig as IExpandedPlotConfig, IAxisMap as IExpandedAxisMap, ChartType, IAxisConfig as IExpandedAxisConfig, IYAxisConfig as IExpandedYAxisConfig, IXAxisConfig as IExpandedXAxisConfig, IAxisSeriesConfig as IExpandedAxisSeriesConfig, IYAxisSeriesConfig as IExpandedYAxisSeriesConfig } from "@data-forge-plot/chart-def";
 import { IAxisMap, IPlotConfig, IAxisConfig, IYAxisConfig, IAxisSeriesConfig, IYAxisSeriesConfig } from "./chart-def";
 import { ISerializedDataFrame } from "@data-forge/serialization";
 import { isString } from "./utils";
@@ -16,6 +16,11 @@ export function expandAxisConfig(axisConfig: IAxisConfig): IExpandedAxisConfig {
         };
     }
 
+    return expandedAxisConfig;
+}
+
+export function expandXAxisConfig(axisConfig: IYAxisConfig): IExpandedXAxisConfig {
+    const expandedAxisConfig = expandAxisConfig(axisConfig);
     return expandedAxisConfig;
 }
 

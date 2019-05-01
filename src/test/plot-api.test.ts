@@ -375,17 +375,6 @@ describe("plot-api", () => {
         expect(serialized.plotConfig.y!.label!.position).toBe(VerticalLabelPosition.OuterMiddle);
     });
 
-    it("can set y axis type", () => {
-        const data: any = {};
-        const plotConfig: IPlotConfig = {};
-        const axisMap: IAxisMap = {};
-        const plot = new PlotAPI(data, plotConfig, axisMap)
-            .y()
-                .type(AxisType.Timeseries);
-        const serialized = plot.serialize();
-        expect(serialized.plotConfig.y!.axisType).toBe(AxisType.Timeseries);
-    });
-
     it("can set y2 axis label", () => {
         const data: any = {};
         const plotConfig: IPlotConfig = { y2: { label: { text: "A label!" }}};
@@ -427,17 +416,6 @@ describe("plot-api", () => {
                 .labelPosition(VerticalLabelPosition.OuterMiddle)
             .serialize();
         expect(serialized.plotConfig.y2!.label!.position).toBe(VerticalLabelPosition.OuterMiddle);
-    });
-
-    it("can set y2 axis type", () => {
-        const data: any = {};
-        const plotConfig: IPlotConfig = {};
-        const axisMap: IAxisMap = {};
-        const plot = new PlotAPI(data, plotConfig, axisMap)
-            .y2()
-                .type(AxisType.Timeseries);
-        const serialized = plot.serialize();
-        expect(serialized.plotConfig.y2!.axisType).toBe(AxisType.Timeseries);
     });
 
     it("can render image", async () => {

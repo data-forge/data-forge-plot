@@ -5,7 +5,7 @@ import { exportTemplate, IExportOptions } from "inflate-template";
 import { captureImage, ICaptureOptions } from "capture-template";
 import { IPlotConfig, IAxisMap } from "./chart-def";
 import { isObject } from "./utils";
-import { ChartType, IChartDef, AxisType, HorizontalLabelPosition, VerticalLabelPosition, IAxisConfig, IYAxisSeriesConfig, IAxisSeriesConfig } from "@data-forge-plot/chart-def";
+import { ChartType, IChartDef, AxisType, HorizontalLabelPosition, VerticalLabelPosition, IAxisConfig, IYAxisSeriesConfig, IAxisSeriesConfig, IXAxisConfig, IYAxisConfig } from "@data-forge-plot/chart-def";
 import { expandChartDef } from "./expand-chart-def";
 import { applyDefaults } from "./apply-defaults";
 
@@ -169,11 +169,6 @@ export interface IAxisConfigAPI<FluentT> extends IPlotAPI {
      * Set the label for the axis.
      */
     label(label: string): FluentT;
-
-    /**
-     * Set the type of the axis.
-     */
-    type(axisType: AxisType): FluentT;
 }
 
 /**
@@ -219,6 +214,11 @@ export interface IXAxisConfigAPI extends IAxisConfigAPI<IXAxisConfigAPI> {
      * Set the series for the x axis.
      */
     setSeries(seriesName: string): IXAxisSeriesConfigAPI;
+
+    /**
+     * Set the type of the axis.
+     */
+    type(axisType: AxisType): IXAxisSeriesConfigAPI;
 
     /**
      * Set the position for the label.
@@ -577,7 +577,7 @@ class YAxisSeriesConfigAPI extends AxisSeriesConfigAPI<YAxisSeriesConfigAPI, IYA
 /**
  * Fluent API for configuring an axis of the chart.
  */
-abstract class AxisConfigAPI<FluentT, AxisMapT> extends AbstractPlotAPI implements IAxisConfigAPI<FluentT> {
+abstract class AxisConfigAPI<FluentT, AxisConfigT extends IAxisConfig> extends AbstractPlotAPI implements IAxisConfigAPI<FluentT> {
 
     /**
      * The name of the axis being configured.
@@ -587,11 +587,11 @@ abstract class AxisConfigAPI<FluentT, AxisMapT> extends AbstractPlotAPI implemen
     /**
      * Configuration for the axis.
      */
-    protected axisConfig: IAxisConfig;
+    protected axisConfig: AxisConfigT;
 
     constructor(
         axisName: string,
-        axisConfig: IAxisConfig,
+        axisConfig: AxisConfigT,
         chartDef: IChartDef
     ) {
         super(chartDef);
@@ -613,25 +613,18 @@ abstract class AxisConfigAPI<FluentT, AxisMapT> extends AbstractPlotAPI implemen
         return this as any as FluentT;
     }
 
-    /**
-     * Set the type of the axis.
-     */
-    type(axisType: AxisType): FluentT {
-        this.axisConfig.axisType = axisType;
-        return this as any as FluentT;
-    }
 }
 
 /**
  * Fluent API for configuring an axis of the chart.
  */
-class XAxisConfigAPI extends AxisConfigAPI<IXAxisConfigAPI, IAxisConfig> implements IXAxisConfigAPI {
+class XAxisConfigAPI extends AxisConfigAPI<IXAxisConfigAPI, IXAxisConfig> implements IXAxisConfigAPI {
 
     createSeriesConfig: (seriesName: string) => IAxisSeriesConfig;
 
     constructor(
         axisName: string,
-        axisConfig: IAxisConfig,
+        axisConfig: IXAxisConfig,
         createSeriesConfig: (seriesName: string) => IAxisSeriesConfig,
         chartDef: IChartDef
     ) {
@@ -652,6 +645,14 @@ class XAxisConfigAPI extends AxisConfigAPI<IXAxisConfigAPI, IAxisConfig> impleme
     }
 
     /**
+     * Set the type of the axis.
+     */
+    type(axisType: AxisType): IXAxisSeriesConfigAPI {
+        this.axisConfig.axisType = axisType;
+        return this as any as IXAxisSeriesConfigAPI;
+    }
+
+    /**
      * Set the position for the label.
      */
     labelPosition(position: HorizontalLabelPosition): IXAxisConfigAPI {
@@ -668,13 +669,13 @@ class XAxisConfigAPI extends AxisConfigAPI<IXAxisConfigAPI, IAxisConfig> impleme
 /**
  * Fluent API for configuring an axis of the chart.
  */
-class YAxisConfigAPI extends AxisConfigAPI<IYAxisConfigAPI, IYAxisSeriesConfig> implements IYAxisConfigAPI {
+class YAxisConfigAPI extends AxisConfigAPI<IYAxisConfigAPI, IYAxisConfig> implements IYAxisConfigAPI {
 
     createSeriesConfig: (seriesName: string) => IYAxisSeriesConfig;
 
     constructor(
         axisName: string,
-        axisConfig: IAxisConfig,
+        axisConfig: IYAxisConfig,
         createSeriesConfig: (seriesName: string) => IYAxisSeriesConfig,
         chartDef: IChartDef
     ) {

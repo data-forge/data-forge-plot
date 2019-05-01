@@ -163,7 +163,7 @@ describe("expand chart def", () => {
     it("can expand axis config", () => {
 
         const xConfig = { axisType: AxisType.Category };
-        const yConfig = { axisType: AxisType.Indexed };
+        const yConfig = { axisType: AxisType.Numerical };
         const y2Config = { axisType: AxisType.Timeseries };
         const expanded = expandChartDef({} as any, { x: xConfig, y: yConfig, y2: y2Config }, {});
         expect(expanded.plotConfig.x).not.toBe(xConfig);
