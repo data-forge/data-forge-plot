@@ -14,12 +14,12 @@ function extractValues(data: ISerializedDataFrame, seriesConfigs: IYAxisSeriesCo
     return flattened;
 }
 
-function findMin(values: number[]): number {
-    return Math.min(...values.filter(v => v !== undefined && v !== null && !Number.isNaN(v)));
+function computeMin(values: number[]): number {
+    return Math.floor(Math.min(...values.filter(v => v !== undefined && v !== null && !Number.isNaN(v))) * 100) / 100;
 }
 
-function findMax(values: number[]): number {
-    return Math.max(...values.filter(v => v !== undefined && v !== null && !Number.isNaN(v) && Number.isFinite(v)));
+function computeMax(values: number[]): number {
+    return Math.ceil(Math.max(...values.filter(v => v !== undefined && v !== null && !Number.isNaN(v) && Number.isFinite(v))) * 100) / 100;
 }
 
 //
@@ -87,7 +87,7 @@ export function applyDefaults(inputChartDef: IChartDef, plotDefaults?: IPlotConf
         y1Values = extractValues(chartDef.data, chartDef.axisMap.y);
 
         if (y1Values.length > 0) {        
-            chartDef.plotConfig.y.min = findMin(y1Values);
+            chartDef.plotConfig.y.min = computeMin(y1Values);
         }
     }
 
@@ -97,7 +97,7 @@ export function applyDefaults(inputChartDef: IChartDef, plotDefaults?: IPlotConf
         }
 
         if (y1Values.length > 0) {        
-            chartDef.plotConfig.y.max = findMax(y1Values);
+            chartDef.plotConfig.y.max = computeMax(y1Values);
         }
     }
 
@@ -110,7 +110,7 @@ export function applyDefaults(inputChartDef: IChartDef, plotDefaults?: IPlotConf
     if (chartDef.plotConfig.y2.min === undefined) {
         y2Values = extractValues(chartDef.data, chartDef.axisMap.y2);
         if (y2Values.length > 0) {
-            chartDef.plotConfig.y2.min = findMin(y2Values);
+            chartDef.plotConfig.y2.min = computeMin(y2Values);
         }
     }
 
@@ -120,7 +120,7 @@ export function applyDefaults(inputChartDef: IChartDef, plotDefaults?: IPlotConf
         }
 
         if (y2Values.length > 0) {
-            chartDef.plotConfig.y2.max = findMax(y2Values);
+            chartDef.plotConfig.y2.max = computeMax(y2Values);
         }
     }
 

@@ -464,4 +464,55 @@ describe("apply defaults", () => {
         expect(chartDef.plotConfig.y2!.min).toBeUndefined();
         expect(chartDef.plotConfig.y2!.max).toBeUndefined();
     });    
+
+    it("computed min and max are rounded", () => {
+
+        const testData = {
+            columnOrder: [ "a" ],
+            columns: {
+                a: "number",
+                b: "number",
+            },
+            index: {
+                type: "number",
+                values: [2, 3, 4],
+            },
+            values: [
+                {
+                    a: 10.123456,
+                },
+                {
+                    a: 20,
+                },
+                {
+                    a: 30.01234567,
+                },
+            ],
+        };
+    
+        const inputChartDef: any = {
+            data: testData,
+            plotConfig: {
+                y: {
+                },
+                y2: {
+                },
+            },
+            axisMap: {
+                y: [
+                    {
+                        series: "a",
+                    },
+                    {
+                        series: "b",
+                    },
+                ],
+            },
+        };
+
+        const chartDef = applyDefaults(inputChartDef);
+        expect(chartDef.plotConfig.y!.min).toBe(10.12);
+        expect(chartDef.plotConfig.y!.max).toBe(30.02);
+    });
+
 });
