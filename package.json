@@ -1,6 +1,6 @@
 {
     "name": "data-forge-plot",
-    "version": "0.3.9",
+    "version": "0.3.10",
     "description": "Plotting API for use with Data-Forge.",
     "main": "build/index.js",
     "types": "build/index.d.ts",
@@ -34,7 +34,7 @@
     },
     "homepage": "https://github.com/data-forge/data-forge-plot#readme",
     "dependencies": {
-        "@data-forge-plot/apex": "0.0.37",
+        "@data-forge-plot/apex": "0.0.38",
         "@data-forge-plot/chart-def": "^1.1.2",
         "@data-forge/serialization": "^1.0.0",
         "capture-template": "^1.1.10",
