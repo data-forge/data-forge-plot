@@ -1,7 +1,5 @@
 import "jest";
-jest.mock("capture-template");
 jest.mock("inflate-template");
-import { captureImage } from "capture-template";
 import { exportTemplate } from "inflate-template";
 import { PlotAPI } from "../plot-api";
 import { ChartType, HorizontalLabelPosition, VerticalLabelPosition, AxisType } from "@data-forge-plot/chart-def";
@@ -416,16 +414,6 @@ describe("plot-api", () => {
                 .labelPosition(VerticalLabelPosition.OuterMiddle)
             .serialize();
         expect(serialized.plotConfig.y2!.label!.position).toBe(VerticalLabelPosition.OuterMiddle);
-    });
-
-    it("can render image", async () => {
-        const data: any = {};
-        const plotConfig: IPlotConfig = { x: { label: { position: HorizontalLabelPosition.OuterRight }}};
-        const axisMap: IAxisMap = {};
-        const plot = new PlotAPI(data, plotConfig, axisMap);
-        const outputPath = "./output/test";
-        await plot.renderImage(outputPath);
-        expect(captureImage).toHaveBeenCalled();
     });
 
     it("can export web", async () => {

@@ -2,7 +2,6 @@ const opn = require("opn");
 import * as path from "path";
 import { ISerializedDataFrame } from "@data-forge/serialization";
 import { exportTemplate, IExportOptions } from "inflate-template";
-import { captureImage, ICaptureOptions } from "capture-template";
 import { IPlotConfig, IAxisMap } from "./chart-def";
 import { isObject } from "./utils";
 import { ChartType, IChartDef, AxisType, HorizontalLabelPosition, VerticalLabelPosition, IAxisConfig, IYAxisSeriesConfig, IAxisSeriesConfig, IXAxisConfig, IYAxisConfig } from "@data-forge-plot/chart-def";
@@ -142,11 +141,6 @@ export interface IPlotAPI {
      * Configure the y axis.
      */
     y2(): IYAxisConfigAPI;
-
-    /**
-     * Render the plot to an image file.
-     */
-    renderImage(imageFilePath: string, renderOptions?: IRenderOptions): Promise<void>;
 
     /**
      * Export an interactive web visualization of the chart.
@@ -370,46 +364,6 @@ export abstract class AbstractPlotAPI implements IPlotAPI {
             },
             this.chartDef
         );
-    }
-
-    /**
-     * Render the plot to an image file.
-     */
-    async renderImage(imageFilePath: string, renderOptions?: IRenderOptions): Promise<void> {
-
-        const chartDef = this.serialize();
-        if (renderOptions && renderOptions.showChartDef) {
-            console.log("Expanded chart definition:");
-            console.log(JSON.stringify(chartDef, null, 4));
-        }
-
-        const templatePath = renderOptions && renderOptions.template || await findChartTemplatePath();
-        const captureOptions: ICaptureOptions = {
-            electronPath: renderOptions && renderOptions.electronPath,
-            inflateOptions: {
-                inMemoryFiles: [
-                    {
-                        file: "chart-def.json",
-                        content: JSON.stringify(
-                            { 
-                                chartDef, 
-                                options: {
-                                    makeStatic: true,
-                                    showChartDef: renderOptions && renderOptions.showChartDef || false,
-                                },
-                            }, 
-                            null, 
-                            4
-                        ),
-                    },
-                ],
-            },
-        };
-        await captureImage(templatePath, { chartDef }, imageFilePath, captureOptions);
-
-        if (renderOptions && renderOptions.openImage) {
-            opn(path.resolve(imageFilePath));
-        }
     }
 
     /**

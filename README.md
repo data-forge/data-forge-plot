@@ -13,6 +13,10 @@ Do your prototyping and exploratory data analysis in JavaScript with [Data-Forge
 
 Please join the conversation on [Gitter](https://gitter.im/data-forge)
 
+## Breaking changes
+
+As of version 0.4.0 the Nightmare/Electron depenency has been removed along with the `renderImage` function. The `renderImage` function will soon be made available in a separately installable plugin. This has been removed due to the size that the Electron dependency adds to this package. In the future you you will have to install the separate package to render a plot to an image.
+
 ## Project Goals
 
 - To simply and conveniently from a series or dataframe to chart.
