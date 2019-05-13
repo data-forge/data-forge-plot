@@ -16,7 +16,7 @@ const DEFAULT_CHART_PACKAGE = "@data-forge-plot/apex";
 //
 // TODO :export let globalChartRenderer: IChartRenderer | null = null;
 
-async function findChartTemplatePath(): Promise<string> {
+export async function findChartTemplatePath(): Promise<string> {
     const defaultTemplatePath = require.resolve(`${DEFAULT_CHART_PACKAGE}/build/template/template.json`);
     const chartTemplatesPath = path.dirname(defaultTemplatePath);
     return chartTemplatesPath;
@@ -36,34 +36,6 @@ export async function endPlot(): Promise<void> {
     await globalChartRenderer!.end();
     globalChartRenderer = null;
     */
-}
-
-/**
- * Options for image rendering.
- */
-export interface IRenderOptions {
-    /**
-     * Open the image in your default image viewer.
-     */
-    openImage?: boolean;
-
-    /**
-     * Path to electron, so that electron can be installed separately to a different location and shared
-     * between the various packages that need it.
-     *
-     * Electron is used to render charts and capture them to images.
-     */
-    electronPath?: string;
-
-    /**
-     * Name of the template used to render the image.
-     */
-    template?: string;
-
-    /**
-     * Set to true to show the chart definition after expansion and also after formatting.
-     */
-    showChartDef?: boolean;
 }
 
 /**
