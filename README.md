@@ -15,7 +15,12 @@ Please join the conversation on [Gitter](https://gitter.im/data-forge)
 
 ## Breaking changes
 
-As of version 0.4.0 the Nightmare/Electron depenency has been removed along with the `renderImage` function. The `renderImage` function will soon be made available in a separately installable plugin. This has been removed due to the size that the Electron dependency adds to this package. In the future you you will have to install the separate package to render a plot to an image.
+As of version 0.4.0 the Nightmare/Electron depenency has been removed along with the `renderImage` function. 
+
+The `renderImage` function has been moved to the separate library [@data-forge-plot/render](todo). This has been removed due to the size that the Electron dependency adds to this package. In the future you you will have to install the separate package to render a plot to an image.
+
+Please note that the sample code below to see how the new library is installed and *required* to access the `renderImage` function.
+
 
 ## Project Goals
 
@@ -32,7 +37,7 @@ Some instructions for using Data-Forge Plot. These instructions are for JavaScri
 
 ### Install
 
-    npm install --save data-forge data-forge-plot
+    npm install --save data-forge data-forge-plot data-forge-plot-render
 
 ### Setup
 
@@ -40,6 +45,7 @@ Some instructions for using Data-Forge Plot. These instructions are for JavaScri
     const dataForge = require('data-forge');
     require('data-forge-fs'); // Extends Data-Forge with 'readFile' function.
     require('data-forge-plot'); // Extends Data-Forge with the 'plot' function.
+    require('@data-forge-plot/render'); // Extends Data-Forge Plot with the 'renderImage' function.
 ```
 
 ### Rendering a chart from a CSV file to an image file

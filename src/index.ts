@@ -3,6 +3,7 @@ import { IDataFrame, DataFrame } from "data-forge";
 import { IPlotAPI, PlotAPI, /*todo: globalChartRenderer,*/ startPlot, endPlot } from "./plot-api";
 import { IPlotConfig, IAxisMap } from "./chart-def";
 export * from "./chart-def";
+export { IPlotAPI } from "./plot-api";
 export { ChartType, AxisType, HorizontalLabelPosition, VerticalLabelPosition } from "@data-forge-plot/chart-def";
 
 //
