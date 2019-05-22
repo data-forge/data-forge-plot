@@ -37,7 +37,7 @@ Some instructions for using Data-Forge Plot. These instructions are for JavaScri
 
 ### Install
 
-    npm install --save data-forge data-forge-plot data-forge-plot-render
+    npm install --save data-forge data-forge-plot @data-forge-plot/render
 
 ### Setup
 
