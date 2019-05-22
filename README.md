@@ -70,11 +70,12 @@ To see examples of API usage please see my blog posts:
 - http://www.the-data-wrangler.com/introducing-data-forge-plot/
 - http://www.the-data-wrangler.com/data-forge-plot-update/
 - http://www.the-data-wrangler.com/data-forge-plot-update2/
+- http://www.the-data-wrangler.com/data-forge-plot-update3/
 
 There's also a first example of DFP here (JavaScript):
 
 https://github.com/data-forge/data-forge-plot-first-example
 
-There's a bunch of TypeScript examples in DFP's GitHub repo:
+And a bunch of examples in this repo:
 
-https://github.com/data-forge/data-forge-plot/tree/master/examples/
+https://github.com/data-forge/data-forge-plot-examples
