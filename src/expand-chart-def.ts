@@ -1,4 +1,4 @@
-import { IChartDef, IPlotConfig as IExpandedPlotConfig, IAxisMap as IExpandedAxisMap, ChartType, IAxisConfig as IExpandedAxisConfig, IYAxisConfig as IExpandedYAxisConfig, IXAxisConfig as IExpandedXAxisConfig, IAxisSeriesConfig as IExpandedAxisSeriesConfig, IYAxisSeriesConfig as IExpandedYAxisSeriesConfig } from "@data-forge-plot/chart-def";
+import { IChartDef, IPlotConfig as IExpandedPlotConfig, IAxisMap as IExpandedAxisMap, IAxisConfig as IExpandedAxisConfig, IYAxisConfig as IExpandedYAxisConfig, IXAxisConfig as IExpandedXAxisConfig, IAxisSeriesConfig as IExpandedAxisSeriesConfig, IYAxisSeriesConfig as IExpandedYAxisSeriesConfig, ISeriesLabelConfig } from "@data-forge-plot/chart-def";
 import { IAxisMap, IPlotConfig, IAxisConfig, IYAxisConfig, IAxisSeriesConfig, IYAxisSeriesConfig } from "./chart-def";
 import { ISerializedDataFrame } from "@data-forge/serialization";
 import { isString } from "./utils";
@@ -36,14 +36,33 @@ export function expandSeriesConfig(series: string | IAxisSeriesConfig): IExpande
         };
     }
     else {
-        return Object.assign({}, series);
+        const inputSeriesConfig = series as IAxisSeriesConfig;
+        const expandedSeriesConfig: IExpandedAxisSeriesConfig = {
+            series: inputSeriesConfig.series,
+        };
+
+        if (inputSeriesConfig.label) {
+            expandedSeriesConfig.label = inputSeriesConfig.label;
+        }
+
+        if (inputSeriesConfig.format) {
+            expandedSeriesConfig.format = inputSeriesConfig.format;
+        }
+
+        if (inputSeriesConfig.color) {
+            expandedSeriesConfig.color = inputSeriesConfig.color;
+        }
+
+        return expandedSeriesConfig;
     }
 }
 
 export function expandYSeriesConfig(series: string | IYAxisSeriesConfig): IExpandedYAxisSeriesConfig {
     const expanded = expandSeriesConfig(series) as IExpandedYAxisSeriesConfig;
-    if (expanded.x) {
-        expanded.x = expandSeriesConfig(expanded.x);
+    if (!isString(series)) {
+        if (series.x) {
+            expanded.x = expandSeriesConfig(series.x);
+        }
     }
     return expanded;
 }

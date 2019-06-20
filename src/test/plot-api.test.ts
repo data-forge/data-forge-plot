@@ -183,7 +183,7 @@ describe("plot-api", () => {
                 .addSeries("my series")
                     .label("a great series")
             .serialize();
-        expect(serialized.axisMap.y[0].label!).toBe("a great series");
+        expect(serialized.axisMap.y[0].label).toBe("a great series");
     });
 
     it("can set specific x series for y axis series", () => {
@@ -209,7 +209,7 @@ describe("plot-api", () => {
                 .addSeries("my series")
                     .label("a great series")
             .serialize();
-        expect(serialized.axisMap.y2[0].label!).toBe("a great series");
+        expect(serialized.axisMap.y2[0].label).toBe("a great series");
     });
 
     it("can set specific x series for y2 axis series", () => {

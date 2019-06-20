@@ -1,22 +1,5 @@
 
-import { ISerializedDataFrame } from "@data-forge/serialization";
-import { HorizontalLabelPosition, VerticalLabelPosition, AxisType, ChartType } from "@data-forge-plot/chart-def";
-
-/**
- * Defines the configuration of an axis label.
- */
-export interface IAxisLabelConfig {
-
-    /**
-     * The text for the label.
-     */
-    text?: string;
-
-    /**
-     * Position of the label.
-     */
-    position?: HorizontalLabelPosition | VerticalLabelPosition;
-}
+import { AxisType, ChartType, IAxisLabelConfig, ILegendConfig, IDataLabels } from "@data-forge-plot/chart-def";
 
 /**
  * Configures an axis of the chart.
@@ -24,15 +7,20 @@ export interface IAxisLabelConfig {
 export interface IAxisConfig {
 
     /**
-     * Sets the type of the axis' data.
-     * Default: AxisType.Indexed ("indexed")
-     */
-    axisType?: AxisType;
-
-    /**
      * Label for the axis.
      */
     label?: string | IAxisLabelConfig;
+}
+
+/**
+ * Configures an axis of the chart.
+ */
+export interface IXAxisConfig extends IAxisConfig {
+
+    /**
+     * Sets the type of the axis' data.
+     */
+    axisType?: AxisType;
 }
 
 /**
@@ -49,17 +37,6 @@ export interface IYAxisConfig extends IAxisConfig {
      * The maximum value to render on the axis.
      */
     max?: number;
-}
-
-/**
- * Configures the legend of the chart.
- */
-export interface ILegendConfig {
-
-    /**
-     * Set to true (default) to show the legend for the chart   .
-     */
-    show?: boolean;
 }
 
 /**
@@ -88,7 +65,7 @@ export interface IPlotConfig {
     /**
      * Configuration for the x axis.
      */
-    x?: IAxisConfig;
+    x?: IXAxisConfig;
 
     /**
      * Configuration for the y axis.
@@ -104,6 +81,11 @@ export interface IPlotConfig {
      * Configures the chart's legend.
      */
     legend?: ILegendConfig;
+
+    /**
+     * Configure data labels for the whole chart.
+     */
+    dataLabels?: IDataLabels;
 }
 
 /**

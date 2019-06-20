@@ -14,12 +14,30 @@ describe("expand chart def", () => {
         expect(expanded.series).toBe("my series");
     });
 
-    it("can clone object series config", () => {
+    it("can expand series config", () => {
         const seriesConfig = { series: "my series" };
         const expanded = expandSeriesConfig(seriesConfig);
         expect(expanded).not.toBe(seriesConfig);
         expect(expanded).toEqual(seriesConfig);
     });    
+
+    it("can expand series config with string label", () => {
+        const seriesConfig = { series: "my series", label: "a great series" };
+        const expanded = expandSeriesConfig(seriesConfig);
+        expect(expanded.label).toBe("a great series");
+    });
+
+    it("can expand series config with format", () => {
+        const seriesConfig = { series: "my series", format: "the format!" };
+        const expanded = expandSeriesConfig(seriesConfig);
+        expect(expanded.format).toBe("the format!");
+    });
+
+    it("can expand series config with color", () => {
+        const seriesConfig = { series: "my series", format: "red" };
+        const expanded = expandSeriesConfig(seriesConfig);
+        expect(expanded.format).toBe("red");
+    });
 
     it("can expand y series config with specific x series as string", () => {
         const seriesConfig = { series: "my y series", x: "my x series" };
@@ -163,8 +181,8 @@ describe("expand chart def", () => {
     it("can expand axis config", () => {
 
         const xConfig = { axisType: AxisType.Category };
-        const yConfig = { axisType: AxisType.Numerical };
-        const y2Config = { axisType: AxisType.Timeseries };
+        const yConfig = {};
+        const y2Config = {};
         const expanded = expandChartDef({} as any, { x: xConfig, y: yConfig, y2: y2Config }, {});
         expect(expanded.plotConfig.x).not.toBe(xConfig);
         expect(expanded.plotConfig.x).toEqual(xConfig);
