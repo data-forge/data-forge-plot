@@ -1,5 +1,5 @@
 
-import { AxisType, ChartType, IAxisLabelConfig, ILegendConfig, IDataLabels } from "@data-forge-plot/chart-def";
+import { AxisType, ChartType, IAxisLabelConfig, ILegendConfig, IDataLabels, IAxisTicksConfiguration } from "@data-forge-plot/chart-def";
 
 /**
  * Configures an axis of the chart.
@@ -10,6 +10,11 @@ export interface IAxisConfig {
      * Label for the axis.
      */
     label?: string | IAxisLabelConfig;
+
+    /**
+     * Configuration for axis tick marks.
+     */
+    ticks?: IAxisTicksConfiguration;
 }
 
 /**
