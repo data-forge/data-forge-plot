@@ -7,6 +7,7 @@ import { isObject } from "./utils";
 import { ChartType, IChartDef, AxisType, HorizontalLabelPosition, VerticalLabelPosition, IAxisConfig, IYAxisSeriesConfig, IAxisSeriesConfig, IXAxisConfig, IYAxisConfig } from "@data-forge-plot/chart-def";
 import { expandChartDef } from "./expand-chart-def";
 import { applyDefaults } from "./apply-defaults";
+const resolve = require('resolve-cwd');
 
 const DEFAULT_CHART_PACKAGE = "@data-forge-plot/apex";
 
@@ -17,7 +18,7 @@ const DEFAULT_CHART_PACKAGE = "@data-forge-plot/apex";
 // TODO :export let globalChartRenderer: IChartRenderer | null = null;
 
 export async function findChartTemplatePath(): Promise<string> {
-    const defaultTemplatePath = require.resolve(`${DEFAULT_CHART_PACKAGE}/build/template/template.json`);
+    const defaultTemplatePath = resolve(`${DEFAULT_CHART_PACKAGE}/build/template/template.json`);
     const chartTemplatesPath = path.dirname(defaultTemplatePath);
     return chartTemplatesPath;
 }
