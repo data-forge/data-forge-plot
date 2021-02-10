@@ -1,7 +1,6 @@
 import "jest";
 import { DataFrame } from "data-forge";
 import "../index";
-import { ChartType } from "@data-forge-plot/chart-def";
 
 describe("data-forge-plot - dataframe configuration", () => {
 
@@ -10,59 +9,39 @@ describe("data-forge-plot - dataframe configuration", () => {
         const df = new DataFrame({ index: [1, 2, 3], values: [{ A: 10 }, { A: 20 }, { A: 30 } ] });
         const plotAPI = df.plot();
         expect(plotAPI.serialize()).toEqual({
-            data: {
-                columnOrder: [
-                    "A",
-                ],  
-                columns: {
-                    A: "number",
+            "data": {
+                "series": {
+                    "A": {
+                        "type": "number",
+                        "values": [
+                            10,
+                            20,
+                            30
+                        ]
+                    }
+                }
+            },
+            "plotConfig": {
+                "legend": {
+                    "show": true
                 },
-                index: {
-                    type: "number",
-                    values: [ 1, 2, 3 ],
+                "chartType": "line",
+                "width": 800,
+                "height": 600,
+                "y": {
+                    "min": 10,
+                    "max": 30
                 },
-                values: [
+                "y2": {}
+            },
+            "axisMap": {
+                "y": [
                     {
-                        A: 10,
-                    },
-                    {
-                        A: 20,
-                    },
-                    {
-                        A: 30,
-                    },
+                        "series": "A"
+                    }
                 ],
-            },
-            plotConfig: {
-                chartType: "line",
-                width: 800,
-                height: 600,
-                y: {
-                    min: 10,
-                    max: 30,
-                },
-                y2: {
-                },
-                legend: {
-                    show: true,
-                },
-            },
-            axisMap: {
-                y: [
-                    {
-                        series: "A",
-                    },
-                ],
-                y2: [],
-            },
+                "y2": []
+            }
         });
-    });
-
-    it("legend is enabled by default for dataframe", ()  => {
-
-        const df = new DataFrame();
-        const plotAPI = df.plot();
-        const serialized = plotAPI.serialize();
-        expect(serialized.plotConfig.legend!.show).toEqual(true);
     });
 });

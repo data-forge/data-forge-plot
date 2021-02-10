@@ -1,10 +1,9 @@
+import { IAxisMap, IPlotConfig } from "@plotex/chart-def";
 import { ISeries, Series } from "data-forge";
 import { IDataFrame, DataFrame } from "data-forge";
-import { IPlotAPI, PlotAPI, /*todo: globalChartRenderer,*/ startPlot, endPlot } from "./plot-api";
-import { IPlotConfig, IAxisMap } from "./chart-def";
-export * from "./chart-def";
-export { IPlotAPI } from "./plot-api";
-export { ChartType, AxisType, HorizontalLabelPosition, VerticalLabelPosition } from "@data-forge-plot/chart-def";
+import { IPlotAPI, plot } from "plot";
+export { IPlotAPI } from "plot";
+export * from "@plotex/chart-def";
 
 //
 // Augment ISeries and Series with plot function.
@@ -32,14 +31,9 @@ const seriesPlotDefaults: IPlotConfig = {
 };
 
 function plotSeries(this: ISeries<any, any>, plotConfig?: IPlotConfig, axisMap?: IAxisMap): IPlotAPI {
-    const serializedData = this
-        .inflate((value: any) => ({ __value__: value }))
-        .serialize();
-    return new PlotAPI(serializedData, plotConfig || {}, axisMap || {}, seriesPlotDefaults);
+    return plot(this.toArray(), plotConfig, axisMap);
 }
 
-Series.prototype.startPlot = startPlot;
-Series.prototype.endPlot = endPlot;
 Series.prototype.plot = plotSeries;
 
 //
@@ -47,16 +41,10 @@ Series.prototype.plot = plotSeries;
 //
 declare module "data-forge/build/lib/dataframe" {
     interface IDataFrame<IndexT, ValueT> {
-        startPlot(): void;
-        endPlot(): void;
-
         plot(plotDef?: IPlotConfig, axisMap?: IAxisMap): IPlotAPI;
     }
 
     interface DataFrame<IndexT, ValueT> {
-        startPlot(): void;
-        endPlot(): void;
-
         plot(plotDef?: IPlotConfig, axisMap?: IAxisMap): IPlotAPI;
     }
 }
@@ -67,11 +55,8 @@ const dataFramePlotDefaults: IPlotConfig = {
     },
 };
 
-function plotDataFrame(this: IDataFrame<any, any>, plotDef?: IPlotConfig, axisMap?: IAxisMap): IPlotAPI {
-    const serializedData = this.serialize();
-    return new PlotAPI(serializedData, plotDef || {}, axisMap || {}, dataFramePlotDefaults);
+function plotDataFrame(this: IDataFrame<any, any>, plotConfig?: IPlotConfig, axisMap?: IAxisMap): IPlotAPI {
+    return plot(this.toArray(), plotConfig, axisMap);
 }
 
-DataFrame.prototype.startPlot = startPlot;
-DataFrame.prototype.endPlot = endPlot;
 DataFrame.prototype.plot = plotDataFrame;
