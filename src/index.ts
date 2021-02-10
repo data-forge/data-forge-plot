@@ -1,9 +1,8 @@
-import { IAxisMap, IPlotConfig } from "@plotex/chart-def";
 import { ISeries, Series } from "data-forge";
 import { IDataFrame, DataFrame } from "data-forge";
-import { IPlotAPI, plot } from "plot";
-export { IPlotAPI } from "plot";
+import { IAxisMap, IPlotAPI, IPlotConfig, plot } from "plot";
 export * from "@plotex/chart-def";
+export { IPlotAPI, IAxisConfig, IXAxisConfig, IYAxisConfig, IPlotConfig, IYAxisSeriesConfig, IAxisMap } from "plot";
 
 //
 // Augment ISeries and Series with plot function.
