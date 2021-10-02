@@ -15,6 +15,8 @@ Do your prototyping and exploratory data analysis in JavaScript with [Data-Forge
 
 Please join the conversation on [Gitter](https://gitter.im/data-forge)
 
+[Click here to support my work](https://www.codecapers.com.au/about#support-my-work)
+
 ## Breaking changes
 
 As of version 1.0.0 Data-Forge Plot has been gutted and reimplimented in terms of the [Plot library](https://www.npmjs.com/package/plot) (which is very similar). DFP is now just a wrapper for Plot to ease my maintence burden.
